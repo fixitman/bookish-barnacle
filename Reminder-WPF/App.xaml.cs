@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
@@ -13,5 +15,36 @@ namespace Reminder_WPF
     /// </summary>
     public partial class App : Application
     {
+        private IHost _host;
+        
+
+        public App()
+        {
+            _host = new HostBuilder()
+                .ConfigureServices((context, services) =>
+                {
+                    services.AddSingleton<MainWindow>();
+                })
+                .Build();
+            
+            
+
+        }
+
+        private async void Application_Startup(object sender, StartupEventArgs e)
+        {
+            await _host.StartAsync();
+            var mainWindow = _host.Services.GetRequiredService<MainWindow>();
+            mainWindow.Show();
+
+        }
+
+        private void Application_Exit(object sender, ExitEventArgs e)
+        {
+            using(_host)
+            {
+                _host.StopAsync(TimeSpan.FromSeconds(5));
+            }
+        }
     }
 }
