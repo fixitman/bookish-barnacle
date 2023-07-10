@@ -1,5 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Quartz.Impl;
+using Quartz;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -16,7 +18,7 @@ namespace Reminder_WPF
     public partial class App : Application
     {
         private IHost _host;
-        
+        private IScheduler _scheduler;
 
         public App()
         {
@@ -28,24 +30,25 @@ namespace Reminder_WPF
                     services.AddScoped<IDataRepo, ReminderRepo>();
                 })
                 .Build();
-            
-            
 
         }
 
         private async void Application_Startup(object sender, StartupEventArgs e)
         {
             await _host.StartAsync();
+            _scheduler = await new StdSchedulerFactory().GetScheduler();
+            await _scheduler.Start();
             var mainWindow = _host.Services.GetRequiredService<MainWindow>();
             mainWindow.Show();
 
         }
 
-        private void Application_Exit(object sender, ExitEventArgs e)
+        private async void Application_Exit(object sender, ExitEventArgs e)
         {
+            await _scheduler.Shutdown();
             using(_host)
             {
-                _host.StopAsync(TimeSpan.FromSeconds(5));
+                await _host.StopAsync();
             }
         }
     }
