@@ -26,8 +26,12 @@ namespace Reminder_WPF
                 .ConfigureServices((context, services) =>
                 {
                     services.AddSingleton<MainWindow>();
-                    services.AddScoped<MainWindowVM>();
-                    services.AddScoped<IDataRepo, ReminderRepo>();
+                    services.AddSingleton<MainWindowVM>();
+                    services.AddSingleton<IScheduler, StdScheduler>((provider) =>
+                    {
+                        return (StdScheduler) new StdSchedulerFactory().GetScheduler().Result;
+                    });
+                    services.AddScoped<IDataRepo, TestReminderRepo>();
                 })
                 .Build();
 

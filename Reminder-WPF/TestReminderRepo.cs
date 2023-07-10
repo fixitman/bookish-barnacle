@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Reminder_WPF
 {
-    internal class ReminderRepo : IDataRepo
+    internal class TestReminderRepo : IDataRepo
     {
         public List<Reminder> GetReminders()
         {
@@ -14,19 +14,19 @@ namespace Reminder_WPF
             {
                 new Reminder()
                 {
-                     ReminderText = "test reminder1", ReminderTime = DateTime.Now.AddMinutes(1)
+                     ReminderText = "test reminder 1", ReminderTime = DateTime.Now.AddSeconds(10) 
                 },
                 new Reminder()
                 {
-                     ReminderText = "test reminder2", ReminderTime = DateTime.Now.AddMinutes(2)
+                     ReminderText = "test reminder 2", ReminderTime = DateTime.Now.AddSeconds(20)
                 },
                 new Reminder()
                 {
-                     ReminderText = "test reminder3", ReminderTime = DateTime.Now.AddMinutes(3)
+                     ReminderText = "test reminder 3", ReminderTime = DateTime.Now.AddSeconds(30)
                 },
                 new Reminder()
                 {
-                     ReminderText = "test reminder4", ReminderTime = DateTime.Now.AddMinutes(4)
+                     ReminderText = "test reminder 4", ReminderTime = DateTime.Now.AddSeconds(40)
                 },
             };
         }
