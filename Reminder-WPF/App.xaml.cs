@@ -24,6 +24,8 @@ namespace Reminder_WPF
                 .ConfigureServices((context, services) =>
                 {
                     services.AddSingleton<MainWindow>();
+                    services.AddScoped<MainWindowVM>();
+                    services.AddScoped<IDataRepo, ReminderRepo>();
                 })
                 .Build();
             

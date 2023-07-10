@@ -20,9 +20,11 @@ namespace Reminder_WPF
     /// </summary>
     public partial class MainWindow : Window
     {
-        public MainWindow()
+        public MainWindow(MainWindowVM vM)
         {
             InitializeComponent();
+            DataContext = vM;
+
         }
     }
 }
