@@ -27,6 +27,7 @@ namespace Reminder_WPF
                 {
                     services.AddSingleton<MainWindow>();
                     services.AddSingleton<MainWindowVM>();
+                    services.AddSingleton<ReminderManager>();
                     services.AddSingleton<IScheduler, StdScheduler>((provider) =>
                     {
                         return (StdScheduler) new StdSchedulerFactory().GetScheduler().Result;
