@@ -6,13 +6,18 @@
         xmlns:local="clr-namespace:Reminder_WPF"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
-    <Grid>
-        <ListView ItemsSource="{Binding Reminders}">
+    <StackPanel Orientation="Vertical">
+        <Menu>
+            <MenuItem Header="File"/>
+        </Menu>
+        <Label Content="Reminders"/>
+        <ListView ItemsSource="{Binding Reminders}" Margin="5" 
+                   BorderThickness="1" BorderBrush="Black">
             <ListView.ItemTemplate>
                 <DataTemplate>
-                    <TextBlock Text="{Binding ReminderText}"/>
+                    <TextBlock x:Name="ReminderText" Text="{Binding ReminderText }"/>
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
-    </Grid>
+    </StackPanel>
 </Window>
