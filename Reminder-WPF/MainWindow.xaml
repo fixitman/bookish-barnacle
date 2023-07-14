@@ -12,12 +12,17 @@
         </Menu>
         <Label Content="Reminders"/>
         <ListView ItemsSource="{Binding Reminders}" Margin="5" 
-                   BorderThickness="1" BorderBrush="Black">
+                   BorderThickness="1" BorderBrush="Black"
+                  SelectionChanged="ListView_SelectionChanged"
+                  SelectionMode="Single">
             <ListView.ItemTemplate>
                 <DataTemplate>
                     <TextBlock x:Name="ReminderText" Text="{Binding ReminderText }"/>
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
+        <TextBlock Text="{Binding SelectedItem.ReminderText}"/>
+        
+        
     </StackPanel>
 </Window>

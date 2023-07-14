@@ -24,7 +24,15 @@ namespace Reminder_WPF
         {
             InitializeComponent();
             DataContext = vM;
+            VM = vM;
+        }
 
+        public MainWindowVM VM { get; }
+
+        private void ListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            var lv = (ListView)sender;
+            VM.SelectedItem = (Reminder)lv.SelectedItem;
         }
     }
 }
