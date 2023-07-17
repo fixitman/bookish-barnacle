@@ -8,20 +8,23 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Input;
 
 namespace Reminder_WPF;
 
 public partial class MainWindowVM : ObservableObject
 {
-    public ObservableCollection<Reminder> Reminders { get; }
+    public ReminderManager Reminders { get; }
     public IScheduler Scheduler { get; }
+
     [ObservableProperty]
-    public Reminder selectedItem; 
+    public Reminder? selectedItem = null; 
+
     public ICommand DeleteCommand { get;  }
 
-    public MainWindowVM(ReminderManager mgr)
+    public MainWindowVM(ReminderManager mgr, IScheduler scheduler)
     {
-        Reminders = mgr;       
+        Reminders = mgr;
         Scheduler = scheduler;
         DeleteCommand = new RelayCommand(Delete);
     }
@@ -39,5 +42,8 @@ public partial class MainWindowVM : ObservableObject
         }
     }
 
-    
+    partial void OnSelectedItemChanged(Reminder? value)
+    {
+        
+    }
 }

@@ -12,19 +12,19 @@ namespace Reminder_WPF
             {
                 new Reminder()
         {
-            ReminderText = "test reminder 1", ReminderTime = DateTime.Now.AddSeconds(10)
+            ReminderText = "test reminder 1", ReminderTime = DateTime.Now.AddSeconds(10), id = 1
                 },
                 new Reminder()
         {
-            ReminderText = "test reminder 2", ReminderTime = DateTime.Now.AddSeconds(20)
+            ReminderText = "test reminder 2", ReminderTime = DateTime.Now.AddSeconds(20), id = 2
                 },
                 new Reminder()
         {
-            ReminderText = "test reminder 3", ReminderTime = DateTime.Now.AddSeconds(30)
+            ReminderText = "test reminder 3", ReminderTime = DateTime.Now.AddSeconds(30), id = 3
                 },
                 new Reminder()
         {
-            ReminderText = "test reminder 4", ReminderTime = DateTime.Now.AddSeconds(40)
+            ReminderText = "test reminder 4", ReminderTime = DateTime.Now.AddSeconds(40), id = 4
                 },
             };
 
