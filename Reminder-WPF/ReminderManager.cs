@@ -26,11 +26,15 @@ public class ReminderManager : ObservableCollection<Reminder>
     public void AddReminder(Reminder item)
     {
         if (item == null) return;
-        Reminder added = DataRepo.AddReminder(item);
-        if (added != null)
+        Reminder r = item;
+        if (item.id == 0)
         {
-            base.Add(item);
-            ScheduleReminder(added);
+            r = DataRepo.AddReminder(item);
+        }
+        if (r != null)
+        {
+            base.Add(r);
+            ScheduleReminder(r);
         }
     }
 
