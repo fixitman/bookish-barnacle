@@ -49,5 +49,11 @@ namespace Reminder_WPF
         {
             return list.ToList();
         }
+
+        bool IDataRepo.DeleteReminder(Reminder item)
+        {
+            list.Remove(item);
+            return true;
+        }
     }
 }

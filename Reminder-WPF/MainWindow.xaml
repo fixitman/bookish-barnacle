@@ -37,7 +37,8 @@
 
             <Button Grid.Column="1" Grid.Row="1" Content="button" Margin="20"/>
             <Button Grid.Column="1" Grid.Row="2" Content="button" Margin="20"/>
-            <Button Grid.Column="1" Grid.Row="3" Content="button" Margin="20"/>
+            <Button Grid.Column="1" Grid.Row="3" Content="Delete" Margin="20"
+                    Command="{Binding DeleteCommand}"/>
         </Grid>
     
 </Window>

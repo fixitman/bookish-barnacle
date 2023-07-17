@@ -17,10 +17,26 @@ public partial class MainWindowVM : ObservableObject
     public IScheduler Scheduler { get; }
     [ObservableProperty]
     public Reminder selectedItem; 
+    public ICommand DeleteCommand { get;  }
 
     public MainWindowVM(ReminderManager mgr)
     {
         Reminders = mgr;       
+        Scheduler = scheduler;
+        DeleteCommand = new RelayCommand(Delete);
+    }
+
+    public bool CanDelete()
+    {
+        return SelectedItem != null;
+    }
+
+    public void Delete()
+    {
+        if (SelectedItem != null)
+        {
+            Reminders.RemoveReminder(SelectedItem);
+        }
     }
 
     
