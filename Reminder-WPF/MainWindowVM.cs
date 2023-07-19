@@ -25,15 +25,10 @@ public partial class MainWindowVM : ObservableObject
     public MainWindowVM(ReminderManager mgr, IScheduler scheduler)
     {
         Reminders = mgr;
-        Scheduler = scheduler;
-       
+        Scheduler = scheduler;       
     }
 
-    public bool CanDelete { get
-        {
-            return SelectedItem != null;
-        }
-    }
+    public bool CanDelete { get { return SelectedItem != null; } }
 
     [RelayCommand(CanExecute =nameof(CanDelete))]
     public void DeleteSelected()
