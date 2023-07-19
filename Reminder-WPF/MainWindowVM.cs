@@ -20,21 +20,23 @@ public partial class MainWindowVM : ObservableObject
     [ObservableProperty]
     public Reminder? selectedItem = null; 
 
-    public ICommand DeleteCommand { get;  }
+    
 
     public MainWindowVM(ReminderManager mgr, IScheduler scheduler)
     {
         Reminders = mgr;
         Scheduler = scheduler;
-        DeleteCommand = new RelayCommand(Delete);
+       
     }
 
-    public bool CanDelete()
-    {
-        return SelectedItem != null;
+    public bool CanDelete { get
+        {
+            return SelectedItem != null;
+        }
     }
 
-    public void Delete()
+    [RelayCommand(CanExecute =nameof(CanDelete))]
+    public void DeleteSelected()
     {
         if (SelectedItem != null)
         {
@@ -44,6 +46,6 @@ public partial class MainWindowVM : ObservableObject
 
     partial void OnSelectedItemChanged(Reminder? value)
     {
-        
+        DeleteSelectedCommand.NotifyCanExecuteChanged();
     }
 }
