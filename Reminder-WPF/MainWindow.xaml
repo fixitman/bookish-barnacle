@@ -28,7 +28,8 @@
             <ListView Grid.Column="0" Grid.Row="1" Grid.RowSpan="3" ItemsSource="{Binding Reminders}" Margin="15" 
                        BorderThickness="1" BorderBrush="Black"
                       SelectionChanged="ListView_SelectionChanged"
-                      SelectionMode="Single">
+                      SelectionMode="Single"
+                      MouseDoubleClick="ListView_MouseDoubleClick">
                 <ListView.ItemTemplate>
                     <DataTemplate>
                         <TextBlock x:Name="ReminderText" Text="{Binding ReminderText }"/>
