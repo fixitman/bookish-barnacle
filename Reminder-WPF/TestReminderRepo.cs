@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Reminder_WPF
 {
@@ -28,7 +26,7 @@ namespace Reminder_WPF
                 },
             };
 
-        
+
 
         public Reminder AddReminder(Reminder item)
         {
@@ -38,8 +36,7 @@ namespace Reminder_WPF
             }
             else
             {
-            var max = list.OrderBy(x => x.id).Last().id;
-            item.id = max + 1;
+                item.id = list.Max(r => r.id) + 1;
             }
             list.Add(item);
             return (item);
