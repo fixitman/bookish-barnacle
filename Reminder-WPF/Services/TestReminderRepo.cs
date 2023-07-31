@@ -1,8 +1,9 @@
-﻿using System;
+﻿using Reminder_WPF.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Reminder_WPF
+namespace Reminder_WPF.Services
 {
     internal class TestReminderRepo : IDataRepo
     {
@@ -39,7 +40,7 @@ namespace Reminder_WPF
                 item.id = list.Max(r => r.id) + 1;
             }
             list.Add(item);
-            return (item);
+            return item;
         }
 
         public List<Reminder> GetReminders()

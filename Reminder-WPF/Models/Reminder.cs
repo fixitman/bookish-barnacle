@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Reminder_WPF
+namespace Reminder_WPF.Models
 {
     public class Reminder
     {

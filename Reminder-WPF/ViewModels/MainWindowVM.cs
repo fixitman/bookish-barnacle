@@ -1,6 +1,8 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Quartz;
+using Reminder_WPF.Models;
+using Reminder_WPF.Services;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -10,7 +12,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 
-namespace Reminder_WPF;
+namespace Reminder_WPF.ViewModels;
 
 public partial class MainWindowVM : ObservableObject
 {

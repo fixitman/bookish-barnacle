@@ -1,13 +1,10 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Quartz.Impl;
 using Quartz;
-using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Data;
-using System.Linq;
-using System.Threading.Tasks;
+using Quartz.Impl;
+using Reminder_WPF.Services;
+using Reminder_WPF.ViewModels;
+using Reminder_WPF.Views;
 using System.Windows;
 
 namespace Reminder_WPF

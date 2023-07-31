@@ -1,4 +1,5 @@
 ﻿using Quartz;
+using Reminder_WPF.Models;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -6,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Reminder_WPF;
+namespace Reminder_WPF.Services;
 
 public class ReminderManager : ObservableCollection<Reminder>
 {
@@ -16,7 +17,7 @@ public class ReminderManager : ObservableCollection<Reminder>
     public ReminderManager(IDataRepo dataRepo, IScheduler scheduler)
     {
         DataRepo = dataRepo;
-        Scheduler = scheduler;       
+        Scheduler = scheduler;
         foreach (Reminder r in dataRepo.GetReminders())
         {
             AddReminder(r);
@@ -33,7 +34,7 @@ public class ReminderManager : ObservableCollection<Reminder>
         }
         if (r != null)
         {
-            base.Add(r);
+            Add(r);
             ScheduleReminder(r);
         }
     }
@@ -50,16 +51,16 @@ public class ReminderManager : ObservableCollection<Reminder>
             .ForJob(job)
             .Build();
 
-        Scheduler.ScheduleJob(job, trigger);        
+        Scheduler.ScheduleJob(job, trigger);
     }
 
     public void RemoveReminder(Reminder item)
     {
-        if(item == null) return;
+        if (item == null) return;
         DataRepo.DeleteReminder(item);
         Scheduler.DeleteJob(new JobKey(item.id.ToString()));
         Remove(item);
     }
 
-    
+
 }

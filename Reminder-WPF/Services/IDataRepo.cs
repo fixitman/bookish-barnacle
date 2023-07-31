@@ -1,6 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using Reminder_WPF.Models;
+using System.Collections.Generic;
 
-namespace Reminder_WPF
+namespace Reminder_WPF.Services
 {
     public interface IDataRepo
     {

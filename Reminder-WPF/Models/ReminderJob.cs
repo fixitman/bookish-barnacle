@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using System.Windows;
 
-namespace Reminder_WPF;
+namespace Reminder_WPF.Models;
 
 public class ReminderJob : IJob
 {

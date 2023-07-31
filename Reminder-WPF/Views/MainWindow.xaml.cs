@@ -1,8 +1,10 @@
 ﻿using System.Windows;
 using System.Windows.Input;
 using System.Windows.Controls;
+using Reminder_WPF.Models;
+using Reminder_WPF.ViewModels;
 
-namespace Reminder_WPF;
+namespace Reminder_WPF.Views;
 
 
 public partial class MainWindow : Window
