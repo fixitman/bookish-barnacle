@@ -33,18 +33,14 @@ public partial class MainWindow : Window
             Reminder? selected = lv.SelectedItem as Reminder;
             if(selected != null)
             {
-                //var win1 = new Window1(selected);       
-                //win1.Closed += Win1_Closed;
-                //win1.Show();
-
                 var dlg = new TestDialog();
                 if (dlg.ShowDialog() == true)
                 {
-                    VM.SelectedItem!.ReminderText = dlg.Reply;
+                    var newText = dlg.Reply;
+                    selected.ReminderText = newText;
+                    VM.UpdateReminder(selected);
                     CollectionViewSource.GetDefaultView(VM.Reminders).Refresh();
                 }
-
-
             }
         }
     }
