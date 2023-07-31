@@ -62,5 +62,15 @@ public class ReminderManager : ObservableCollection<Reminder>
         Remove(item);
     }
 
+    public void UpdateReminder(Reminder item)
+    {
+        if (item.id > 0)
+        {
+            RemoveReminder(item);
+            item.id = 0;
+            AddReminder(item);
+        }
+    }
+
 
 }

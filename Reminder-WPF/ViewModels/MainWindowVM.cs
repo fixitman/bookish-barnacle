@@ -3,14 +3,6 @@ using CommunityToolkit.Mvvm.Input;
 using Quartz;
 using Reminder_WPF.Models;
 using Reminder_WPF.Services;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Input;
 
 namespace Reminder_WPF.ViewModels;
 
@@ -18,9 +10,9 @@ public partial class MainWindowVM : ObservableObject
 {
     public ReminderManager Reminders { get; }
     public IScheduler Scheduler { get; }
-
     [ObservableProperty]
-    public Reminder? selectedItem = null; 
+    public Reminder? selectedItem = null;     
+    public bool CanDelete { get { return SelectedItem != null; } }
 
     
 
@@ -30,9 +22,7 @@ public partial class MainWindowVM : ObservableObject
         Scheduler = scheduler;       
     }
 
-    public bool CanDelete { get { return SelectedItem != null; } }
-
-    [RelayCommand(CanExecute =nameof(CanDelete))]
+    [RelayCommand(CanExecute = nameof(CanDelete))]
     public void DeleteSelected()
     {
         if (SelectedItem != null)
@@ -45,4 +35,10 @@ public partial class MainWindowVM : ObservableObject
     {
         DeleteSelectedCommand.NotifyCanExecuteChanged();
     }
+
+    internal void UpdateReminder(Reminder selected)
+    {
+        Reminders.UpdateReminder(selected);
+    }
+
 }
