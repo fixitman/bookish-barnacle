@@ -34,6 +34,7 @@ public partial class MainWindow : Window
             if(selected != null)
             {
                 var dlg = new TestDialog();
+                dlg.Owner = this;
                 if (dlg.ShowDialog() == true)
                 {
                     var newText = dlg.Reply;
