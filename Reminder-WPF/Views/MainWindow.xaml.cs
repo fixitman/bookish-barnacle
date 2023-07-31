@@ -45,13 +45,5 @@ public partial class MainWindow : Window
         }
     }
 
-    private void Win1_Closed(object? sender, System.EventArgs e)
-    {
-        var win1 = sender as Window1;
-        if(win1 != null)
-        {
-            var t = win1.Reminder.ReminderText;
-            win1.Closed -= Win1_Closed;              
-        }
-    }
+    
 }
