@@ -3,16 +3,18 @@ using System;
 using Reminder_WPF.Models;
 using System.Text.Json;
 using System.Globalization;
+using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace Reminder_WPF.Views
 {
-    /// <summary>
-    /// Interaction logic for AddEditReminderDlg.xaml
-    /// </summary>
+
+    [ObservableObject]
     public  partial class AddEditReminderDlg : Window
     {
-        public enum DlgMode { Add, Edit};
         public Reminder Reminder { get; set; }
+        
+        [ObservableProperty]
+        private string errorMessage = "";
 
         public AddEditReminderDlg( Reminder? reminder = null)
         {
@@ -32,6 +34,7 @@ namespace Reminder_WPF.Views
             DataContext = Reminder;
             dtDate.Text = Reminder.ReminderTime.Date.ToString();
             txtTime.Text = string.Format(@"{0:hh\:mm}", Reminder.ReminderTime.TimeOfDay);
+            txtError.DataContext = this;
 
         }
 
@@ -41,6 +44,8 @@ namespace Reminder_WPF.Views
             TimeOnly t;
             if(txtReminderText.Text.Length < 1)
             {
+                ErrorMessage = "Reminder Text Required";
+                txtReminderText.Focus();
                 return;
             }
             try
@@ -50,19 +55,34 @@ namespace Reminder_WPF.Views
             }
             catch (Exception ex)
             {
+                ErrorMessage = "Invalid Date or Time";
                 return;
             }
             var dt = new DateTime(d.Year, d.Month, d.Day, t.Hour, t.Minute, t.Second);
             Reminder.ReminderTime = dt;
             DialogResult = true;
-        }
-            
+        }          
        
-
         private void Window_ContentRendered(object sender, EventArgs e)
         {
             txtReminderText.SelectAll();
             txtReminderText.Focus();
+        }
+                
+        internal void ClearErrorMessage()
+        {
+            ErrorMessage = "";
+        }
+
+        private void DataChanged(object sender, object e)
+        {
+            ClearErrorMessage();
+        }
+
+        partial void OnErrorMessageChanged(string value)
+        {
+            txtError.Visibility = value.Length > 0? Visibility.Visible : Visibility.Collapsed;
+            
         }
     }
 }

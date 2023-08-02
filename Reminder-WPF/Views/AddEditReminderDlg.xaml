@@ -7,7 +7,7 @@
         mc:Ignorable="d"
         Title="AddEditReminderDlg" 
         WindowStartupLocation="CenterOwner"
-        Height="240" Width="440"
+        Height="285" Width="440"
         SizeToContent="WidthAndHeight"
         FontSize="20"
         ContentRendered="Window_ContentRendered">
@@ -27,11 +27,13 @@
         </Grid.RowDefinitions>
         <Label  Content="Reminder Text"/>
         <TextBox x:Name="txtReminderText" Text="{Binding ReminderText}"
-                 Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" MinWidth="400"/>
+                 Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" 
+                 MinWidth="400"
+                 TextChanged="DataChanged"/>
         <Label Content="Date" Grid.Row="2"/>
-        <DatePicker Name="dtDate" Grid.Row="3"/>
+        <DatePicker Name="dtDate" Grid.Row="3" SelectedDateChanged="DataChanged"/>
         <Label Content="Time" Grid.Row="2" Grid.Column="1"/>
-        <TextBox x:Name="txtTime" Grid.Row="3" Grid.Column="1" />
+        <TextBox x:Name="txtTime" Grid.Row="3" Grid.Column="1" TextChanged="DataChanged"/>
         <StackPanel Orientation="Horizontal" 
                     Grid.Row="4" Grid.Column="1" 
                     HorizontalAlignment="Right"
@@ -40,5 +42,10 @@
             <Button Content="Ok" IsDefault="True" Padding="10 5" 
                 Click="Button_Click"/>
         </StackPanel>
+        <TextBlock x:Name="txtError"
+                    Grid.Row="5" Grid.ColumnSpan="2" 
+                    Background="Pink" Visibility="Collapsed"
+                    TextAlignment="Center" Padding="5"
+                   Text="{Binding ErrorMessage}"/>
     </Grid>
 </Window>
