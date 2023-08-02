@@ -15,6 +15,7 @@ public partial class MainWindow : Window
         InitializeComponent();
         DataContext = vM;
         VM = vM;
+        VM.MainWindow = this;
     }
 
     public MainWindowVM VM { get; }
@@ -34,7 +35,7 @@ public partial class MainWindow : Window
             if(selected != null)
             {
                 var dlg = new TestDialog();
-                dlg.Owner = this;
+                dlg.Owner = this;                
                 if (dlg.ShowDialog() == true)
                 {
                     var newText = dlg.Reply;

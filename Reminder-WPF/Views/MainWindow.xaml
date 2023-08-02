@@ -37,8 +37,10 @@
                 </ListView.ItemTemplate>
             </ListView>
 
-            <Button Grid.Column="1" Grid.Row="1" Content="button" Margin="20"/>
-            <Button Grid.Column="1" Grid.Row="2" Content="button" Margin="20"/>
+            <Button Grid.Column="1" Grid.Row="1" Content="Add" Margin="20"
+                    Command="{Binding AddClickedCommand}"/>
+            <Button Grid.Column="1" Grid.Row="2" Content="Edit" Margin="20" 
+                    Command="{Binding EditClickedCommand}"/>
             <Button Grid.Column="1" Grid.Row="3" Content="Delete" Margin="20"
                     Command="{Binding DeleteSelectedCommand}"/>
         </Grid>

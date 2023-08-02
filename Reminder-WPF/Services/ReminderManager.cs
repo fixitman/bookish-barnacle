@@ -59,13 +59,15 @@ public class ReminderManager : ObservableCollection<Reminder>
         if (item == null) return;
         DataRepo.DeleteReminder(item);
         Scheduler.DeleteJob(new JobKey(item.id.ToString()));
-        Remove(item);
+        var r = this.Where(r => r.id == item.id).First();
+        Remove(r);
     }
 
     public void UpdateReminder(Reminder item)
     {
         if (item.id > 0)
         {
+            var id = item.id;
             RemoveReminder(item);
             item.id = 0;
             AddReminder(item);

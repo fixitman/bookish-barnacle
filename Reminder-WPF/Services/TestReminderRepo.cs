@@ -11,15 +11,15 @@ namespace Reminder_WPF.Services
             {
                 new Reminder()
         {
-            ReminderText = "test reminder 1", ReminderTime = DateTime.Now.AddSeconds(10), id = 1
+            ReminderText = "test reminder 1", ReminderTime = DateTime.Now.AddDays(10), id = 1
                 },
                 new Reminder()
         {
-            ReminderText = "test reminder 2", ReminderTime = DateTime.Now.AddSeconds(20), id = 2
+            ReminderText = "test reminder 2", ReminderTime = DateTime.Now.AddHours(20), id = 2
                 },
                 new Reminder()
         {
-            ReminderText = "test reminder 3", ReminderTime = DateTime.Now.AddSeconds(30), id = 3
+            ReminderText = "test reminder 3", ReminderTime = DateTime.Now.AddMinutes(30), id = 3
                 },
                 new Reminder()
         {
