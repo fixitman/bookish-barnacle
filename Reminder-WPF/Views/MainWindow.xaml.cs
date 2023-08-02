@@ -4,6 +4,7 @@ using System.Windows.Controls;
 using Reminder_WPF.Models;
 using Reminder_WPF.ViewModels;
 using System.Windows.Data;
+using System.ComponentModel;
 
 namespace Reminder_WPF.Views;
 
@@ -16,6 +17,8 @@ public partial class MainWindow : Window
         DataContext = vM;
         VM = vM;
         VM.MainWindow = this;
+        ReminderList.Items.SortDescriptions.Clear();
+        ReminderList.Items.SortDescriptions.Add(new SortDescription("ReminderTime", ListSortDirection.Ascending));
     }
 
     public MainWindowVM VM { get; }

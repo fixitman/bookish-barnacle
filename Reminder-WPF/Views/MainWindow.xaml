@@ -25,8 +25,9 @@
                 <MenuItem Header="File" />
             </Menu>
 
-            <ListView Grid.Column="0" Grid.Row="1" Grid.RowSpan="3" ItemsSource="{Binding Reminders}" Margin="15" 
-                       BorderThickness="1" BorderBrush="Black"
+            <ListView x:Name="ReminderList"
+                      Grid.Column="0" Grid.Row="1" Grid.RowSpan="3" ItemsSource="{Binding Reminders}" Margin="15" 
+                      BorderThickness="1" BorderBrush="Black"
                       SelectionChanged="ListView_SelectionChanged"
                       SelectionMode="Single"
                       MouseDoubleClick="ListView_MouseDoubleClick">
@@ -42,7 +43,7 @@
             <Button Grid.Column="1" Grid.Row="2" Content="Edit" Margin="20" 
                     Command="{Binding EditClickedCommand}"/>
             <Button Grid.Column="1" Grid.Row="3" Content="Delete" Margin="20"
-                    Command="{Binding DeleteSelectedCommand}"/>
+                    Command="{Binding DeleteClickedCommand}"/>
         </Grid>
     
 </Window>
