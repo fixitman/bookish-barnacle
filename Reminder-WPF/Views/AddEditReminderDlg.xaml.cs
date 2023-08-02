@@ -50,7 +50,6 @@ namespace Reminder_WPF.Views
             }
             var dt = new DateTime(d.Year, d.Month, d.Day, t.Hour, t.Minute, t.Second);
             Reminder.ReminderTime = dt;
-            Reminder.ReminderText = txtReminderText.Text;
             DialogResult = true;
         }
             
