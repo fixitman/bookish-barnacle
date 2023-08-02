@@ -10,7 +10,6 @@ namespace Reminder_WPF.Views
     /// </summary>
     public  partial class AddEditReminderDlg : Window
     {
-        public DlgMode Mode { get; }
         public enum DlgMode { Add, Edit};
         public Reminder Reminder { get; set; }
 
@@ -21,14 +20,12 @@ namespace Reminder_WPF.Views
             {
                 Reminder = new Reminder();
                 Reminder.ReminderTime = DateTime.Now;
-                Mode = DlgMode.Add;
                 Title = "Add Reminder";
             }
             else
             {
                 var remCopy = JsonSerializer.Deserialize<Reminder>(JsonSerializer.Serialize<Reminder>(reminder));
                 Reminder = remCopy!;
-                Mode = DlgMode.Edit;
                 Title = "Edit Reminder";
             }
             DataContext = Reminder;
