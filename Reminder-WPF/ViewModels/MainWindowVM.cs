@@ -28,7 +28,7 @@ public partial class MainWindowVM : ObservableObject
     }
 
     [RelayCommand(CanExecute = nameof(CanDelete))]
-    public void DeleteSelected()
+    public void DeleteClicked()
     {
         if (SelectedItem != null)
         {
@@ -62,7 +62,7 @@ public partial class MainWindowVM : ObservableObject
 
     partial void OnSelectedItemChanged(Reminder? value)
     {
-        DeleteSelectedCommand.NotifyCanExecuteChanged();
+        DeleteClickedCommand.NotifyCanExecuteChanged();
         EditClickedCommand.NotifyCanExecuteChanged();
     }
 
