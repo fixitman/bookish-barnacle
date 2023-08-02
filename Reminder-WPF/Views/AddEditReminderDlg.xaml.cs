@@ -2,6 +2,7 @@
 using System;
 using Reminder_WPF.Models;
 using System.Text.Json;
+using System.Globalization;
 
 namespace Reminder_WPF.Views
 {
@@ -29,7 +30,8 @@ namespace Reminder_WPF.Views
                 Title = "Edit Reminder";
             }
             DataContext = Reminder;
-            dtDate.Text = Reminder.ReminderTime.Date.ToString();
+            dtDate.Text = Reminder.ReminderTime.ToString();
+            dtDate.SelectedDateFormat = System.Windows.Controls.DatePickerFormat.Long;
             txtTime.Text = string.Format(@"{0:hh\:mm}", Reminder.ReminderTime.TimeOfDay);
 
         }
@@ -38,7 +40,10 @@ namespace Reminder_WPF.Views
         {
             DateOnly d;
             TimeOnly t;
-
+            if(txtReminderText.Text.Length < 0)
+            {
+                return;
+            }
             try
             {
                 d = DateOnly.Parse(dtDate.Text);
