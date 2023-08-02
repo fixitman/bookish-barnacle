@@ -20,7 +20,7 @@ namespace Reminder_WPF.Views
             if (reminder == null)
             {
                 Reminder = new Reminder();
-                Reminder.ReminderTime = DateTime.Now;
+                Reminder.ReminderTime = DateTime.Now.AddMinutes(10);
                 Title = "Add Reminder";
             }
             else
@@ -30,8 +30,7 @@ namespace Reminder_WPF.Views
                 Title = "Edit Reminder";
             }
             DataContext = Reminder;
-            dtDate.Text = Reminder.ReminderTime.ToString();
-            dtDate.SelectedDateFormat = System.Windows.Controls.DatePickerFormat.Long;
+            dtDate.Text = Reminder.ReminderTime.Date.ToString();
             txtTime.Text = string.Format(@"{0:hh\:mm}", Reminder.ReminderTime.TimeOfDay);
 
         }
@@ -40,7 +39,7 @@ namespace Reminder_WPF.Views
         {
             DateOnly d;
             TimeOnly t;
-            if(txtReminderText.Text.Length < 0)
+            if(txtReminderText.Text.Length < 1)
             {
                 return;
             }
