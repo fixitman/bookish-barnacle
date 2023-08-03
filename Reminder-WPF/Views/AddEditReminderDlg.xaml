@@ -34,7 +34,7 @@
         
         <Label Content="Date" Grid.Row="2"/>
         <DatePicker Name="dtDate" Grid.Row="3" 
-                    Text="{Binding Path=ReminderTime, StringFormat={}{0:D}}"
+                    SelectedDate="{Binding Path=ReminderTime, StringFormat={}{0:D}}"
                     SelectedDateChanged="DataChanged"/>
         
         <Label Content="Time" Grid.Row="2" Grid.Column="1"/>
