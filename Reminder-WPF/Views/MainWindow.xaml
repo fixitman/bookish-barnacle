@@ -24,6 +24,8 @@
             <Menu Grid.Row="0" Grid.ColumnSpan="2">
                 <MenuItem Header="File" />
             </Menu>
+            
+            
 
             <ListView x:Name="ReminderList"
                       Grid.Column="0" Grid.Row="1" Grid.RowSpan="3" ItemsSource="{Binding Reminders}" Margin="15" 
@@ -31,11 +33,15 @@
                       SelectionChanged="ListView_SelectionChanged"
                       SelectionMode="Single"
                       MouseDoubleClick="ListView_MouseDoubleClick">
-                <ListView.ItemTemplate>
-                    <DataTemplate>
-                        <TextBlock x:Name="ReminderText" Text="{Binding ReminderText }"/>
-                    </DataTemplate>
-                </ListView.ItemTemplate>
+            <ListView.View>
+                <GridView>
+                    <GridView.Columns>
+                        <GridViewColumn Header="Text" Width="400" DisplayMemberBinding="{Binding ReminderText}"/>
+                        <GridViewColumn Header="Time" Width="100" DisplayMemberBinding="{Binding ReminderTime}"/>                        
+                    </GridView.Columns>
+                </GridView>
+            </ListView.View>
+                
             </ListView>
 
             <Button Grid.Column="1" Grid.Row="1" Content="Add" Margin="20"
