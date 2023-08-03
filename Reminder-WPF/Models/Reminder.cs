@@ -7,5 +7,6 @@ namespace Reminder_WPF.Models
         public int id {  get; set; }
         public string ReminderText { get; set; }
         public DateTime ReminderTime { get; set; }
+        public bool IsRecurring { get; set; } = false;
     }
 }
