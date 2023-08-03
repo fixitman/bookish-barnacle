@@ -32,8 +32,6 @@ namespace Reminder_WPF.Views
                 Title = "Edit Reminder";
             }
             DataContext = Reminder;
-            dtDate.Text = Reminder.ReminderTime.Date.ToString();
-            txtTime.Text = string.Format(@"{0:hh\:mm}", Reminder.ReminderTime.TimeOfDay);
             txtError.DataContext = this;
 
         }

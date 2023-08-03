@@ -9,7 +9,7 @@
         WindowStartupLocation="CenterOwner"
         Height="285" Width="440"
         SizeToContent="WidthAndHeight"
-        FontSize="20"
+        
         ContentRendered="Window_ContentRendered">
     <Grid Margin="20">
         <Grid.ColumnDefinitions>
@@ -29,19 +29,31 @@
         <TextBox x:Name="txtReminderText" Text="{Binding ReminderText}"
                  Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" 
                  MinWidth="400"
+                 Padding="0 3"
                  TextChanged="DataChanged"/>
+        
         <Label Content="Date" Grid.Row="2"/>
-        <DatePicker Name="dtDate" Grid.Row="3" SelectedDateChanged="DataChanged"/>
+        <DatePicker Name="dtDate" Grid.Row="3" 
+                    Text="{Binding Path=ReminderTime, StringFormat={}{0:D}}"
+                    SelectedDateChanged="DataChanged"/>
+        
         <Label Content="Time" Grid.Row="2" Grid.Column="1"/>
-        <TextBox x:Name="txtTime" Grid.Row="3" Grid.Column="1" TextChanged="DataChanged"/>
+        <TextBox x:Name="txtTime" Grid.Row="3" Grid.Column="1" 
+                 Margin="5 0 0 0"
+                 Padding="5 0 0 0"
+                 VerticalContentAlignment="Center"
+                 TextChanged="DataChanged"
+                 Text="{Binding Path=ReminderTime, StringFormat={}{0:h:mm tt}}"/>
+        
         <StackPanel Orientation="Horizontal" 
                     Grid.Row="4" Grid.Column="1" 
                     HorizontalAlignment="Right"
-                    Margin="0 5">
-            <Button Content="Cancel" IsCancel="True" Padding="10 5" Margin="15 0"/>
-            <Button Content="Ok" IsDefault="True" Padding="10 5" 
+                    Margin="0 15 0 0">
+            <Button Content="Ok" IsDefault="True" Padding="15 5" 
                 Click="Button_Click"/>
+            <Button Content="Cancel" IsCancel="True" Padding="10 5" Margin="15 0 0 0"/>
         </StackPanel>
+        
         <TextBlock x:Name="txtError"
                     Grid.Row="5" Grid.ColumnSpan="2" 
                     Background="Pink" Visibility="Collapsed"
