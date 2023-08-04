@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Reminder_WPF.Services
 {
@@ -28,6 +29,19 @@ namespace Reminder_WPF.Services
             };
 
 
+        public List<Reminder> GetReminders()
+        {
+            return list.ToList();
+        }
+        
+        public async Task<List<Reminder>> GetRemindersAsync()
+        {
+            return await Task.Run<List<Reminder>>(() =>
+            {
+                return GetReminders();
+            });
+        }
+
 
         public Reminder AddReminder(Reminder item)
         {
@@ -43,15 +57,30 @@ namespace Reminder_WPF.Services
             return item;
         }
 
-        public List<Reminder> GetReminders()
+        public async Task<Reminder> AddReminderAsync(Reminder item)
         {
-            return list.ToList();
+            return await Task.Run(() =>
+            {
+                return AddReminder(item);
+            });
         }
 
-        bool IDataRepo.DeleteReminder(Reminder item)
+
+        public async Task<bool> DeleteReminderAsync(Reminder item)
+        {
+            return await Task.Run(() =>
+            {
+                return DeleteReminder(item);
+            });
+        }
+
+        public bool DeleteReminder(Reminder item)
         {
             list.Remove(item);
             return true;
         }
+        
+        
+
     }
 }

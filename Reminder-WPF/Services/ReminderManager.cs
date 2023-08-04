@@ -18,19 +18,25 @@ public class ReminderManager : ObservableCollection<Reminder>
     {
         DataRepo = dataRepo;
         Scheduler = scheduler;
-        foreach (Reminder r in dataRepo.GetReminders())
+
+        Task.Run(async () =>
         {
-            AddReminder(r);
-        }
+            foreach (Reminder r in await dataRepo.GetRemindersAsync())
+            {
+                await AddReminder(r);
+            }
+
+        });
+
     }
 
-    public void AddReminder(Reminder item)
+    public async Task  AddReminder(Reminder item)
     {
         if (item == null) return;
         Reminder r = item;
         if (item.id == 0)
         {
-            r = DataRepo.AddReminder(item);
+            r = await DataRepo.AddReminderAsync(item);
         }
         if (r != null)
         {
@@ -57,7 +63,7 @@ public class ReminderManager : ObservableCollection<Reminder>
     public void RemoveReminder(Reminder item)
     {
         if (item == null) return;
-        DataRepo.DeleteReminder(item);
+        DataRepo.DeleteReminderAsync(item);
         Scheduler.DeleteJob(new JobKey(item.id.ToString()));
         var r = this.Where(r => r.id == item.id).First();
         Remove(r);
