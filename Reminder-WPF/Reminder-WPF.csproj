@@ -19,7 +19,7 @@
 
   <ItemGroup>
     <None Update="Data\Reminders.db">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </None>
     <None Update="Quartz.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
