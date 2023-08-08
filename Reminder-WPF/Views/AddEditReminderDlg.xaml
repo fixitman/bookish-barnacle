@@ -33,8 +33,7 @@
                  TextChanged="DataChanged"/>
         
         <Label Content="Date" Grid.Row="2"/>
-        <DatePicker Name="dtDate" Grid.Row="3" 
-                    SelectedDate="{Binding Path=ReminderTime, StringFormat={}{0:D}}"
+        <DatePicker Name="dtDate" Grid.Row="3"                     
                     SelectedDateChanged="DataChanged"/>
         
         <Label Content="Time" Grid.Row="2" Grid.Column="1"/>
@@ -43,7 +42,7 @@
                  Padding="5 0 0 0"
                  VerticalContentAlignment="Center"
                  TextChanged="DataChanged"
-                 Text="{Binding Path=ReminderTime, StringFormat={}{0:h:mm tt}}"/>
+                 />
         
         <StackPanel Orientation="Horizontal" 
                     Grid.Row="4" Grid.Column="1" 

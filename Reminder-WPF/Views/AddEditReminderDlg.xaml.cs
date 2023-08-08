@@ -16,7 +16,7 @@ namespace Reminder_WPF.Views
         [ObservableProperty]
         private string errorMessage = "";
 
-        public AddEditReminderDlg( Reminder? reminder = null)
+        public AddEditReminderDlg(Reminder? reminder = null)
         {
             InitializeComponent();
             if (reminder == null)
@@ -32,6 +32,8 @@ namespace Reminder_WPF.Views
                 Title = "Edit Reminder";
             }
             DataContext = Reminder;
+            dtDate.SelectedDate = Reminder.ReminderTime.Date;
+            txtTime.Text = Reminder.ReminderTime.ToShortTimeString();
             txtError.DataContext = this;
 
         }
@@ -56,7 +58,7 @@ namespace Reminder_WPF.Views
                 ErrorMessage = "Invalid Date or Time";
                 return;
             }
-            var dt = new DateTime(d.Year, d.Month, d.Day, t.Hour, t.Minute, t.Second);
+            var dt = new DateTime(d.Year, d.Month, d.Day, t.Hour, t.Minute, 0);
             Reminder.ReminderTime = dt;
             DialogResult = true;
         }          
