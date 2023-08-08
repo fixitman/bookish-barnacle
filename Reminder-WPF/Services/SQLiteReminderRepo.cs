@@ -17,24 +17,24 @@ public class SQLiteReminderRepo : IDataRepo
     public SQLiteReminderRepo()
     {
         _connectionString = ConfigurationManager.ConnectionStrings["Default"].ConnectionString;
+        CreateTables();
+        DeleteOldRemindersAsync();
+    }
 
-        string createSQL = @"
-CREATE TABLE Reminders (
+    private void CreateTables()
+    {
+        string sql = @"
+CREATE TABLE IF NOT EXISTS Reminders (
 id	INTEGER NOT NULL UNIQUE,
 ReminderText	TEXT NOT NULL DEFAULT """",
 ReminderTime	INTEGER NOT NULL,
 IsRecurring	INTEGER NOT NULL DEFAULT 0,
 PRIMARY KEY(id AUTOINCREMENT)
 )";
-        string checkSQL = @"
-        SELECT count(name) FROM sqlite_master WHERE type='table' AND name='Reminders';
-";
-        var conn = new SqliteConnection( _connectionString );
-        var ret = conn.ExecuteScalar<int>(checkSQL );
-        if ( ret == 0)
-        {
-            conn.Execute(createSQL);
-        }
+        
+        var conn = new SqliteConnection(_connectionString);
+        conn.Execute(sql);
+        
     }
 
     public async Task<Reminder> AddReminderAsync(Reminder item)
@@ -48,9 +48,7 @@ VALUES (@ReminderText,
 @ReminderTime,
 @IsRecurring);
 SELECT last_insert_rowid();";
-
             
-        item.IsRecurring = true;
         var newId = await conn.ExecuteScalarAsync<int>(sql, item);
         item.id = newId;
         return item;
@@ -67,6 +65,22 @@ SELECT CHANGES();
         var numDeleted = await conn.ExecuteScalarAsync<int>(sql, new {ID = item.id});
         return numDeleted > 0;
     }
+
+    public async Task<bool> DeleteOldRemindersAsync()
+    {
+        using SqliteConnection conn = new SqliteConnection(_connectionString);
+        string sql = @"
+DELETE FROM REMINDERS 
+WHERE ReminderTime < datetime(""now"") and IsRecurring = false;
+SELECT CHANGES();
+";
+        var numDeleted = await conn.ExecuteScalarAsync<int>(sql);
+        return numDeleted > 0;
+    }
+
+
+
+
 
     public async Task<List<Reminder>> GetRemindersAsync()
     {
