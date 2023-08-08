@@ -33,11 +33,16 @@
                       SelectionChanged="ListView_SelectionChanged"
                       SelectionMode="Single"
                       MouseDoubleClick="ListView_MouseDoubleClick">
+            <ListView.Resources>
+                <Style TargetType="GridViewColumnHeader">
+                    <Setter Property="HorizontalContentAlignment" Value="Left"/>
+                </Style>
+            </ListView.Resources>
             <ListView.View>
                 <GridView>
                     <GridView.Columns>
                         <GridViewColumn Header="Text" Width="400" DisplayMemberBinding="{Binding ReminderText}"/>
-                        <GridViewColumn Header="Time" Width="100" DisplayMemberBinding="{Binding ReminderTime}"/>                        
+                        <GridViewColumn Header="Time" Width="auto" DisplayMemberBinding="{Binding ReminderTime, StringFormat={}{0:h:mm tt}}"/>                        
                     </GridView.Columns>
                 </GridView>
             </ListView.View>
