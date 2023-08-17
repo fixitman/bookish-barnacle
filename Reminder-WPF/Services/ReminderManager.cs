@@ -60,23 +60,23 @@ public class ReminderManager : ObservableCollection<Reminder>
         Scheduler.ScheduleJob(job, trigger);
     }
 
-    public void RemoveReminder(Reminder item)
+    public async Task RemoveReminder(Reminder item)
     {
         if (item == null) return;
-        DataRepo.DeleteReminderAsync(item);
-        Scheduler.DeleteJob(new JobKey(item.id.ToString()));
+        await DataRepo.DeleteReminderAsync(item);
+        await Scheduler.DeleteJob(new JobKey(item.id.ToString()));
         var r = this.Where(r => r.id == item.id).First();
         Remove(r);
     }
 
-    public void UpdateReminder(Reminder item)
+    public async Task UpdateReminder(Reminder item)
     {
         if (item.id > 0)
         {
             var id = item.id;
-            RemoveReminder(item);
+            await RemoveReminder(item);
             item.id = 0;
-            AddReminder(item);
+            await AddReminder(item);
         }
     }
 
