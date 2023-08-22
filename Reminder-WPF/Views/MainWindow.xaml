@@ -7,8 +7,7 @@
         xmlns:local="clr-namespace:Reminder_WPF.Views"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800"
-        WindowStartupLocation="CenterScreen">
-    
+        WindowStartupLocation="CenterScreen">    
         
         <Grid >
             <Grid.ColumnDefinitions>
@@ -21,34 +20,34 @@
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
-        <tb:TaskbarIcon IconSource="/resources/list2.ico" ToolTipText="Hello World!"/>
+            
+            <tb:TaskbarIcon IconSource="/resources/list2.ico" ToolTipText="Hello World!"/>
 
-        <Menu Grid.Row="0" Grid.ColumnSpan="2">
+            <Menu Grid.Row="0" Grid.ColumnSpan="2">
                 <MenuItem Header="File" />
             </Menu>
             
-            
-
             <ListView x:Name="ReminderList"
-                      Grid.Column="0" Grid.Row="1" Grid.RowSpan="3" ItemsSource="{Binding Reminders}" Margin="15" 
+                      Grid.Column="0" Grid.Row="1" Grid.RowSpan="3" 
+                      ItemsSource="{Binding Reminders}" 
+                      Margin="15" 
+                      SelectionMode="Single"
                       BorderThickness="1" BorderBrush="Black"
                       SelectionChanged="ListView_SelectionChanged"
-                      SelectionMode="Single"
                       MouseDoubleClick="ListView_MouseDoubleClick">
-            <ListView.Resources>
-                <Style TargetType="GridViewColumnHeader">
-                    <Setter Property="HorizontalContentAlignment" Value="Left"/>
-                </Style>
-            </ListView.Resources>
-            <ListView.View>
-                <GridView>
-                    <GridView.Columns>
-                        <GridViewColumn Header="Text" Width="400" DisplayMemberBinding="{Binding ReminderText}"/>
-                        <GridViewColumn Header="Time" Width="auto" DisplayMemberBinding="{Binding ReminderTime, StringFormat={}{0:h:mm tt}}"/>                        
-                    </GridView.Columns>
-                </GridView>
-            </ListView.View>
-                
+                <ListView.Resources>
+                    <Style TargetType="GridViewColumnHeader">
+                        <Setter Property="HorizontalContentAlignment" Value="Left"/>
+                    </Style>
+                </ListView.Resources>
+                <ListView.View>
+                    <GridView>
+                        <GridView.Columns>
+                            <GridViewColumn Header="What" Width="400" DisplayMemberBinding="{Binding ReminderText}"/>
+                            <GridViewColumn Header="When" Width="100" DisplayMemberBinding="{Binding ReminderTime, StringFormat={}{0:MM/dd/yyyy h:mm tt}}"/>                        
+                        </GridView.Columns>
+                    </GridView>
+                </ListView.View>                
             </ListView>
 
             <Button Grid.Column="1" Grid.Row="1" Content="Add" Margin="20"
