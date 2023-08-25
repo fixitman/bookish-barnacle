@@ -58,5 +58,7 @@
                     Background="Pink" Visibility="Collapsed"
                     TextAlignment="Center" Padding="5"
                    Text="{Binding ErrorMessage}"/>
+
+        <ComboBox x:Name="Combo" ItemsSource="{Binding Recurrences}" Grid.Row="5"/>
     </Grid>
 </Window>
