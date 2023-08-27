@@ -17,11 +17,9 @@ namespace Reminder_WPF.Views
         [ObservableProperty]
         private string errorMessage = "";
 
-        public enum RecurrenceType { none, Daily, Weekly}
+        
 
-        public RecurrenceType[] Recurrences {
-            get => Enum.GetValues<RecurrenceType>();
-                 }
+        
 
         public AddEditReminderDlg(Reminder? reminder = null)
         {
@@ -42,7 +40,7 @@ namespace Reminder_WPF.Views
             dtDate.SelectedDate = Reminder.ReminderTime.Date;
             txtTime.Text = Reminder.ReminderTime.ToShortTimeString();
             txtError.DataContext = this;
-            Combo.DataContext = this;   
+            
 
         }
 

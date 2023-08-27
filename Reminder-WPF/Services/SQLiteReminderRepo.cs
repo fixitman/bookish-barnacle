@@ -28,7 +28,8 @@ CREATE TABLE IF NOT EXISTS Reminders (
 id	INTEGER NOT NULL UNIQUE,
 ReminderText	TEXT NOT NULL DEFAULT """",
 ReminderTime	INTEGER NOT NULL,
-IsRecurring	INTEGER NOT NULL DEFAULT 0,
+Recurrence	INTEGER NOT NULL DEFAULT 0,
+RecurrenceData	TEXT,
 PRIMARY KEY(id AUTOINCREMENT)
 )";
         
@@ -43,10 +44,13 @@ PRIMARY KEY(id AUTOINCREMENT)
             string sql = @"
 INSERT INTO Reminders
 (ReminderText,
-ReminderTime, IsRecurring) 
+ReminderTime, 
+Recurrence,
+RecurrenceData) 
 VALUES (@ReminderText,
 @ReminderTime,
-@IsRecurring);
+@Recurrence,
+@RecurrenceData);
 SELECT last_insert_rowid();";
             
         var newId = await conn.ExecuteScalarAsync<int>(sql, item);
@@ -71,7 +75,7 @@ SELECT CHANGES();
         using SqliteConnection conn = new SqliteConnection(_connectionString);
         string sql = @"
 DELETE FROM REMINDERS 
-WHERE ReminderTime < datetime(""now"") and IsRecurring = false;
+WHERE ReminderTime < datetime(now) and Recurrence = 0;
 SELECT CHANGES();
 ";
         var numDeleted = await conn.ExecuteScalarAsync<int>(sql);
