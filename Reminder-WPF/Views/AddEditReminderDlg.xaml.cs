@@ -5,6 +5,7 @@ using System.Text.Json;
 using System.Globalization;
 using CommunityToolkit.Mvvm.ComponentModel;
 using System.Collections;
+using System.Windows.Controls;
 
 namespace Reminder_WPF.Views
 {
@@ -16,10 +17,6 @@ namespace Reminder_WPF.Views
         
         [ObservableProperty]
         private string errorMessage = "";
-
-        
-
-        
 
         public AddEditReminderDlg(Reminder? reminder = null)
         {
@@ -40,7 +37,6 @@ namespace Reminder_WPF.Views
             dtDate.SelectedDate = Reminder.ReminderTime.Date;
             txtTime.Text = Reminder.ReminderTime.ToShortTimeString();
             txtError.DataContext = this;
-            
 
         }
 
@@ -66,6 +62,7 @@ namespace Reminder_WPF.Views
             }
             var dt = new DateTime(d.Year, d.Month, d.Day, t.Hour, t.Minute, 0);
             Reminder.ReminderTime = dt;
+            GetRecurrenceData();
             DialogResult = true;
         }          
        
@@ -90,5 +87,45 @@ namespace Reminder_WPF.Views
             txtError.Visibility = value.Length > 0? Visibility.Visible : Visibility.Collapsed;
             
         }
+
+        private void Recurrence_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        {
+            var r = (sender as ComboBox).SelectedItem.ToString();
+            switch (r.ToUpper())
+            {
+
+                case "WEEKLY":
+                    RecurrenceDataHolder.Visibility = Visibility.Visible;
+                    WeeklyControl.Visibility = Visibility.Visible;
+                    break;
+                    
+
+                default:
+                    RecurrenceDataHolder.Visibility = Visibility.Collapsed;
+                    WeeklyControl.Visibility = Visibility.Collapsed;
+                    break;
+            }
+
+            PopulateRecurrenceControls();
+
+        }
+
+        private void PopulateRecurrenceControls()
+        {
+            if(Reminder.Recurrence == Reminder.RecurrenceType.Weekly)
+            {
+                WeeklyControl.Text = Reminder.RecurrenceData;
+            }
+        }
+
+        private void GetRecurrenceData()
+        {
+            if(Reminder.Recurrence == Reminder.RecurrenceType.Weekly)
+            {
+                Reminder.RecurrenceData = WeeklyControl.Text;
+            }
+        }
+
+
     }
 }

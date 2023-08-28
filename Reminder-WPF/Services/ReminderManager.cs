@@ -52,12 +52,21 @@ public class ReminderManager : ObservableCollection<Reminder>
             .UsingJobData("reminderText", item.ReminderText)
             .Build();
 
-        var trigger = TriggerBuilder.Create()
-            .StartAt(item.ReminderTime)
-            .ForJob(job)
-            .Build();
-
-        Scheduler.ScheduleJob(job, trigger);
+        var trigger = TriggerBuilder.Create();
+        if(item.Recurrence == Reminder.RecurrenceType.Weekly)
+        {
+            var cs = $"0 {item.ReminderTime.Minute} {item.ReminderTime.Hour} ? * {item.RecurrenceData}";
+            trigger.WithCronSchedule(cs);
+        }
+        else
+        {
+            trigger.StartAt(item.ReminderTime);     
+        }
+       
+       
+        trigger.ForJob(job);
+        
+        Scheduler.ScheduleJob(job, trigger.Build());
     }
 
     public async Task RemoveReminder(Reminder item)
