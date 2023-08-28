@@ -37,15 +37,17 @@ public partial class MainWindow : Window
             Reminder? selected = lv.SelectedItem as Reminder;
             if(selected != null)
             {
-                var dlg = new TestDialog();
-                dlg.Owner = this;                
-                if (dlg.ShowDialog() == true)
-                {
-                    var newText = dlg.Reply;
-                    selected.ReminderText = newText;
-                    VM.UpdateReminder(selected);
-                    CollectionViewSource.GetDefaultView(VM.Reminders).Refresh();
-                }
+                //var dlg = new TestDialog();
+                //dlg.Owner = this;                
+                //if (dlg.ShowDialog() == true)
+                //{
+                //    var newText = dlg.Reply;
+                //    selected.ReminderText = newText;
+                //    VM.UpdateReminder(selected);
+                //    CollectionViewSource.GetDefaultView(VM.Reminders).Refresh();
+                //}
+
+                VM.EditClicked();
             }
         }
     }
