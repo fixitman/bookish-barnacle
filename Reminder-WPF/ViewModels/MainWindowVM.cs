@@ -51,12 +51,12 @@ public partial class MainWindowVM : ObservableObject
     [RelayCommand(CanExecute = nameof(CanEdit))]
     public void EditClicked()
     {
-        var addDlg = new AddEditReminderDlg(SelectedItem);
-        addDlg.Title = "Edit Reminder";
-        addDlg.Owner = MainWindow;
-        if (addDlg.ShowDialog() == true)
+        var editDlg = new AddEditReminderDlg(SelectedItem);
+        editDlg.Title = "Edit Reminder";
+        editDlg.Owner = MainWindow;
+        if (editDlg.ShowDialog() == true)
         {
-            UpdateReminder(addDlg.Reminder);
+            UpdateReminder(editDlg.Reminder);
         }
     }
 
