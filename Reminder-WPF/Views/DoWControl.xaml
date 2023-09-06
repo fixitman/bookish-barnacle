@@ -6,8 +6,8 @@
              xmlns:local="clr-namespace:Reminder_WPF.Views"
              mc:Ignorable="d"              
              >
-    <WrapPanel Orientation="Horizontal" Margin="10" >
-        <CheckBox x:Name="cbSun" IsChecked="{Binding Sunday}" Content=" Sunday"  Margin="20,10,0,0"/>
+    <WrapPanel Orientation="Horizontal" Margin="0 10" >
+        <CheckBox x:Name="cbSun" IsChecked="{Binding Sunday}" Content=" Sunday"  Margin="0,10,0,0"/>
         <CheckBox x:Name="cbMon" IsChecked="{Binding Monday}" Content=" Monday"  Margin="20,10,0,0"/>
         <CheckBox x:Name="cbTue" IsChecked="{Binding Tuesday}" Content=" Tuesday"  Margin="20,10,0,0"/>
         <CheckBox x:Name="cbWed" IsChecked="{Binding Wednesday}" Content=" Wednesday"  Margin="20,10,0,0"/>
