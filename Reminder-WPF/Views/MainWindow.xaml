@@ -21,8 +21,6 @@
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
             
-            <tb:TaskbarIcon IconSource="/resources/list2.ico" ToolTipText="Hello World!"/>
-
             <Menu Grid.Row="0" Grid.ColumnSpan="2">
                 <MenuItem Header="File" />
             </Menu>

@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Hardcodet.Wpf.TaskbarNotification;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Quartz;
 using Quartz.Impl;
@@ -14,8 +15,11 @@ namespace Reminder_WPF
     /// </summary>
     public partial class App : Application
     {
-        private IHost _host;
+        private static IHost _host;
         private IScheduler _scheduler;
+        private TaskbarIcon _taskbarIcon;
+
+        public static IHost GetHost() { return _host; }
 
         public App()
         {
@@ -41,6 +45,7 @@ namespace Reminder_WPF
             await _host.StartAsync();
             _scheduler = await new StdSchedulerFactory().GetScheduler();
             await _scheduler.Start();
+            _taskbarIcon = (TaskbarIcon)FindResource("TaskBarIcon");
             var mainWindow = _host.Services.GetRequiredService<MainWindow>();
             mainWindow.Show();
 

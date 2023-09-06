@@ -10,12 +10,13 @@
 
   <ItemGroup>
     <None Remove="Resources\List2.ico" />
+    <None Remove="Resources\Red.ico" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.1" />
     <PackageReference Include="Dapper" Version="2.0.151" />
-    <PackageReference Include="Hardcodet.NotifyIcon.Wpf" Version="1.1.0" />
+    <PackageReference Include="Hardcodet.Wpf.TaskbarNotification.Core" Version="2.0.0" />
     <PackageReference Include="Microsoft.Data.Sqlite" Version="7.0.9" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="7.0.0" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="7.0.1" />
@@ -24,8 +25,9 @@
 
   <ItemGroup>
     <Resource Include="Resources\List2.ico">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CopyToOutputDirectory></CopyToOutputDirectory>
     </Resource>
+    <Resource Include="Resources\Red.ico" />
   </ItemGroup>
 
   <ItemGroup>
