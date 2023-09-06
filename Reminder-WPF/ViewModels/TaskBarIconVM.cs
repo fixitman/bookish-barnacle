@@ -24,7 +24,17 @@ namespace Reminder_WPF.ViewModels
             App.Current.Shutdown();
         }
 
+        [RelayCommand]
+        void ShowMainWindow()
+        {
+            (App.Current as App).Show();
+        }
 
-        
+        [RelayCommand]
+        void HideMainWindow()
+        {
+            App.Current.MainWindow.Hide();
+        }
+
     }
 }

@@ -5,6 +5,8 @@
                     >
 
     <ContextMenu x:Key="TrayMenu">
+        <MenuItem Header="Show Main Window" Command="{Binding ShowMainWindowCommand}"/>
+        <MenuItem Header="Hide Main Window" Command="{Binding HideMainWindowCommand}"/>
         <Separator/>
         <MenuItem Header="Exit" Command="{Binding MenuExitCommand}"/>
     </ContextMenu>

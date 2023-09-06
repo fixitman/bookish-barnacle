@@ -15,19 +15,19 @@ namespace Reminder_WPF
     /// </summary>
     public partial class App : Application
     {
-        private static IHost _host;
+        private IHost _host;
         private IScheduler _scheduler;
         private TaskbarIcon _taskbarIcon;
 
-        public static IHost GetHost() { return _host; }
-
+        
         public App()
         {
             _host = new HostBuilder()
                 .ConfigureServices((context, services) =>
                 {
-                    services.AddSingleton<MainWindow>();
-                    services.AddSingleton<MainWindowVM>();
+                   
+                    services.AddTransient<MainWindow>();
+                    services.AddTransient<MainWindowVM>();
                     services.AddSingleton<ReminderManager>();
                     services.AddSingleton<IScheduler, StdScheduler>((provider) =>
                     {
@@ -46,10 +46,19 @@ namespace Reminder_WPF
             _scheduler = await new StdSchedulerFactory().GetScheduler();
             await _scheduler.Start();
             _taskbarIcon = (TaskbarIcon)FindResource("TaskBarIcon");
-            var mainWindow = _host.Services.GetRequiredService<MainWindow>();
-            mainWindow.Show();
+           
+            
 
         }
+
+        public void Show()
+        {
+            MainWindow = _host.Services.GetRequiredService<MainWindow>();
+            MainWindow.Show();
+        }
+
+
+        
 
         private async void Application_Exit(object sender, ExitEventArgs e)
         {
