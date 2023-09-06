@@ -55,7 +55,7 @@ namespace Reminder_WPF.Views
                 d = DateOnly.Parse(dtDate.Text);
                 t = TimeOnly.Parse(txtTime.Text);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 ErrorMessage = "Invalid Date or Time";
                 return;
@@ -90,8 +90,8 @@ namespace Reminder_WPF.Views
 
         private void Recurrence_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
         {
-            var r = (sender as ComboBox).SelectedItem.ToString();
-            switch (r.ToUpper())
+            var r = (sender as ComboBox)?.SelectedItem.ToString();
+            switch (r?.ToUpper())
             {
 
                 case "WEEKLY":
