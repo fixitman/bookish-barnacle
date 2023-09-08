@@ -52,5 +52,9 @@ public partial class MainWindow : Window
         }
     }
 
-    
+    private void Window_Closing(object sender, CancelEventArgs e)
+    {
+        this.Hide();
+        e.Cancel = true;
+    }
 }

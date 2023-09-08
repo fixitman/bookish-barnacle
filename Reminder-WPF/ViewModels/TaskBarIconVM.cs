@@ -27,13 +27,13 @@ namespace Reminder_WPF.ViewModels
         [RelayCommand]
         void ShowMainWindow()
         {
-            (App.Current as App).Show();
+            Application.Current.MainWindow.Show();
         }
 
         [RelayCommand]
         void HideMainWindow()
         {
-            App.Current.MainWindow.Hide();
+            Application.Current.MainWindow.Hide();
         }
 
     }

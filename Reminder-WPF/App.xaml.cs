@@ -25,9 +25,8 @@ namespace Reminder_WPF
             _host = new HostBuilder()
                 .ConfigureServices((context, services) =>
                 {
-                   
-                    services.AddTransient<MainWindow>();
-                    services.AddTransient<MainWindowVM>();
+                    services.AddSingleton<MainWindow>();
+                    services.AddSingleton<MainWindowVM>();
                     services.AddSingleton<ReminderManager>();
                     services.AddSingleton<IScheduler, StdScheduler>((provider) =>
                     {
@@ -46,19 +45,8 @@ namespace Reminder_WPF
             _scheduler = await new StdSchedulerFactory().GetScheduler();
             await _scheduler.Start();
             _taskbarIcon = (TaskbarIcon)FindResource("TaskBarIcon");
-           
-            
-
-        }
-
-        public void Show()
-        {
             MainWindow = _host.Services.GetRequiredService<MainWindow>();
-            MainWindow.Show();
         }
-
-
-        
 
         private async void Application_Exit(object sender, ExitEventArgs e)
         {
