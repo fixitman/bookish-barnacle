@@ -18,7 +18,7 @@ public class SQLiteReminderRepo : IDataRepo
     {
         _connectionString = ConfigurationManager.ConnectionStrings["Default"].ConnectionString;
         CreateTables();
-        DeleteOldRemindersAsync();
+        _ = DeleteOldRemindersAsync();
     }
 
     private void CreateTables()

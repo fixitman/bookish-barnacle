@@ -16,7 +16,7 @@ namespace Reminder_WPF
     public partial class App : Application
     {
         private IHost _host;
-        private IScheduler _scheduler;
+        private IScheduler? _scheduler;
         private TaskbarIcon _taskbarIcon;
 
         
@@ -50,7 +50,10 @@ namespace Reminder_WPF
 
         private async void Application_Exit(object sender, ExitEventArgs e)
         {
+            if (_scheduler != null)
+            {
             await _scheduler.Shutdown();
+            }
             using(_host)
             {
                 await _host.StopAsync();

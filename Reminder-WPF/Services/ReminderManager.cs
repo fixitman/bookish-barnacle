@@ -58,6 +58,11 @@ public class ReminderManager : ObservableCollection<Reminder>
             var cs = $"0 {item.ReminderTime.Minute} {item.ReminderTime.Hour} ? * {item.RecurrenceData}";
             trigger.WithCronSchedule(cs);
         }
+        else if (item.Recurrence == Reminder.RecurrenceType.Daily)
+        {
+            var cs = $"0 {item.ReminderTime.Minute} {item.ReminderTime.Hour} * * ?";
+            trigger.WithCronSchedule(cs);
+        }
         else
         {
             trigger.StartAt(item.ReminderTime);     

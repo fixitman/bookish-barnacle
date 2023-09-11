@@ -32,7 +32,7 @@ public partial class MainWindowVM : ObservableObject
     {
         if (SelectedItem != null)
         {
-            Reminders.RemoveReminder(SelectedItem);
+            _ = Reminders.RemoveReminder(SelectedItem);
         }
     }
 
@@ -68,12 +68,12 @@ public partial class MainWindowVM : ObservableObject
 
     public void UpdateReminder(Reminder r)
     {
-        Reminders.UpdateReminder(r);
+        _ = Reminders.UpdateReminder(r);
     }
 
     public void AddReminder(Reminder r)
     {
-        Reminders.AddReminder(r);
+        _ = Reminders.AddReminder(r);
     }
 
 }
