@@ -21,7 +21,7 @@ public class ReminderManager : ObservableCollection<Reminder>
 
         Task.Run(async () =>
         {
-            foreach (Reminder r in await dataRepo.GetRemindersAsync())
+            foreach (Reminder r in await DataRepo.GetRemindersAsync())
             {
                 await AddReminder(r);
             }
