@@ -13,17 +13,17 @@ public partial class MainWindowVM : ObservableObject
 {
     public MainWindow? MainWindow { get; set; }
     public ReminderManager Reminders { get; }
-    public IScheduler Scheduler { get; }
+    private ISettings Settings { get; }
+
     [ObservableProperty]
     public Reminder? selectedItem = null;     
     public bool CanDelete { get { return SelectedItem != null; } }
     public bool CanAdd { get { return true; } }
     public bool CanEdit { get { return SelectedItem != null; } }
 
-    public MainWindowVM(ReminderManager mgr, IScheduler scheduler)
+    public MainWindowVM(ReminderManager mgr)
     {
-        Reminders = mgr;
-        Scheduler = scheduler;
+        Reminders = mgr;        
         MainWindow = null;
     }
 
