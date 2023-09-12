@@ -12,7 +12,7 @@ namespace Reminder_WPF.Models
         }
 
         public int id {  get; set; }
-        public string ReminderText { get; set; }
+        public string ReminderText { get; set; } = string.Empty;
         public DateTime ReminderTime { get; set; }
         public RecurrenceType Recurrence { get; set; } = RecurrenceType.None;
         public string RecurrenceData { get; set; } = "";
