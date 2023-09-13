@@ -59,15 +59,5 @@ namespace Reminder_WPF.Properties {
                 resourceCulture = value;
             }
         }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
-        /// </summary>
-        public static System.Drawing.Icon List2 {
-            get {
-                object obj = ResourceManager.GetObject("List2", resourceCulture);
-                return ((System.Drawing.Icon)(obj));
-            }
-        }
     }
 }
