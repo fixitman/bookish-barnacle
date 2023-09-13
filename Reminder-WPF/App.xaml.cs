@@ -20,13 +20,7 @@ namespace Reminder_WPF
     {
         private IHost _host;
         private IScheduler? _scheduler;
-        private string settingsPath = Path.Combine(
-                Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-                ConfigurationManager.AppSettings["Company"] ?? "Company",
-                ConfigurationManager.AppSettings["AppName"] ?? "AppName",
-                "settings.json");
-
-
+       
         public App()
         {
             _host = new HostBuilder()
@@ -35,12 +29,10 @@ namespace Reminder_WPF
                     services.AddSingleton<MainWindow>();
                     services.AddSingleton<MainWindowVM>();
                     services.AddSingleton<ReminderManager>();
-                    services.AddSingleton<ISettings, Settings>();
                     services.AddSingleton<IScheduler, StdScheduler>((provider) =>
                     {
                         return (StdScheduler) new StdSchedulerFactory().GetScheduler().Result;
                     });
-                    //services.AddScoped<IDataRepo, TestReminderRepo>();
                     services.AddScoped<IDataRepo, SQLiteReminderRepo>();
                 })
                 .Build();
@@ -50,17 +42,21 @@ namespace Reminder_WPF
         private async void Application_Startup(object sender, StartupEventArgs e)
         {                        
             await _host.StartAsync();
-            
-            ISettings settings = _host.Services.GetRequiredService<ISettings>();            
-            await settings.Load(settingsPath);
-                        
+
+            if (AppSettings.Default.UpdateSettings)
+            {
+                AppSettings.Default.Upgrade();
+                AppSettings.Default.UpdateSettings = false;
+                AppSettings.Default.Save();
+            }
+
             _scheduler = _host.Services.GetRequiredService<IScheduler>();
             await _scheduler.Start();
 
             _ = (TaskbarIcon)FindResource("TaskBarIcon");
 
             MainWindow = _host.Services.GetRequiredService<MainWindow>();
-            if (!settings.HideMainWindowOnStartup)
+            if (!AppSettings.Default.StartMinimized)
             {
                 MainWindow.Show();
             }
@@ -68,14 +64,13 @@ namespace Reminder_WPF
 
         private async void Application_Exit(object sender, ExitEventArgs e)
         {
+            AppSettings.Default.Save();
+            
             if (_scheduler != null)
             {
             await _scheduler.Shutdown();
             }
-
-            ISettings s = _host.Services.GetRequiredService<ISettings>();
-            await s.Save(settingsPath);
-
+            
             using (_host)
             {
                 await _host.StopAsync();

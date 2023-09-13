@@ -6,6 +6,11 @@
     <RootNamespace>Reminder_WPF</RootNamespace>
     <Nullable>enable</Nullable>
     <UseWPF>true</UseWPF>
+    <Company>FixitmanMike</Company>
+    <Product>ReminderApp</Product>
+    <Copyright>Copyright 2023 Mike Collins</Copyright>
+    <Version>1.1</Version>
+    <PackageId>ReminderApp</PackageId>
   </PropertyGroup>
 
   <ItemGroup>
@@ -31,6 +36,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Update="AppSettings.Designer.cs">
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>AppSettings.settings</DependentUpon>
+    </Compile>
     <Compile Update="Properties\Resources.Designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
@@ -46,6 +56,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="AppSettings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>AppSettings.Designer.cs</LastGenOutput>
+    </None>
     <None Update="Data\Reminders.db">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
