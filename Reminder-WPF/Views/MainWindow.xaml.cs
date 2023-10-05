@@ -1,18 +1,24 @@
-﻿using System.Windows;
-using System.Windows.Input;
-using System.Windows.Controls;
-using Reminder_WPF.Models;
+﻿using Reminder_WPF.Models;
 using Reminder_WPF.ViewModels;
-using System.Windows.Data;
 using System.ComponentModel;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Input;
+using System.Windows.Interop;
 
 namespace Reminder_WPF.Views;
 
 
 public partial class MainWindow : Window
 {
+    public MainWindowVM VM { get; }
+
     public MainWindow(MainWindowVM vM)
     {
+        //if the window doesn't have a hwnd, TBMenu crashes
+        var helper = new WindowInteropHelper(this);
+        helper.EnsureHandle();
+        
         InitializeComponent();
         DataContext = vM;
         VM = vM;
@@ -20,8 +26,6 @@ public partial class MainWindow : Window
         ReminderList.Items.SortDescriptions.Clear();
         ReminderList.Items.SortDescriptions.Add(new SortDescription("ReminderTime", ListSortDirection.Ascending));
     }
-
-    public MainWindowVM VM { get; }
 
     private void ListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {

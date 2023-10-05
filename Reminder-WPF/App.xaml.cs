@@ -1,14 +1,10 @@
-﻿using Hardcodet.Wpf.TaskbarNotification;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Quartz;
 using Quartz.Impl;
 using Reminder_WPF.Services;
 using Reminder_WPF.ViewModels;
 using Reminder_WPF.Views;
-using System;
-using System.Configuration;
-using System.IO;
 using System.Windows;
 
 namespace Reminder_WPF
@@ -20,6 +16,7 @@ namespace Reminder_WPF
     {
         private IHost _host;
         private IScheduler? _scheduler;
+        TBMenu TBMenu = new TBMenu();
        
         public App()
         {
@@ -52,8 +49,7 @@ namespace Reminder_WPF
 
             _scheduler = _host.Services.GetRequiredService<IScheduler>();
             await _scheduler.Start();
-
-            _ = (TaskbarIcon)FindResource("TaskBarIcon");
+                      
 
             MainWindow = _host.Services.GetRequiredService<MainWindow>();
             if (!AppSettings.Default.StartMinimized)
