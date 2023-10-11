@@ -1,17 +1,20 @@
-﻿using CommunityToolkit.Mvvm.Input;
-using Microsoft.Extensions.DependencyInjection;
-using Reminder_WPF.Views;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using System.Windows;
 
 namespace Reminder_WPF.ViewModels
 {
-    internal partial class TaskBarIconVM
+    internal partial class TaskBarIconVM : ObservableObject
     {
+
+        [ObservableProperty]
+        public bool startMinimized;
+
+        public TaskBarIconVM()
+        {
+            startMinimized = AppSettings.Default.StartMinimized;
+        }
+
         [RelayCommand]
         void TBIDoubleClick()
         {
@@ -34,6 +37,17 @@ namespace Reminder_WPF.ViewModels
         void HideMainWindow()
         {
             Application.Current.MainWindow.Hide();
+        }
+
+        [RelayCommand]
+        void ToggleStartMinimized()
+        {
+            StartMinimized = !StartMinimized;
+        }
+
+        partial void OnStartMinimizedChanged(bool oldValue, bool newValue)
+        {
+            AppSettings.Default.StartMinimized = newValue;            
         }
 
     }

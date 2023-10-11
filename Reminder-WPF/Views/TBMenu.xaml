@@ -18,8 +18,8 @@
         <tb:TaskbarIcon.ContextMenu>
             <ContextMenu >
                 <MenuItem Header="Show Main Window" Command="{Binding ShowMainWindowCommand}"/>
-                <MenuItem Header="Hide Main Window" Command="{Binding HideMainWindowCommand}"/>
-                <Separator/>
+                <MenuItem Header="Start Minimized" Command="{Binding ToggleStartMinimizedCommand}" IsChecked="{Binding StartMinimized}" />
+                <Separator/>                
                 <MenuItem Header="Exit" Command="{Binding MenuExitCommand}"/>
             </ContextMenu>
         </tb:TaskbarIcon.ContextMenu>
