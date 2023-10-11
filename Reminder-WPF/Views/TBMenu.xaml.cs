@@ -23,8 +23,8 @@ namespace Reminder_WPF.Views
     {
         public TBMenu()
         {
-            InitializeComponent();
             this.DataContext = new TaskBarIconVM();
+            InitializeComponent();
         }
     }
 }
