@@ -1,5 +1,5 @@
 ﻿using Microsoft.Extensions.Configuration;
-﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Quartz;
 using Quartz.Impl;
@@ -42,7 +42,7 @@ namespace Reminder_WPF
                 {
                     services.AddSingleton<MainWindow>();
                     services.AddSingleton<MainWindowVM>();
-                    services.AddSingleton<ReminderManager>();
+                    services.AddSingleton<IReminderManager,ReminderManager>();
                     services.AddSingleton<IScheduler, StdScheduler>((provider) =>
                     {
                         return (StdScheduler) new StdSchedulerFactory().GetScheduler().Result;
