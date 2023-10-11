@@ -1,3 +1,4 @@
+﻿using Microsoft.Extensions.Logging;
 ﻿using Quartz;
 using Reminder_WPF.Models;
 using System;
@@ -9,13 +10,17 @@ using System.Threading.Tasks;
 
 namespace Reminder_WPF.Services;
 
-public class ReminderManager : ObservableCollection<Reminder>
+public class ReminderManager : ObservableCollection<Reminder>, IReminderManager, IJobListener
 {
+    private readonly ILogger logger;
     private IDataRepo DataRepo { get; }
     private IScheduler Scheduler { get; }
 
     public ReminderManager(IDataRepo dataRepo, IScheduler scheduler)
+    public ReminderManager(IDataRepo dataRepo, IScheduler scheduler, ILogger<ReminderManager> logger)
     {
+        this.logger = logger;
+        logger.LogDebug("ReminderManager");
         DataRepo = dataRepo;
         Scheduler = scheduler;
 
@@ -32,6 +37,7 @@ public class ReminderManager : ObservableCollection<Reminder>
 
     public async Task  AddReminder(Reminder item)
     {
+        logger.LogDebug("AddReminder");
         if (item == null) return;
         Reminder r = item;
         if (item.id == 0)
@@ -47,6 +53,7 @@ public class ReminderManager : ObservableCollection<Reminder>
 
     private void ScheduleReminder(Reminder item)
     {
+        logger.LogDebug("ScheduleReminder");
         var job = JobBuilder.Create<ReminderJob>()
             .WithIdentity(item.id.ToString())
             .UsingJobData("reminderText", item.ReminderText)
@@ -76,6 +83,7 @@ public class ReminderManager : ObservableCollection<Reminder>
 
     public async Task RemoveReminder(Reminder item)
     {
+        logger.LogDebug("RemoveReminder");
         if (item == null) return;
         await DataRepo.DeleteReminderAsync(item);
         await Scheduler.DeleteJob(new JobKey(item.id.ToString()));

@@ -1,3 +1,4 @@
+﻿using Microsoft.Extensions.Configuration;
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Quartz;
@@ -5,6 +6,9 @@ using Quartz.Impl;
 using Reminder_WPF.Services;
 using Reminder_WPF.ViewModels;
 using Reminder_WPF.Views;
+using Serilog;
+using Serilog.Formatting.Json;
+using System.IO;
 using System.Windows;
 
 namespace Reminder_WPF
@@ -20,7 +24,20 @@ namespace Reminder_WPF
        
         public App()
         {
-            _host = new HostBuilder()
+           var logConfig = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+                .AddEnvironmentVariables()
+                .Build();
+
+            Log.Logger = new LoggerConfiguration()
+                .ReadFrom.Configuration(logConfig)
+                .Enrich.FromLogContext()               
+                .WriteTo.Debug()
+                .WriteTo.File(new JsonFormatter(),"logfile.json")
+                .CreateBootstrapLogger();
+            
+            _host = Host.CreateDefaultBuilder()
                 .ConfigureServices((context, services) =>
                 {
                     services.AddSingleton<MainWindow>();
@@ -32,6 +49,7 @@ namespace Reminder_WPF
                     });
                     services.AddScoped<IDataRepo, SQLiteReminderRepo>();
                 })
+                .UseSerilog()
                 .Build();
 
         }

@@ -1,5 +1,6 @@
 ﻿using Dapper;
 using Microsoft.Data.Sqlite;
+using Microsoft.Extensions.Logging;
 using Reminder_WPF.Models;
 using System;
 using System.Collections.Generic;
@@ -13,9 +14,11 @@ public class SQLiteReminderRepo : IDataRepo
 {
 
     private string _connectionString;
+    private readonly ILogger<SQLiteReminderRepo> logger;
 
-    public SQLiteReminderRepo()
+    public SQLiteReminderRepo(ILogger<SQLiteReminderRepo> logger)
     {
+        this.logger = logger;
         _connectionString = ConfigurationManager.ConnectionStrings["Default"].ConnectionString;
         CreateTables();
         _ = DeleteOldRemindersAsync();
@@ -23,6 +26,7 @@ public class SQLiteReminderRepo : IDataRepo
 
     private void CreateTables()
     {
+        logger.LogDebug("CreateTables");
         string sql = @"
 CREATE TABLE IF NOT EXISTS Reminders (
 id	INTEGER NOT NULL UNIQUE,
@@ -32,16 +36,26 @@ Recurrence	INTEGER NOT NULL DEFAULT 0,
 RecurrenceData	TEXT,
 PRIMARY KEY(id AUTOINCREMENT)
 )";
-        
-        var conn = new SqliteConnection(_connectionString);
-        conn.Execute(sql);
+
+        try
+        {
+            var conn = new SqliteConnection(_connectionString);
+            conn.Execute(sql);
+        }
+        catch (Exception e)
+        {
+            logger.LogError(e, "SQLite error executing - {sql}", sql);
+            throw ;
+        }
         
     }
 
     public async Task<Reminder> AddReminderAsync(Reminder item)
-    {        
-            using SqliteConnection conn = new SqliteConnection(_connectionString);
-            string sql = @"
+    {
+
+        logger.LogDebug("AddReminderAsync");
+        using SqliteConnection conn = new SqliteConnection(_connectionString);
+        string sql = @"
 INSERT INTO Reminders
 (ReminderText,
 ReminderTime, 
@@ -51,8 +65,7 @@ VALUES (@ReminderText,
 @ReminderTime,
 @Recurrence,
 @RecurrenceData);
-SELECT last_insert_rowid();";
-            
+SELECT last_insert_rowid();";            
         var newId = await conn.ExecuteScalarAsync<int>(sql, item);
         item.id = newId;
         return item;
@@ -60,6 +73,7 @@ SELECT last_insert_rowid();";
 
     public async Task<bool> DeleteReminderAsync(Reminder item)
     {
+        logger.LogDebug("DeleteReminderAsync");
         using SqliteConnection conn = new SqliteConnection(_connectionString);
         string sql = @"
 DELETE FROM REMINDERS 
@@ -72,6 +86,7 @@ SELECT CHANGES();
 
     public async Task<bool> DeleteOldRemindersAsync()
     {
+        logger.LogDebug("DeleteOldRemindersAsync");
         using SqliteConnection conn = new SqliteConnection(_connectionString);
         string sql = @"
 DELETE FROM REMINDERS 
@@ -82,12 +97,9 @@ SELECT CHANGES();
         return numDeleted > 0;
     }
 
-
-
-
-
     public async Task<List<Reminder>> GetRemindersAsync()
     {
+        logger.LogDebug("GetRemindersAsync");
         using SqliteConnection conn = new SqliteConnection(_connectionString);
         var result = await conn.QueryAsync<Reminder>(@"select * from Reminders");
         return result.ToList();
