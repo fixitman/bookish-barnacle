@@ -11,12 +11,11 @@ namespace Reminder_WPF.ViewModels;
 
 public partial class MainWindowVM : ObservableObject
 {
-    public MainWindow? MainWindow { get; set; }
-    public IReminderManager Reminders { get; }
-    private ISettings Settings { get; }
 
     [ObservableProperty]
     public Reminder? selectedItem = null;     
+    public MainWindow? MainWindow { get; set; }
+    public IReminderManager Reminders { get; }    
     public bool CanDelete { get { return SelectedItem != null; } }
     public bool CanAdd { get { return true; } }
     public bool CanEdit { get { return SelectedItem != null; } }
