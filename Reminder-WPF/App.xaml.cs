@@ -47,7 +47,7 @@ namespace Reminder_WPF
                     {
                         return (StdScheduler) new StdSchedulerFactory().GetScheduler().Result;
                     });
-                    services.AddScoped<IDataRepo, SQLiteReminderRepo>();
+                    services.AddSingleton<IDataRepo, SQLiteReminderRepo>();
                 })
                 .UseSerilog()
                 .Build();
