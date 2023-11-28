@@ -47,7 +47,8 @@ namespace Reminder_WPF.ViewModels
 
         partial void OnStartMinimizedChanged(bool oldValue, bool newValue)
         {
-            AppSettings.Default.StartMinimized = newValue;            
+            AppSettings.Default.StartMinimized = newValue;   
+            AppSettings.Default.Save();
         }
 
     }
