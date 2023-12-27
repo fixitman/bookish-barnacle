@@ -18,7 +18,8 @@ namespace Reminder_WPF.ViewModels
         [RelayCommand]
         void TBIDoubleClick()
         {
-            MessageBox.Show("TBI Double-Clicked");
+            //MessageBox.Show("TBI Double-Clicked");
+            ShowMainWindow();
         }
 
         [RelayCommand]
