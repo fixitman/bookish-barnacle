@@ -32,6 +32,7 @@ namespace Reminder_WPF.ViewModels
         void ShowMainWindow()
         {
             Application.Current.MainWindow.Show();
+            Application.Current.MainWindow.Focus();
         }
 
         [RelayCommand]

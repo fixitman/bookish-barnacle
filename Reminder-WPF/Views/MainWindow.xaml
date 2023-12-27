@@ -5,55 +5,56 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Reminder_WPF.Views"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800"
+        Title="Reminders" Height="450" Width="800"
         Closing="Window_Closing"
-        WindowStartupLocation="CenterScreen">    
-        
-        <Grid >
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="3*"/>
-                <ColumnDefinition Width="1*"/>
-            </Grid.ColumnDefinitions>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                 <RowDefinition Height="*"/>
-                <RowDefinition Height="*"/>
-                <RowDefinition Height="*"/>
-            </Grid.RowDefinitions>
-            
-            <Menu Grid.Row="0" Grid.ColumnSpan="2">
-                <MenuItem Header="File" />
-            </Menu>
-            
-            <ListView x:Name="ReminderList"
+        WindowStartupLocation="CenterScreen">
+
+    <Grid >
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="3*"/>
+            <ColumnDefinition Width="1*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <Menu Grid.Row="0" Grid.ColumnSpan="2">
+            <MenuItem Header="File" />
+        </Menu>
+
+        <ListView x:Name="ReminderList"
                       Grid.Column="0" Grid.Row="1" Grid.RowSpan="3" 
                       ItemsSource="{Binding Reminders}" 
-                      Margin="15" 
+                      Margin="20,20,0,20" 
+                      
                       SelectionMode="Single"
                       BorderThickness="1" BorderBrush="Black"
                       SelectionChanged="ListView_SelectionChanged"
                       MouseDoubleClick="ListView_MouseDoubleClick">
-                <ListView.Resources>
-                    <Style TargetType="GridViewColumnHeader">
-                        <Setter Property="HorizontalContentAlignment" Value="Left"/>
-                    </Style>
-                </ListView.Resources>
-                <ListView.View>
-                    <GridView>
-                        <GridView.Columns>
-                            <GridViewColumn Header="What" Width="400" DisplayMemberBinding="{Binding ReminderText}"/>
-                            <GridViewColumn Header="When" Width="150" DisplayMemberBinding="{Binding ReminderTime, StringFormat={}{0:MM/dd/yyyy h:mm tt}}"/>                        
-                        </GridView.Columns>
-                    </GridView>
-                </ListView.View>                
-            </ListView>
+            <ListView.Resources>
+                <Style TargetType="GridViewColumnHeader">
+                    <Setter Property="HorizontalContentAlignment" Value="Left"/>
+                </Style>
+            </ListView.Resources>
+            <ListView.View>
+                <GridView>
+                    <GridView.Columns>
+                        <GridViewColumn Header="What" Width="400" DisplayMemberBinding="{Binding ReminderText}"/>
+                        <GridViewColumn Header="When" Width="150" DisplayMemberBinding="{Binding ReminderTime, StringFormat={}{0:MM/dd/yyyy h:mm tt}}"/>
+                    </GridView.Columns>
+                </GridView>
+            </ListView.View>
+        </ListView>
 
-            <Button Grid.Column="1" Grid.Row="1" Content="Add" Margin="20"
+        <Button Grid.Column="1" Grid.Row="1" Content="Add" Margin="20"
                     Command="{Binding AddClickedCommand}"/>
-            <Button Grid.Column="1" Grid.Row="2" Content="Edit" Margin="20" 
+        <Button Grid.Column="1" Grid.Row="2" Content="Edit" Margin="20" 
                     Command="{Binding EditClickedCommand}"/>
-            <Button Grid.Column="1" Grid.Row="3" Content="Delete" Margin="20"
+        <Button Grid.Column="1" Grid.Row="3" Content="Delete" Margin="20"
                     Command="{Binding DeleteClickedCommand}"/>
-        </Grid>
-    
+    </Grid>
+
 </Window>

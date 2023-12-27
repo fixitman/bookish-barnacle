@@ -36,8 +36,16 @@ namespace Reminder_WPF.Views
             DataContext = Reminder;
             dtDate.SelectedDate = Reminder.ReminderTime.Date;
             txtTime.Text = Reminder.ReminderTime.ToShortTimeString();
+            txtTime.GotKeyboardFocus += SelectAallOnKeyboardFocus;
+            txtReminderText.GotKeyboardFocus += SelectAallOnKeyboardFocus;
             txtError.DataContext = this;
 
+        }
+
+        private void SelectAallOnKeyboardFocus(object sender, System.Windows.Input.KeyboardFocusChangedEventArgs e)
+        {
+            TextBox? t = e.OriginalSource as TextBox;
+            t?.SelectAll();
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
