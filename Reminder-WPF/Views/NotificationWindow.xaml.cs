@@ -1,8 +1,10 @@
-﻿using Reminder_WPF.Models;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using Reminder_WPF.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -18,15 +20,18 @@ namespace Reminder_WPF.Views
     /// <summary>
     /// Interaction logic for NotificationWindow.xaml
     /// </summary>
+    [ObservableObject]
     public partial class NotificationWindow : Window
     {
-        public Reminder Reminder { get; }
+        [ObservableProperty]
+        private string reminderText;
         public bool Snoozed { get; private set; } = false;
 
-        public NotificationWindow(Reminder reminder)
+        public NotificationWindow(string reminderText)
         {
             InitializeComponent();
-            Reminder = reminder;            
+            DataContext = this;
+            ReminderText = reminderText;            
         }
 
         private void Dismiss_Click(object sender, RoutedEventArgs e)

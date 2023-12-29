@@ -8,6 +8,7 @@ using Reminder_WPF.ViewModels;
 using Reminder_WPF.Views;
 using Serilog;
 using Serilog.Formatting.Json;
+using System;
 using System.IO;
 using System.Windows;
 
@@ -18,7 +19,9 @@ namespace Reminder_WPF
     /// </summary>
     public partial class App : Application
     {
-        private IHost _host;
+        private IHost _host; 
+        public IServiceProvider Services { get => _host.Services; }
+
         private IScheduler? _scheduler;
         TBMenu TBMenu = new TBMenu();
        

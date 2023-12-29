@@ -104,4 +104,12 @@ SELECT CHANGES();
         var result = await conn.QueryAsync<Reminder>(@"select * from Reminders");
         return result.ToList();
     }
+
+    public async Task<Reminder?> GetReminderByIdAsync(int id)
+    {
+        logger.LogDebug($"GetReminderByIdAsync ({id})");
+        using SqliteConnection conn = new SqliteConnection(_connectionString);
+        var result = await conn.QueryFirstOrDefaultAsync<Reminder>(@"select * from Reminders where id = @id",new {id = id});
+        return result;
+    }
 }

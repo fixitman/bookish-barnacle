@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using Quartz;
 using Reminder_WPF.Models;
+using Reminder_WPF.Views;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -8,11 +9,16 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace Reminder_WPF.Services;
 
 public class ReminderManager : ObservableCollection<Reminder>, IReminderManager, IJobListener
 {
+    public static readonly string REMINDERTEXT = "reminderText";
+    public static readonly string REMINDERID = "reminderID";
+
+
     private readonly ILogger logger;
     private readonly SynchronizationContext synchronizationContext;
 
@@ -62,8 +68,8 @@ public class ReminderManager : ObservableCollection<Reminder>, IReminderManager,
         logger.LogDebug("ScheduleReminder");
         var job = JobBuilder.Create<ReminderJob>()
             .WithIdentity(item.id.ToString())
-            .UsingJobData("reminderText", item.ReminderText)
-            .UsingJobData("reminderID", item.id)
+            .UsingJobData(REMINDERTEXT, item.ReminderText)
+            .UsingJobData(REMINDERID, item.id)
             .Build();
 
         var trigger = TriggerBuilder.Create();
@@ -127,12 +133,37 @@ public class ReminderManager : ObservableCollection<Reminder>, IReminderManager,
 
     public Task JobWasExecuted(IJobExecutionContext context, JobExecutionException? jobException, CancellationToken cancellationToken = default)
     {
-        var reminderId = context.JobDetail.JobDataMap.GetIntValue("reminderID");
-        Reminder reminder = this.First((r => r.id == reminderId));
-        if (reminder != null && reminder.Recurrence == Reminder.RecurrenceType.None)
-        {
-            _ = RemoveReminder(reminder);
-        }
+        var reminderId = context.JobDetail.JobDataMap.GetIntValue(REMINDERID);
+        var reminderText = context.JobDetail.JobDataMap.GetString(REMINDERTEXT);
+        Reminder? reminder = this.FirstOrDefault(r => r.id == reminderId);
+
+        synchronizationContext.Post((state)=> {
+            var dlg = new NotificationWindow(reminderText ?? "");
+            dlg.Owner = ((App) Application.Current).MainWindow;
+            dlg.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+            
+            var result = dlg.ShowDialog();
+            if (dlg.Snoozed)
+            {
+                Reminder newReminder = new Reminder
+                {
+                    id = 10000 + Random.Shared.Next(),
+                    Recurrence = Reminder.RecurrenceType.None,
+                    ReminderText = reminderText,
+                    ReminderTime = context.Trigger.StartTimeUtc.DateTime.AddMinutes(10)
+                };
+
+                this.ScheduleReminder(newReminder);
+            }
+
+            if (reminder != null && reminder.Recurrence == Reminder.RecurrenceType.None && reminderId != 0)
+            {                
+                _ = RemoveReminder(reminder);
+            }
+        },null);
+        
+       
+
         return Task.CompletedTask;
 
     }

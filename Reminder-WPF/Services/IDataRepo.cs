@@ -15,5 +15,7 @@ namespace Reminder_WPF.Services
         
         Task<List<Reminder>> GetRemindersAsync();
 
+        Task<Reminder?> GetReminderByIdAsync(int id);
+
     }
 }

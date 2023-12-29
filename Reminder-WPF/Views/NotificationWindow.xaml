@@ -26,7 +26,7 @@
                 HorizontalAlignment="Stretch"
                 Padding="20"
                 TextWrapping="Wrap"
-                Text="{Binding Reminder.ReminderText}" 
+                Text="{Binding ReminderText}" 
                 FontFamily="Arial Rounded MT Bold" 
                 FontWeight="Bold" FontSize="32"
                 TextAlignment="Center" VerticalAlignment="Center"

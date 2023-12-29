@@ -64,7 +64,11 @@ namespace Reminder_WPF.Services
                 return AddReminder(item);
             });
         }
-
+        public bool DeleteReminder(Reminder item)
+        {
+            list.Remove(item);
+            return true;
+        }
 
         public async Task<bool> DeleteReminderAsync(Reminder item)
         {
@@ -73,14 +77,17 @@ namespace Reminder_WPF.Services
                 return DeleteReminder(item);
             });
         }
-
-        public bool DeleteReminder(Reminder item)
+        private Reminder? GetReminderById(int id)
         {
-            list.Remove(item);
-            return true;
+            return list.SingleOrDefault(r => r.id == id);
         }
-        
-        
+
+        public async Task<Reminder?> GetReminderByIdAsync(int id)
+        {
+            return await Task.Run(() => {
+                return GetReminderById(id);
+            });
+        }
 
     }
 }
