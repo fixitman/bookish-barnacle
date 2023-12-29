@@ -14,6 +14,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Resources\icons8-reminder-48.png" />
+    <None Remove="Resources\icons8-reminder-96.png" />
     <None Remove="Resources\List2.ico" />
     <None Remove="Resources\Red.ico" />
   </ItemGroup>
@@ -33,6 +35,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Resource Include="Resources\icons8-reminder-48.png" />
+    <Resource Include="Resources\icons8-reminder-96.png" />
     <Resource Include="Resources\List2.ico">
       <CopyToOutputDirectory></CopyToOutputDirectory>
     </Resource>
