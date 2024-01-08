@@ -25,7 +25,7 @@ namespace Reminder_WPF.Views
     {
         [ObservableProperty]
         private string reminderText;
-        public bool Snoozed { get; private set; } = false;
+        public bool WasSnoozed { get; private set; } = false;
 
         public NotificationWindow(string reminderText)
         {
@@ -36,14 +36,14 @@ namespace Reminder_WPF.Views
 
         private void Dismiss_Click(object sender, RoutedEventArgs e)
         {
-            Snoozed = false;
+            WasSnoozed = false;
             this.DialogResult = true;
 
         }
 
         private void Snooze_Click(object sender, RoutedEventArgs e)
         {
-            Snoozed = true;
+            WasSnoozed = true;
             this.DialogResult = true;
         }
     }

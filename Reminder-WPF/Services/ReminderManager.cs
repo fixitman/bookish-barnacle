@@ -63,7 +63,7 @@ public class ReminderManager : ObservableCollection<Reminder>, IReminderManager,
         }
     }
 
-    private void ScheduleReminder(Reminder item)
+    public void ScheduleReminder(Reminder item)
     {
         logger.LogDebug("ScheduleReminder");
         var job = JobBuilder.Create<ReminderJob>()
@@ -137,30 +137,12 @@ public class ReminderManager : ObservableCollection<Reminder>, IReminderManager,
         var reminderText = context.JobDetail.JobDataMap.GetString(REMINDERTEXT);
         Reminder? reminder = this.FirstOrDefault(r => r.id == reminderId);
 
-        synchronizationContext.Post((state)=> {
-            var dlg = new NotificationWindow(reminderText ?? "");
-            dlg.Owner = ((App) Application.Current).MainWindow;
-            dlg.WindowStartupLocation = WindowStartupLocation.CenterOwner;
-            
-            var result = dlg.ShowDialog();
-            if (dlg.Snoozed)
-            {
-                Reminder newReminder = new Reminder
-                {
-                    id = 10000 + Random.Shared.Next(),
-                    Recurrence = Reminder.RecurrenceType.None,
-                    ReminderText = reminderText,
-                    ReminderTime = context.Trigger.StartTimeUtc.DateTime.AddMinutes(10)
-                };
-
-                this.ScheduleReminder(newReminder);
-            }
-
-            if (reminder != null && reminder.Recurrence == Reminder.RecurrenceType.None && reminderId != 0)
-            {                
-                _ = RemoveReminder(reminder);
-            }
-        },null);
+        
+        
+        if (reminder != null && reminder.Recurrence == Reminder.RecurrenceType.None && reminderId != 0)
+        {
+            _ = RemoveReminder(reminder);
+        }
         
        
 

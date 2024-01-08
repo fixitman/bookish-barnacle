@@ -8,5 +8,7 @@ namespace Reminder_WPF.Services
         Task AddReminder(Reminder item);
         Task RemoveReminder(Reminder item);
         Task UpdateReminder(Reminder item);
+        void ScheduleReminder(Reminder item);
+
     }
 }
