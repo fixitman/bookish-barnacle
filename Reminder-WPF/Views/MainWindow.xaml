@@ -23,9 +23,9 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <Menu Grid.Row="0" Grid.ColumnSpan="2">
+        <!--<Menu Grid.Row="0" Grid.ColumnSpan="2">
             <MenuItem Header="File" />
-        </Menu>
+        </Menu>-->
 
         <ListView x:Name="ReminderList"
                       Grid.Column="0" Grid.Row="1" Grid.RowSpan="3" 
