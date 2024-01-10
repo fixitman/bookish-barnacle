@@ -46,5 +46,11 @@ namespace Reminder_WPF.Views
             WasSnoozed = true;
             this.DialogResult = true;
         }
+
+        protected override void OnContentRendered(EventArgs e)
+        {
+            base.OnContentRendered(e);
+            this.Activate();
+        }
     }
 }

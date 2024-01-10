@@ -34,8 +34,7 @@ public class ReminderJob : IJob
             {
                 var dlg = new NotificationWindow(reminderText ?? "Empty");
                 dlg.Owner = ((App)Application.Current).MainWindow;
-                dlg.WindowStartupLocation = WindowStartupLocation.CenterOwner;
-                dlg.Activate();
+                dlg.WindowStartupLocation = WindowStartupLocation.CenterOwner;                
 
                 var result = dlg.ShowDialog();
                 if (dlg.WasSnoozed)
