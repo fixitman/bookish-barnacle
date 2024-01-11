@@ -67,6 +67,11 @@ namespace Reminder_WPF.Views
             {
                 ErrorMessage = "Invalid Date or Time";
                 return;
+            }            
+            if (Reminder.Recurrence == Reminder.RecurrenceType.Weekly && string.IsNullOrEmpty(WeeklyControl.Text))
+            {
+                ErrorMessage = "You must select at least one day";
+                return;
             }
             var dt = new DateTime(d.Year, d.Month, d.Day, t.Hour, t.Minute, 0);
             Reminder.ReminderTime = dt;
@@ -131,6 +136,7 @@ namespace Reminder_WPF.Views
             if(Reminder.Recurrence == Reminder.RecurrenceType.Weekly)
             {
                 Reminder.RecurrenceData = WeeklyControl.Text;
+                
             }
         }
 
