@@ -44,8 +44,9 @@
             <ListView.View>
                 <GridView>
                     <GridView.Columns>
-                        <GridViewColumn Header="What" Width="400" DisplayMemberBinding="{Binding ReminderText}"/>
+                        <GridViewColumn Header="What" Width="300" DisplayMemberBinding="{Binding ReminderText}"/>
                         <GridViewColumn Header="When" Width="150" DisplayMemberBinding="{Binding ReminderTime, StringFormat={}{0:MM/dd/yyyy h:mm tt}}"/>
+                        <GridViewColumn Header="Recurrence" Width="100" DisplayMemberBinding="{Binding Recurrence}"/>
                     </GridView.Columns>
                 </GridView>
             </ListView.View>
