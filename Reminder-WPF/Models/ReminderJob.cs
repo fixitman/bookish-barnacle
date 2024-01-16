@@ -35,7 +35,7 @@ public class ReminderJob : IJob
                 var dlg = new NotificationWindow(reminderText ?? "Empty");
                 dlg.Owner = ((App)Application.Current).MainWindow;
                 dlg.WindowStartupLocation = WindowStartupLocation.CenterOwner;                
-
+                System.Media.SystemSounds.Exclamation.Play();
                 var result = dlg.ShowDialog();
                 if (dlg.WasSnoozed)
                 {
@@ -53,8 +53,6 @@ public class ReminderJob : IJob
             
             
         }
-
-
         return Task.CompletedTask;
     }
 
