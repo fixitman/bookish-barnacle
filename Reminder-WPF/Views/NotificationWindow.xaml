@@ -6,6 +6,8 @@
         xmlns:local="clr-namespace:Reminder_WPF.Views"
         mc:Ignorable="d"
         Title="Notification" Height="350" Width="500"
+        WindowStyle="None"
+        ResizeMode="NoResize"
         >
     <Grid Background="Beige" >
         <Grid.RowDefinitions>
