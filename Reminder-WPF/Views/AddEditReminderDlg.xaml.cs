@@ -1,17 +1,15 @@
-﻿using System.Windows;
-using System;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using Reminder_WPF.Models;
+using System;
 using System.Text.Json;
-using System.Globalization;
-using CommunityToolkit.Mvvm.ComponentModel;
-using System.Collections;
+using System.Windows;
 using System.Windows.Controls;
 
 namespace Reminder_WPF.Views
 {
 
     [ObservableObject]
-    public  partial class AddEditReminderDlg : Window
+    public  partial class AddEditReminderDlg : Window, IDisposable
     {
         public Reminder Reminder { get; set; }
         
@@ -140,6 +138,10 @@ namespace Reminder_WPF.Views
             }
         }
 
-
+        public void Dispose()
+        {
+            txtTime.GotKeyboardFocus -= SelectAallOnKeyboardFocus;
+            txtReminderText.GotKeyboardFocus -= SelectAallOnKeyboardFocus;
+        }
     }
 }
