@@ -19,9 +19,6 @@ namespace Reminder_WPF.Services
     {
         private readonly ILogger<APIReminderRepo> _logger;
         private readonly IAPIManager _api;
-        private string APIBase = "";
-        private string host;
-        private int port;
         private string basePath;
         private HttpClient client;
 
@@ -64,17 +61,16 @@ namespace Reminder_WPF.Services
         }
     }
 
-    public class IAPIManager
+    public class APIManager : IAPIManager
     {
         private readonly IConfiguration _configuration;
         private string host;
         private int port;
-
-        public string? BasePath { get; internal set; }
+        public string BasePath { get; internal set; }
         private string _currentToken = "";
         private DateTime TokenExpires = DateTime.Now.AddMinutes(-1);
 
-        public IAPIManager(IConfiguration configuration)
+        public APIManager(IConfiguration configuration)
         {
             _configuration = configuration;
             var API = _configuration.GetSection("API");
