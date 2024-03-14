@@ -2,8 +2,6 @@
 {
     public interface IAPIManager
     {
-        string BasePath { get; }
-
-        string GetToken();
+       string? GetToken();
     }
 }
