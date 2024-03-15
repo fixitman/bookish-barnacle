@@ -16,7 +16,7 @@ namespace Reminder_WPF.Services
     {
         private readonly ILogger<APIReminderRepo> _logger;
         private readonly IAPIManager _api;
-        private string basePath;
+       
         private HttpClient _client;
 
         public APIReminderRepo(HttpClient client, ILogger<APIReminderRepo> logger, IAPIManager api)
@@ -25,10 +25,11 @@ namespace Reminder_WPF.Services
             _api = api;
 
             _client = client;
+
             _client.BaseAddress = new Uri(_api.BasePath);
             _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", _api.GetToken());
             
-            _logger.LogInformation($"API BasePath = {basePath}");           
+            _logger.LogInformation($"API BasePath = {_api.BasePath}");           
         }
         public async Task<List<Reminder>> GetRemindersAsync()
         {
@@ -69,59 +70,6 @@ namespace Reminder_WPF.Services
         {
             throw new NotImplementedException();
         }
-
-
-    }
-
-    public class APIManager : IAPIManager
-    {
-        private HttpClient _client;
-        private string host;
-        private int port;
-        public string BasePath { get; internal set; }
-        private string _currentToken = "";
-        private DateTime TokenExpires = DateTime.Now.AddMinutes(-1);
-
-        public APIManager(HttpClient client)
-        {
-            _client = client;
-            host = AppSettings.Default.API_Host;
-            port = AppSettings.Default.API_Port;
-            BasePath = $"http://{host}:{port}/";
-            
-            _currentToken = AppSettings.Default.API_Token;
-            TokenExpires = AppSettings.Default.API_TokenExpiration;
-            
-            _client.BaseAddress = new Uri(BasePath);
-            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", GetToken() );
-        }
-
-        public string? GetToken()
-        {
-            if(TokenExpires > DateTime.Now)
-            {
-                return _currentToken;
-            }
-
-            var body = new LoginModel {UserName=AppSettings.Default.API_Username, password=AppSettings.Default.API_Password};
-            var result = _client.PostAsJsonAsync<LoginModel>("Account/login", body).Result;
-            if(result.IsSuccessStatusCode)
-            {
-                var t = result.Content.ReadFromJsonAsync<LoginResponse>().Result;
-                if(t != null)
-                {
-                    AppSettings.Default.API_Token = t.token;
-                    _currentToken = t.token;
-                    AppSettings.Default.API_TokenExpiration = DateTime.Parse(t.expiration);
-                    TokenExpires = DateTime.Parse(t.expiration);
-                    return t.token;
-                }
-            }
-
-            return null;
-            
-        }
-
 
 
     }
