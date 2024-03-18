@@ -52,7 +52,7 @@ namespace Reminder_WPF
                     });
                     //services.AddSingleton<IDataRepo, SQLiteReminderRepo>();
                     services.AddSingleton<IDataRepo, APIReminderRepo>();
-                    services.AddSingleton<IAPIManager, APIManager>();
+                    //services.AddSingleton<IAPIManager, APIManager>();
                     services.AddHttpClient();
                 })
                 .UseSerilog()

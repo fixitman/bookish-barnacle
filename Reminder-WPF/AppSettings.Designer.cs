@@ -61,7 +61,7 @@ namespace Reminder_WPF {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("172.16.240.153")]
+        [global::System.Configuration.DefaultSettingValueAttribute("fixitmanmike2.ddns.net")]
         public string API_Host {
             get {
                 return ((string)(this["API_Host"]));
@@ -73,7 +73,7 @@ namespace Reminder_WPF {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("5000")]
+        [global::System.Configuration.DefaultSettingValueAttribute("80")]
         public int API_Port {
             get {
                 return ((int)(this["API_Port"]));

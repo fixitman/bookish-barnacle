@@ -18,24 +18,20 @@ namespace Reminder_WPF.Services
         public APIManager(HttpClient client)
         {
             _client = client;
-            host = AppSettings.Default.API_Host;
-            port = AppSettings.Default.API_Port;
-            BasePath = $"http://{host}:{port}/";
-
+           
             CurrentToken = AppSettings.Default.API_Token;
             TokenExpiration = AppSettings.Default.API_TokenExpiration;
 
-            _client.BaseAddress = new Uri(BasePath);
             _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", GetToken());
 
         }
 
         public string? GetToken(string username, string password)
         {
-            if (TokenExpiration > DateTime.Now)
-            {
-                return CurrentToken;
-            }
+            //if (TokenExpiration > DateTime.Now)
+            //{
+            //    return CurrentToken;
+            //}
 
             var body = new LoginModel { UserName = username, password = password };
             var result = _client.PostAsJsonAsync<LoginModel>("Account/login", body).Result;
@@ -60,7 +56,8 @@ namespace Reminder_WPF.Services
         {
             var UserName = AppSettings.Default.API_Username;
             var password = AppSettings.Default.API_Password;
-            return GetToken(UserName, password);
+            var t = GetToken(UserName, password);
+            return t;
         }
 
 

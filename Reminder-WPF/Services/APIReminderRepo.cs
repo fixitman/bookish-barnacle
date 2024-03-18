@@ -12,65 +12,96 @@ using System.Windows.Controls;
 
 namespace Reminder_WPF.Services
 {
-    internal class APIReminderRepo : IDataRepo
+    public class APIReminderRepo : IDataRepo
     {
+        private readonly IHttpClientFactory _factory;
         private readonly ILogger<APIReminderRepo> _logger;
-        private readonly IAPIManager _api;
        
-        private HttpClient _client;
-
-        public APIReminderRepo(HttpClient client, ILogger<APIReminderRepo> logger, IAPIManager api)
+        public APIReminderRepo(IHttpClientFactory factory, ILogger<APIReminderRepo> logger)
         {
-            _logger = logger;
-            _api = api;
-
-            _client = client;
-
-            _client.BaseAddress = new Uri(_api.BasePath);
-            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", _api.GetToken());
-            
-            _logger.LogInformation($"API BasePath = {_api.BasePath}");           
+            _factory = factory;
+            _logger = logger;                      
         }
+        
+        
         public async Task<List<Reminder>> GetRemindersAsync()
         {
-            var r = await _client.GetAsync("Reminders");
-            
-            r.EnsureSuccessStatusCode();
-            var data = await r.Content.ReadFromJsonAsync<List<Reminder>>();
-            return data;
-            
-        }
+            using(var client = await GetClient())
+            {
 
+            }
+            return new List<Reminder>();
+
+
+            //using (var client = GetClient())
+            //{
+            //    var result = client.GetAsync("Reminders").Result;
+            //    result.EnsureSuccessStatusCode();
+            //    var data = await result.Content.ReadFromJsonAsync<List<Reminder>>();
+            //    client.Dispose();
+            //    return data;         
+            //}
+
+
+
+        }
 
         public async Task<Reminder?> GetReminderByIdAsync(int id)
         {
-            var reminder = await _client.GetFromJsonAsync<Reminder?>($"reminders/{id}");
+            using var client = await GetClient();
+            var reminder = await client.GetFromJsonAsync<Reminder?>($"reminders/{id}");
             return reminder;
         }
 
-
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        /*============================================================================================*/
-
-
-        public Task<Reminder> AddReminderAsync(Reminder item)
+        public async Task<Reminder?> AddReminderAsync(Reminder item)
         {
-            throw new NotImplementedException();
+            using var client = await GetClient();
+            var result = await client.PostAsJsonAsync<Reminder>($"reminders", item);
+            if (result != null)
+            {
+                var reminder = await result.Content.ReadFromJsonAsync<Reminder>();
+                return reminder;
+            }
+            return null;
+
         }
 
-        public Task<bool> DeleteReminderAsync(Reminder item)
+        public async Task<bool> DeleteReminderAsync(Reminder item)
         {
-            throw new NotImplementedException();
+            using var client = await GetClient();
+            var result = await client.DeleteAsync($"reminders/{item.id}");
+            return result.IsSuccessStatusCode;
         }
 
+        private async Task<HttpClient> GetClient()
+        {
+            var client = _factory.CreateClient();
+            client.BaseAddress = new Uri($"http://{AppSettings.Default.API_Host}:{AppSettings.Default.API_Port}");
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", await GetToken());
+            return client;
+        }
 
+        private async Task<string?> GetToken()
+        {
+            //if (AppSettings.Default.API_TokenExpiration > DateTime.Now)
+            //{
+            //    return AppSettings.Default.API_Token;
+            //}
+
+            using (var client = _factory.CreateClient()) 
+            {
+                client.BaseAddress = new Uri($"http://{AppSettings.Default.API_Host}:{AppSettings.Default.API_Port}");
+                var login = new LoginModel { UserName = AppSettings.Default.API_Username, password = AppSettings.Default.API_Password };
+                var r = await client.PostAsJsonAsync<LoginModel>("Account/login", login);
+                if (r.IsSuccessStatusCode)
+                {
+                    var token = await r.Content.ReadFromJsonAsync<LoginResponse>();
+                    AppSettings.Default.API_Token = token.token;
+                    AppSettings.Default.API_TokenExpiration = DateTime.Parse(token.expiration);
+                    return token.token;
+                }
+                return null;
+            }
+        }
     }
 }

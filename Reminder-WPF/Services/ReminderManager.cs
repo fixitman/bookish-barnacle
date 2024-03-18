@@ -58,8 +58,11 @@ public class ReminderManager : ObservableCollection<Reminder>, IReminderManager,
         }
         if (r != null)
         {
-            Add(r);
-            ScheduleReminder(r);
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                Add(r);
+                ScheduleReminder(r);
+            }, null);
         }
     }
 
