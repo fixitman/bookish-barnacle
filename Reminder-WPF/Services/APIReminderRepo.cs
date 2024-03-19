@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Logging;
 using Reminder_WPF.Models;
 using Reminder_WPF.Utilities;
+using Reminder_WPF.Views;
 using System;
 using System.Collections.Generic;
 using System.Net;
@@ -110,12 +111,15 @@ namespace Reminder_WPF.Services
 
         private async Task<string?> GetToken()
         {
-            if (AppSettings.Default.API_TokenExpiration > DateTime.Now)
-            {
-                _logger.LogInformation("Token OK. No Update");
-                return AppSettings.Default.API_Token;
-            }
+            //if (AppSettings.Default.API_TokenExpiration > DateTime.Now)
+            //{
+            //    _logger.LogInformation("Token OK. No Update");
+            //    return AppSettings.Default.API_Token;
+            //}
 
+            LoginModel credentials = GetCredentials();
+            
+            
             using (var client = _factory.CreateClient()) 
             {
                 client.BaseAddress = new Uri($"http://{AppSettings.Default.API_Host}:{AppSettings.Default.API_Port}");
@@ -135,6 +139,24 @@ namespace Reminder_WPF.Services
                 }
                 return null;
             }
+        }
+
+        private LoginModel GetCredentials()
+        {
+            LoginModel Credentials = new LoginModel();
+            //if (AppSettings.Default.API_RememberCredentials)
+            //{
+            //    Credentials.UserName = AppSettings.Default.API_Username;
+            //    Credentials.password = AppSettings.Default.API_Password;
+            //    return Credentials;
+            //}
+
+            var dlg = new CredentialsDialog(Credentials);
+            if(dlg.ShowDialog() == true)
+            {
+                return Credentials;
+            }
+            return new LoginModel();
         }
     }
 }

@@ -109,7 +109,7 @@ namespace Reminder_WPF {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
         public bool API_RememberCredentials {
             get {
                 return ((bool)(this["API_RememberCredentials"]));
