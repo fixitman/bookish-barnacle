@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Logging;
 using Quartz;
 using Reminder_WPF.Models;
+using Reminder_WPF.Utilities;
 using Reminder_WPF.Views;
 using System;
 using System.Collections.Generic;
@@ -34,14 +35,23 @@ public class ReminderManager : ObservableCollection<Reminder>, IReminderManager,
         Scheduler.ListenerManager.AddJobListener(this);
         Task.Run(async () =>
         {
-            foreach (Reminder r in await DataRepo.GetRemindersAsync())
+            var result = await DataRepo.GetRemindersAsync();
+            if (result.Success)
             {
-                await AddReminder(r);
+                foreach (Reminder r in result.Value)
+                {
+                    await AddReminder(r);
+                }
+            }
+            else
+            {
+                ShowError(result.Error);
             }
 
         });
 
     }
+
 
     public async Task AddReminder(Reminder item)
     {
@@ -50,7 +60,15 @@ public class ReminderManager : ObservableCollection<Reminder>, IReminderManager,
         Reminder r = item;
         if (item.id == 0)
         {
-            r = await DataRepo.AddReminderAsync(item);
+            var result = await DataRepo.AddReminderAsync(item);
+            if (result.Success)
+            {
+                r = result.Value;
+            }
+            else
+            {
+                ShowError(result.Error);
+            }
         }
         if (r != null)
         {
@@ -60,6 +78,7 @@ public class ReminderManager : ObservableCollection<Reminder>, IReminderManager,
                 ScheduleReminder(r);
             }, null);
         }
+        
     }
 
     public void ScheduleReminder(Reminder item)
@@ -97,14 +116,20 @@ public class ReminderManager : ObservableCollection<Reminder>, IReminderManager,
     {
         _logger.LogDebug("RemoveReminder");
         if (item == null) return;
-        await DataRepo.DeleteReminderAsync(item);
-        await Scheduler.DeleteJob(new JobKey(item.id.ToString()));
-        var r = this.Where(r => r.id == item.id).First();
-        Application.Current.Dispatcher.Invoke(() =>
+        var result = await DataRepo.DeleteReminderAsync(item);
+        if (result.IsFailure)
         {
-            Remove(r);
-        }, null);
-        
+            ShowError(result.Error);
+        }
+        else
+        {
+            await Scheduler.DeleteJob(new JobKey(item.id.ToString()));
+            var r = this.Where(r => r.id == item.id).First();
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                Remove(r);
+            }, null);
+        }
     }
 
     public async Task UpdateReminder(Reminder item)
@@ -119,6 +144,10 @@ public class ReminderManager : ObservableCollection<Reminder>, IReminderManager,
         }
     }
 
+    private static void ShowError(string error)
+    {
+        MessageBox.Show(error, "Reminders - Error", MessageBoxButton.OK, MessageBoxImage.Error);
+    }
 
 
     public Task JobToBeExecuted(IJobExecutionContext context, CancellationToken cancellationToken = default)

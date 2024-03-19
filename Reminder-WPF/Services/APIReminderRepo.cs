@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Reminder_WPF.Models;
+using Reminder_WPF.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Net;
@@ -24,44 +25,79 @@ namespace Reminder_WPF.Services
         }
         
         
-        public async Task<List<Reminder>> GetRemindersAsync()
+        public async Task<Result<List<Reminder>>> GetRemindersAsync()
         {
-            using (var client = await GetClient())
+            try
             {
-                var result = client.GetAsync("Reminders").Result;
+                using (var client = await GetClient())
+                {
+                    var result = await client.GetAsync("Reminders");
+                    result.EnsureSuccessStatusCode();
+                    var data = await result.Content.ReadFromJsonAsync<List<Reminder>>();
+                    return Result.Ok(data?? new List<Reminder>());
+                }
+            }
+            catch (HttpRequestException e)
+            {
+                _logger.LogCritical($"Exception Thrown: {e.Message}");
+                return Result.Fail<List<Reminder>>(e.Message);
+            }
+
+        }
+
+        public async Task<Result<Reminder?>> GetReminderByIdAsync(int id)
+        {
+            try
+            {
+                using var client = await GetClient();
+                var result = await client.GetAsync($"reminders/{id}");
                 result.EnsureSuccessStatusCode();
-                var data = await result.Content.ReadFromJsonAsync<List<Reminder>>();
-                client.Dispose();
-                return data;
+                var reminder = await result.Content.ReadFromJsonAsync<Reminder?>();
+                return Result.Ok(reminder);
             }
-
-        }
-
-        public async Task<Reminder?> GetReminderByIdAsync(int id)
-        {
-            using var client = await GetClient();
-            var reminder = await client.GetFromJsonAsync<Reminder?>($"reminders/{id}");
-            return reminder;
-        }
-
-        public async Task<Reminder?> AddReminderAsync(Reminder item)
-        {
-            using var client = await GetClient();
-            var result = await client.PostAsJsonAsync<Reminder>($"reminders", item);
-            if (result != null)
+            catch (HttpRequestException e)
             {
-                var reminder = await result.Content.ReadFromJsonAsync<Reminder>();
-                return reminder;
+                _logger.LogCritical($"Exception Thrown: {e.Message}");
+                return Result.Fail<Reminder?>(e.Message);
             }
-            return null;
+        }
+
+        public async Task<Result<Reminder?>> AddReminderAsync(Reminder item)
+        {
+            try
+            {
+                using var client = await GetClient();
+                var result = await client.PostAsJsonAsync<Reminder>($"reminders", item);
+                result.EnsureSuccessStatusCode();
+                if (result != null)
+                {
+                    var reminder = await result.Content.ReadFromJsonAsync<Reminder>();
+                    return Result.Ok(reminder);
+                }
+                return Result.Ok<Reminder?>(null);
+            }
+            catch (HttpRequestException e)
+            {
+                _logger.LogCritical($"Exception Thrown: {e.Message}");
+                return Result.Fail<Reminder?>(e.Message);
+            }
 
         }
 
-        public async Task<bool> DeleteReminderAsync(Reminder item)
+        public async Task<Result> DeleteReminderAsync(Reminder item)
         {
-            using var client = await GetClient();
-            var result = await client.DeleteAsync($"reminders/{item.id}");
-            return result.IsSuccessStatusCode;
+            try
+            {
+                using var client = await GetClient();
+                var result = await client.DeleteAsync($"reminders/{item.id}");
+                result.EnsureSuccessStatusCode();
+                return Result.Ok();
+            }
+            catch (HttpRequestException e)
+            {
+                _logger.LogCritical($"Exception Thrown: {e.Message}");
+                return Result.Fail(e.Message);
+            }
         }
 
         private async Task<HttpClient> GetClient()
@@ -88,10 +124,14 @@ namespace Reminder_WPF.Services
                 if (r.IsSuccessStatusCode)
                 {
                     var token = await r.Content.ReadFromJsonAsync<LoginResponse>();
-                    AppSettings.Default.API_Token = token.token;
-                    AppSettings.Default.API_TokenExpiration = DateTime.Parse(token.expiration);
-                    _logger.LogInformation($"New Tolen : {token.token}");
-                    return token.token;
+                    if(token != null)
+                    {
+                        AppSettings.Default.API_Token = token.token;
+                        AppSettings.Default.API_TokenExpiration = DateTime.Parse(token.expiration);
+                        AppSettings.Default.Save();
+                        _logger.LogInformation($"New Tolen : {token.token}");
+                        return token.token;
+                    }
                 }
                 return null;
             }

@@ -2,6 +2,7 @@
 using Microsoft.Data.Sqlite;
 using Microsoft.Extensions.Logging;
 using Reminder_WPF.Models;
+using Reminder_WPF.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -50,12 +51,13 @@ PRIMARY KEY(id AUTOINCREMENT)
         
     }
 
-    public async Task<Reminder> AddReminderAsync(Reminder item)
+    public async Task<Result<Reminder>> AddReminderAsync(Reminder item)
     {
-
         logger.LogDebug("AddReminderAsync");
-        using SqliteConnection conn = new SqliteConnection(_connectionString);
-        string sql = @"
+        try
+        {
+            using SqliteConnection conn = new SqliteConnection(_connectionString);
+            string sql = @"
 INSERT INTO Reminders
 (ReminderText,
 ReminderTime, 
@@ -65,51 +67,89 @@ VALUES (@ReminderText,
 @ReminderTime,
 @Recurrence,
 @RecurrenceData);
-SELECT last_insert_rowid();";            
-        var newId = await conn.ExecuteScalarAsync<int>(sql, item);
-        item.id = newId;
-        return item;
+SELECT last_insert_rowid();";
+            var newId = await conn.ExecuteScalarAsync<int>(sql, item);
+            item.id = newId;
+            return Result.Ok(item);
+        }
+        catch (Exception e)
+        {
+            logger.LogError($"There was a problem. {e.Message}");
+            return Result.Fail<Reminder>(e.Message);
+        }
     }
 
-    public async Task<bool> DeleteReminderAsync(Reminder item)
+    public async Task<Result> DeleteReminderAsync(Reminder item)
     {
         logger.LogDebug("DeleteReminderAsync");
-        using SqliteConnection conn = new SqliteConnection(_connectionString);
-        string sql = @"
+        try
+        {
+            using SqliteConnection conn = new SqliteConnection(_connectionString);
+            string sql = @"
 DELETE FROM REMINDERS 
 WHERE ID = @ID;
 SELECT CHANGES();
 ";
-        var numDeleted = await conn.ExecuteScalarAsync<int>(sql, new {ID = item.id});
-        return numDeleted > 0;
+           await conn.ExecuteScalarAsync<int>(sql, new { ID = item.id });
+           return Result.Ok();
+        }
+        catch (Exception e )
+        {
+            logger.LogError($"There was a problem. {e.Message}");
+            return Result.Fail(e.Message);
+        }
     }
 
-    public async Task<bool> DeleteOldRemindersAsync()
+    public async Task<Result> DeleteOldRemindersAsync()
     {
         logger.LogDebug("DeleteOldRemindersAsync");
-        using SqliteConnection conn = new SqliteConnection(_connectionString);
-        string sql = @"
+        try
+        {
+            using SqliteConnection conn = new SqliteConnection(_connectionString);
+            string sql = @"
 DELETE FROM REMINDERS 
 WHERE ReminderTime < datetime(""now"") and Recurrence = 0;
 SELECT CHANGES();
 ";
-        var numDeleted = await conn.ExecuteScalarAsync<int>(sql);
-        return numDeleted > 0;
+            await conn.ExecuteScalarAsync<int>(sql);
+            return Result.Ok();
+        }
+        catch (Exception e)
+        {
+            logger.LogError($"There was a problem. {e.Message}");
+            return Result.Fail(e.Message);
+        }
     }
 
-    public async Task<List<Reminder>> GetRemindersAsync()
+    public async Task<Result<List<Reminder>>> GetRemindersAsync()
     {
         logger.LogDebug("GetRemindersAsync");
-        using SqliteConnection conn = new SqliteConnection(_connectionString);
-        var result = await conn.QueryAsync<Reminder>(@"select * from Reminders");
-        return result.ToList();
+        try
+        {
+            using SqliteConnection conn = new SqliteConnection(_connectionString);
+            var reminders = await conn.QueryAsync<Reminder>(@"select * from Reminders");
+            return Result.Ok(reminders.ToList());
+        }
+        catch (Exception e)
+        {
+            logger.LogError($"There was a problem. {e.Message}");
+            return Result.Fail<List<Reminder>>(e.Message);
+        }
     }
 
-    public async Task<Reminder?> GetReminderByIdAsync(int id)
+    public async Task<Result<Reminder?>> GetReminderByIdAsync(int id)
     {
         logger.LogDebug($"GetReminderByIdAsync ({id})");
-        using SqliteConnection conn = new SqliteConnection(_connectionString);
-        var result = await conn.QueryFirstOrDefaultAsync<Reminder>(@"select * from Reminders where id = @id",new {id = id});
-        return result;
+        try
+        {
+            using SqliteConnection conn = new SqliteConnection(_connectionString);
+            Reminder? reminder = await conn.QueryFirstOrDefaultAsync<Reminder?>(@"select * from Reminders where id = @id", new { id = id });
+            return Result.Ok(reminder);
+        }
+        catch (Exception e)
+        {
+            logger.LogError($"There was a problem. {e.Message}");
+            return Result.Fail<Reminder?>(e.Message);
+        }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Reminder_WPF.Models;
+using Reminder_WPF.Utilities;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -7,15 +8,15 @@ namespace Reminder_WPF.Services
     public interface IDataRepo
     {
         
-        Task<Reminder> AddReminderAsync(Reminder item);
+        Task<Result<Reminder>> AddReminderAsync(Reminder item);
 
         
-        Task<bool> DeleteReminderAsync(Reminder item);
+        Task<Result> DeleteReminderAsync(Reminder item);
 
         
-        Task<List<Reminder>> GetRemindersAsync();
+        Task<Result<List<Reminder>>> GetRemindersAsync();
 
-        Task<Reminder?> GetReminderByIdAsync(int id);
+        Task<Result<Reminder?>> GetReminderByIdAsync(int id);
 
     }
 }

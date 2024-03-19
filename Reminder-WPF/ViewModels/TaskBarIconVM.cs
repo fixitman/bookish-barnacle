@@ -32,7 +32,7 @@ namespace Reminder_WPF.ViewModels
         void ShowMainWindow()
         {
             Application.Current.MainWindow.Show();
-            Application.Current.MainWindow.Topmost = true;  
+            //Application.Current.MainWindow.Topmost = true;  
             Application.Current.MainWindow.Activate();
         }
 
