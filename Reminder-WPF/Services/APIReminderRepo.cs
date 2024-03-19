@@ -26,13 +26,6 @@ namespace Reminder_WPF.Services
         
         public async Task<List<Reminder>> GetRemindersAsync()
         {
-            //using(var client = await GetClient())
-            //{
-
-            //}
-            //return new List<Reminder>();
-
-
             using (var client = await GetClient())
             {
                 var result = client.GetAsync("Reminders").Result;
@@ -41,8 +34,6 @@ namespace Reminder_WPF.Services
                 client.Dispose();
                 return data;
             }
-
-
 
         }
 

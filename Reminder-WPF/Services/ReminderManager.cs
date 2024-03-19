@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using Quartz;
 using Reminder_WPF.Models;
 using Reminder_WPF.Views;
@@ -18,20 +19,15 @@ public class ReminderManager : ObservableCollection<Reminder>, IReminderManager,
     public static readonly string REMINDERTEXT = "reminderText";
     public static readonly string REMINDERID = "reminderID";
 
-
-    private readonly ILogger logger;
-    private readonly SynchronizationContext synchronizationContext;
-
+    private readonly ILogger _logger;    
     private IDataRepo DataRepo { get; }
     private IScheduler Scheduler { get; }
-
 
     public string Name => "ReminderManager";
 
     public ReminderManager(IDataRepo dataRepo, IScheduler scheduler, ILogger<ReminderManager> logger)
     {
-        this.logger = logger;
-        synchronizationContext = SynchronizationContext.Current!;
+        _logger = logger;
         logger.LogDebug("ReminderManager");
         DataRepo = dataRepo;
         Scheduler = scheduler;
@@ -49,7 +45,7 @@ public class ReminderManager : ObservableCollection<Reminder>, IReminderManager,
 
     public async Task AddReminder(Reminder item)
     {
-        logger.LogDebug("AddReminder");
+        _logger.LogDebug("AddReminder");
         if (item == null) return;
         Reminder r = item;
         if (item.id == 0)
@@ -68,7 +64,7 @@ public class ReminderManager : ObservableCollection<Reminder>, IReminderManager,
 
     public void ScheduleReminder(Reminder item)
     {
-        logger.LogDebug("ScheduleReminder");
+        _logger.LogDebug("ScheduleReminder");
         var job = JobBuilder.Create<ReminderJob>()
             .WithIdentity(item.id.ToString())
             .UsingJobData(REMINDERTEXT, item.ReminderText)
@@ -99,20 +95,21 @@ public class ReminderManager : ObservableCollection<Reminder>, IReminderManager,
 
     public async Task RemoveReminder(Reminder item)
     {
-        logger.LogDebug("RemoveReminder");
+        _logger.LogDebug("RemoveReminder");
         if (item == null) return;
         await DataRepo.DeleteReminderAsync(item);
         await Scheduler.DeleteJob(new JobKey(item.id.ToString()));
         var r = this.Where(r => r.id == item.id).First();
-        synchronizationContext.Post((state) =>
+        Application.Current.Dispatcher.Invoke(() =>
         {
             Remove(r);
         }, null);
+        
     }
 
     public async Task UpdateReminder(Reminder item)
     {
-        logger.LogDebug("UpdateReminder");
+        _logger.LogDebug("UpdateReminder");
         if (item.id > 0)
         {
             var id = item.id;
