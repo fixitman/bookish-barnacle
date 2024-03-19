@@ -26,21 +26,21 @@ namespace Reminder_WPF.Services
         
         public async Task<List<Reminder>> GetRemindersAsync()
         {
-            using(var client = await GetClient())
-            {
-
-            }
-            return new List<Reminder>();
-
-
-            //using (var client = GetClient())
+            //using(var client = await GetClient())
             //{
-            //    var result = client.GetAsync("Reminders").Result;
-            //    result.EnsureSuccessStatusCode();
-            //    var data = await result.Content.ReadFromJsonAsync<List<Reminder>>();
-            //    client.Dispose();
-            //    return data;         
+
             //}
+            //return new List<Reminder>();
+
+
+            using (var client = await GetClient())
+            {
+                var result = client.GetAsync("Reminders").Result;
+                result.EnsureSuccessStatusCode();
+                var data = await result.Content.ReadFromJsonAsync<List<Reminder>>();
+                client.Dispose();
+                return data;
+            }
 
 
 
@@ -83,10 +83,11 @@ namespace Reminder_WPF.Services
 
         private async Task<string?> GetToken()
         {
-            //if (AppSettings.Default.API_TokenExpiration > DateTime.Now)
-            //{
-            //    return AppSettings.Default.API_Token;
-            //}
+            if (AppSettings.Default.API_TokenExpiration > DateTime.Now)
+            {
+                _logger.LogInformation("Token OK. No Update");
+                return AppSettings.Default.API_Token;
+            }
 
             using (var client = _factory.CreateClient()) 
             {
@@ -98,6 +99,7 @@ namespace Reminder_WPF.Services
                     var token = await r.Content.ReadFromJsonAsync<LoginResponse>();
                     AppSettings.Default.API_Token = token.token;
                     AppSettings.Default.API_TokenExpiration = DateTime.Parse(token.expiration);
+                    _logger.LogInformation($"New Tolen : {token.token}");
                     return token.token;
                 }
                 return null;
