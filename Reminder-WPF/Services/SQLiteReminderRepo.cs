@@ -51,7 +51,7 @@ PRIMARY KEY(id AUTOINCREMENT)
         
     }
 
-    public async Task<Result<Reminder>> AddReminderAsync(Reminder item)
+    public async Task<Result<Reminder?>> AddReminderAsync(Reminder item)
     {
         logger.LogDebug("AddReminderAsync");
         try

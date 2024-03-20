@@ -71,12 +71,9 @@ namespace Reminder_WPF.Services
                 using var client = await GetClient();
                 var result = await client.PostAsJsonAsync<Reminder>($"reminders", item);
                 result.EnsureSuccessStatusCode();
-                if (result != null)
-                {
-                    var reminder = await result.Content.ReadFromJsonAsync<Reminder>();
-                    return Result.Ok(reminder);
-                }
-                return Result.Ok<Reminder?>(null);
+                var reminder = await result.Content.ReadFromJsonAsync<Reminder>();
+                return Result.Ok(reminder);              
+               
             }
             catch (HttpRequestException e)
             {

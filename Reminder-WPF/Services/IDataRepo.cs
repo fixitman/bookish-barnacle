@@ -8,7 +8,7 @@ namespace Reminder_WPF.Services
     public interface IDataRepo
     {
         
-        Task<Result<Reminder>> AddReminderAsync(Reminder item);
+        Task<Result<Reminder?>> AddReminderAsync(Reminder item);
 
         
         Task<Result> DeleteReminderAsync(Reminder item);
