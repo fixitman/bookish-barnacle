@@ -10,6 +10,7 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Controls;
 
 namespace Reminder_WPF.Services
@@ -144,6 +145,7 @@ namespace Reminder_WPF.Services
         private LoginModel GetCredentials()
         {
             LoginModel Credentials = new LoginModel();
+           
             //if (AppSettings.Default.API_RememberCredentials)
             //{
             //    Credentials.UserName = AppSettings.Default.API_Username;
@@ -151,12 +153,19 @@ namespace Reminder_WPF.Services
             //    return Credentials;
             //}
 
-            var dlg = new CredentialsDialog(Credentials);
-            if(dlg.ShowDialog() == true)
+            Application.Current.Dispatcher.Invoke(() =>
             {
-                return Credentials;
-            }
-            return new LoginModel();
+                var dlg = new CredentialsDialog(Credentials);
+                if(dlg.ShowDialog() == true)
+                {
+                    Credentials = dlg.Credentials;
+                }
+                
+
+            });
+
+            return Credentials;
+
         }
     }
 }
