@@ -1,5 +1,6 @@
 ﻿using Reminder_WPF.Models;
 using System.Windows;
+using System.Windows.Controls;
 
 namespace Reminder_WPF.Views
 {
@@ -8,21 +9,28 @@ namespace Reminder_WPF.Views
     /// </summary>
     public partial class CredentialsDialog : Window
     {
-        public LoginModel Credentials;
+        public CredentialsModel Credentials { get; private set; }
+                
 
-        public CredentialsDialog(LoginModel login)
+        public CredentialsDialog(CredentialsModel savedCreds)
         {
+            Credentials = savedCreds;            
             InitializeComponent();
-            Credentials = login;
+            Password.Password = Credentials.Password;
             DataContext = Credentials;
-
+            
         }
+
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            Credentials.password = Password.Password;
-            MessageBox.Show($"{Credentials.UserName} => {Credentials.password}");
+            
             this.DialogResult = true;
+        }
+
+        private void OnPasswordChanged(object sender, RoutedEventArgs e)
+        {
+            Credentials.Password = (sender as PasswordBox)!.Password;
         }
     }
 }
