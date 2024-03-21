@@ -9,7 +9,7 @@
       <Value Profile="(Default)">False</Value>
     </Setting>
     <Setting Name="UpdateSettings" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">True</Value>
+      <Value Profile="(Default)">False</Value>
     </Setting>
     <Setting Name="API_Host" Type="System.String" Scope="User">
       <Value Profile="(Default)">fixitmanmike2.ddns.net</Value>
@@ -18,10 +18,10 @@
       <Value Profile="(Default)">80</Value>
     </Setting>
     <Setting Name="API_Username" Type="System.String" Scope="User">
-      <Value Profile="(Default)">mike</Value>
+      <Value Profile="(Default)" />
     </Setting>
     <Setting Name="API_Password" Type="System.String" Scope="User">
-      <Value Profile="(Default)">Penny1992</Value>
+      <Value Profile="(Default)" />
     </Setting>
     <Setting Name="API_RememberCredentials" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>

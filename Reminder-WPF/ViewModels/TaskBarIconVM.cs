@@ -1,5 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Microsoft.Win32;
+using System.Diagnostics;
 using System.Windows;
 
 namespace Reminder_WPF.ViewModels
@@ -10,9 +12,13 @@ namespace Reminder_WPF.ViewModels
         [ObservableProperty]
         public bool startMinimized;
 
+        [ObservableProperty]
+        public bool runAtStartup;
+
         public TaskBarIconVM()
         {
             startMinimized = AppSettings.Default.StartMinimized;
+            runAtStartup = AppSettings.Default.RunAppOnWindowsStart;
         }
 
         [RelayCommand]
@@ -46,6 +52,31 @@ namespace Reminder_WPF.ViewModels
         void ToggleStartMinimized()
         {
             StartMinimized = !StartMinimized;
+            AppSettings.Default.StartMinimized = StartMinimized;
+            AppSettings.Default.Save();
+        }
+
+        [RelayCommand]
+        void ToggleRunAtStartup()
+        {
+            RunAtStartup = !RunAtStartup;
+            AppSettings.Default.RunAppOnWindowsStart = RunAtStartup;
+            AppSettings.Default.Save();
+
+            string? selfPath = Process.GetCurrentProcess().MainModule?.FileName;
+            if(selfPath != null)
+            {
+                string subKey = @"Software\Microsoft\Windows\CurrentVersion\Run";
+                string valueName = "Reminders";
+                if(RunAtStartup)
+                {
+                    Registry.CurrentUser.OpenSubKey(subKey,true)?.SetValue(valueName,selfPath);
+                }
+                else
+                {
+                    Registry.CurrentUser.OpenSubKey(subKey,true)?.DeleteValue(valueName);
+                }
+            }
         }
 
         partial void OnStartMinimizedChanged(bool oldValue, bool newValue)

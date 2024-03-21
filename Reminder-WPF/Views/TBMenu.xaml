@@ -19,6 +19,7 @@
             <ContextMenu >
                 <MenuItem Header="Show Main Window" Command="{Binding ShowMainWindowCommand}"/>
                 <MenuItem Header="Start Minimized" Command="{Binding ToggleStartMinimizedCommand}" IsChecked="{Binding StartMinimized}" />
+                <MenuItem Header="Run at Startup" Command="{Binding ToggleRunAtStartupCommand}" IsChecked="{Binding RunAtStartup}" />
                 <Separator/>                
                 <MenuItem Header="Exit" Command="{Binding MenuExitCommand}"/>
             </ContextMenu>

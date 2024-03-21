@@ -49,7 +49,7 @@ namespace Reminder_WPF {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
         public bool UpdateSettings {
             get {
                 return ((bool)(this["UpdateSettings"]));
@@ -85,7 +85,7 @@ namespace Reminder_WPF {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("mike")]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
         public string API_Username {
             get {
                 return ((string)(this["API_Username"]));
@@ -97,7 +97,7 @@ namespace Reminder_WPF {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("Penny1992")]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
         public string API_Password {
             get {
                 return ((string)(this["API_Password"]));
