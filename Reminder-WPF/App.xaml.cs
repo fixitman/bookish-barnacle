@@ -9,14 +9,13 @@ using Reminder_WPF.Views;
 using Serilog;
 using Serilog.Formatting.Json;
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Windows;
 
 namespace Reminder_WPF
 {
-    /// <summary>
-    /// Interaction logic for App.xaml
-    /// </summary>
+    
     public partial class App : Application
     {
         private IHost _host; 
@@ -27,9 +26,10 @@ namespace Reminder_WPF
        
         public App()
         {
+           var workingDir = Path.GetDirectoryName(Process.GetCurrentProcess().MainModule?.FileName);     
            var logConfig = new ConfigurationBuilder()
-                .SetBasePath(Directory.GetCurrentDirectory())
-                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+                .SetBasePath(workingDir!)
+                .AddJsonFile(Path.Combine(workingDir!,"appsettings.json"), optional: false, reloadOnChange: true)
                 .AddEnvironmentVariables()
                 .Build();
 
@@ -37,7 +37,7 @@ namespace Reminder_WPF
                 .ReadFrom.Configuration(logConfig)
                 .Enrich.FromLogContext()               
                 .WriteTo.Debug()
-                .WriteTo.File(new JsonFormatter(),"logfile.json")
+                .WriteTo.File(new JsonFormatter(),Path.Combine(workingDir!,"logfile.json"))
                 .CreateBootstrapLogger();
             
             _host = Host.CreateDefaultBuilder()
@@ -60,7 +60,7 @@ namespace Reminder_WPF
                     config.ReadFrom.Configuration(logConfig)
                         .Enrich.FromLogContext()
                         .WriteTo.Debug()
-                        .WriteTo.File(new JsonFormatter(), "logfile.json");
+                        .WriteTo.File(new JsonFormatter(), Path.Combine(workingDir!, "logfile.json"));
                 })
                 .Build();
 
