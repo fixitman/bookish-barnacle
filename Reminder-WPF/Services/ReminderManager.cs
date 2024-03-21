@@ -35,23 +35,27 @@ public class ReminderManager : ObservableCollection<Reminder>, IReminderManager,
         Scheduler.ListenerManager.AddJobListener(this);
         Task.Run(async () =>
         {
-            var result = await DataRepo.GetRemindersAsync();
-            if (result.Success)
-            {
-                foreach (Reminder r in result.Value)
-                {
-                    await AddReminder(r);
-                }
-            }
-            else
-            {
-                ShowError(result.Error);
-            }
-
+            await GetAllReminders();
         });
 
     }
 
+
+    private async Task GetAllReminders()
+    {
+        var result = await DataRepo.GetRemindersAsync();
+        if (result.Success)
+        {
+            foreach (Reminder r in result.Value)
+            {
+                await AddReminder(r);
+            }
+        }
+        else
+        {
+            ShowError(result.Error);
+        }
+    }
 
     public async Task AddReminder(Reminder item)
     {
@@ -147,6 +151,12 @@ public class ReminderManager : ObservableCollection<Reminder>, IReminderManager,
     private static void ShowError(string error)
     {
         MessageBox.Show(error, "Reminders - Error", MessageBoxButton.OK, MessageBoxImage.Error);
+    }
+
+    public async Task RefreshReminders()
+    {
+        this.Clear();
+        await GetAllReminders();        
     }
 
 
