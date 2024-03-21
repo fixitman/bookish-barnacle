@@ -55,7 +55,13 @@ namespace Reminder_WPF
                     //services.AddSingleton<IAPIManager, APIManager>();
                     services.AddHttpClient();
                 })
-                .UseSerilog()
+                .UseSerilog((context, config) =>
+                {
+                    config.ReadFrom.Configuration(logConfig)
+                        .Enrich.FromLogContext()
+                        .WriteTo.Debug()
+                        .WriteTo.File(new JsonFormatter(), "logfile.json");
+                })
                 .Build();
 
         }
