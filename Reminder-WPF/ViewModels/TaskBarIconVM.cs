@@ -1,7 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Win32;
-using Reminder_WPF.Services;
 using System.Diagnostics;
 using System.Windows;
 
@@ -9,8 +9,6 @@ namespace Reminder_WPF.ViewModels
 {
     internal partial class TaskBarIconVM : ObservableObject
     {
-        private readonly ICredentialManager _credentialManager;
-        private readonly IReminderManager _reminderManager;
 
         [ObservableProperty]
         public bool startMinimized;
@@ -18,10 +16,8 @@ namespace Reminder_WPF.ViewModels
         [ObservableProperty]
         public bool runAtStartup;
 
-        public TaskBarIconVM(ICredentialManager credentialManager, IReminderManager reminderManager)
+        public TaskBarIconVM( )
         {
-            _credentialManager = credentialManager;
-            _reminderManager = reminderManager;
             startMinimized = AppSettings.Default.StartMinimized;
             runAtStartup = AppSettings.Default.RunAppOnWindowsStart;
         }
@@ -51,13 +47,6 @@ namespace Reminder_WPF.ViewModels
         void HideMainWindow()
         {
             Application.Current.MainWindow.Hide();
-        }
-
-        [RelayCommand]
-        void Logout()
-        {
-            _credentialManager.LogOut();
-            _reminderManager.RefreshReminders();
         }
 
         [RelayCommand]
