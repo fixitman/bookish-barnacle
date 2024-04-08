@@ -15,7 +15,7 @@ using System.Windows;
 
 namespace Reminder_WPF
 {
-
+    
     public partial class App : Application
     {
         private IHost _host; 
@@ -53,7 +53,6 @@ namespace Reminder_WPF
                     //services.AddSingleton<IDataRepo, SQLiteReminderRepo>();
                     services.AddSingleton<IDataRepo, APIReminderRepo>();
                     //services.AddSingleton<IAPIManager, APIManager>();
-                    services.AddSingleton<ICredentialManager, CredentialManager>();
                     services.AddHttpClient();
                 })
                 .UseSerilog((context, config) =>
