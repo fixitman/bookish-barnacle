@@ -9,7 +9,8 @@
         WindowStyle="None"
         ResizeMode="NoResize"
         >
-    <Grid Background="Beige" >
+    <Grid Background="Beige" 
+          FocusManager.FocusedElement="{Binding ElementName=Minutes}">
         <Grid.RowDefinitions>
             <RowDefinition Height="3*" />
             <RowDefinition Height="*"/>            
@@ -41,9 +42,27 @@
             Margin="20"
             Visibility="Hidden"
         />
+        <StackPanel Orientation="Horizontal"
+                    Grid.Row="1" Grid.Column="0"
+                    HorizontalAlignment="Center"
+                    Margin="20">
+            <TextBox x:Name="Minutes"
+                     Text="{Binding SnoozeMinutes}"
+                     Focusable="True"     
+                     Width="35"
+                     Margin="10 10"
+                     TextAlignment="Center"
+                     VerticalAlignment="Center"                     
+                     />
+            <TextBlock
+            Text="Minutes"
+                VerticalAlignment="Center"
+                Width="50"
+            />
+        </StackPanel>
         <Button x:Name="Snooze" 
             Grid.Row="1" Grid.Column="1" 
-            Content="Snooze (10 Mins)" 
+            Content="Snooze" 
             Margin="20"
             Click="Snooze_Click"
         />
@@ -51,7 +70,7 @@
             Grid.Row="1" Grid.Column="2" 
             Content="Dismiss"
             Margin="20"
-            IsDefault="True"
+            IsDefault="False"
             Click="Dismiss_Click"
         />
 

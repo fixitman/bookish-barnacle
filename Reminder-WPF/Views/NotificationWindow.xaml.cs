@@ -26,12 +26,14 @@ namespace Reminder_WPF.Views
         [ObservableProperty]
         private string reminderText;
         public bool WasSnoozed { get; private set; } = false;
+        public string SnoozeMinutes { get; set; }
 
         public NotificationWindow(string reminderText)
         {
             InitializeComponent();
             DataContext = this;
-            ReminderText = reminderText;            
+            ReminderText = reminderText;
+            SnoozeMinutes = "10";
         }
 
         private void Dismiss_Click(object sender, RoutedEventArgs e)

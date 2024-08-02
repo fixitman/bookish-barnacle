@@ -44,7 +44,7 @@ public class ReminderJob : IJob
                         id = 10000 + Random.Shared.Next(int.MaxValue - 10000),
                         Recurrence = Reminder.RecurrenceType.None,
                         ReminderText = reminderText ?? "Empty",
-                        ReminderTime = DateTime.Now.AddMinutes(10)
+                        ReminderTime = DateTime.Now.AddMinutes(Convert.ToDouble(dlg.SnoozeMinutes))
                     };
 
                     reminders.ScheduleReminder(newReminder);
