@@ -8,9 +8,9 @@
         Title="Notification" Height="350" Width="500"
         WindowStyle="None"
         ResizeMode="NoResize"
+        FocusManager.FocusedElement="{Binding ElementName=Minutes}"
         >
-    <Grid Background="Beige" 
-          FocusManager.FocusedElement="{Binding ElementName=Minutes}">
+    <Grid Background="Beige" >
         <Grid.RowDefinitions>
             <RowDefinition Height="3*" />
             <RowDefinition Height="*"/>            
@@ -52,7 +52,8 @@
                      Width="35"
                      Margin="10 10"
                      TextAlignment="Center"
-                     VerticalAlignment="Center"                     
+                     VerticalAlignment="Center" 
+                     KeyDown="Minutes_KeyDown"
                      />
             <TextBlock
             Text="Minutes"

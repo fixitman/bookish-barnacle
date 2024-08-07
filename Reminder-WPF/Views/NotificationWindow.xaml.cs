@@ -53,6 +53,17 @@ namespace Reminder_WPF.Views
         {
             base.OnContentRendered(e);
             this.Activate();
+            Minutes.SelectAll();
+        }
+
+        private void Minutes_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                e.Handled = true;
+                WasSnoozed = true;
+                this.DialogResult= true;
+            }
         }
     }
 }
