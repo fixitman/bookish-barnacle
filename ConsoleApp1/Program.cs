@@ -1,4 +1,5 @@
-﻿using System.Net.Http.Json;
+﻿using System.Data;
+using System.Net.Http.Json;
 
 namespace ConsoleApp1
 {
@@ -6,33 +7,28 @@ namespace ConsoleApp1
     {
         static void Main(string[] args)
         {
-            using (HttpClient client = new HttpClient())
-            {
-                client.BaseAddress = new Uri("http://fixitmanmike2.ddns.net:80");
-                string u = "mike";
-                string p = "Penny1992";
-                Login body = new Login { username = u, password = p };
-                var result = client.PostAsJsonAsync<Login>("Account/login", body).Result;
-                Console.WriteLine( result.Content.ReadFromJsonAsync<Response>().Result.token);
-            }
-            
+            ReminderScheduler scheduler = new ReminderScheduler();
+            Reminder r = new Reminder { 
+                id = 1, 
+                ReminderTime = DateTime.Now, 
+                ReminderText = "You have been reminded!", 
+                Recurrence = Reminder.RecurrenceType.Weekly,
+                RecurrenceData = "fri"
+            };
 
-            Console.ReadLine();
+            scheduler.ScheduleReminder(r, Callback);
+            //Thread.Sleep(1000);
+            //r.ReminderText += " Changed!";
+            //r.ReminderTime = DateTime.Now.AddSeconds(9);
+            //scheduler.UpdateReminder(r);
+           
+            Console.ReadLine();   //to keep the program running
+        }
+
+        private static void Callback(object? state)
+        {
+            Reminder? r = state as Reminder;
+            Console.WriteLine(r?.ReminderText);
         }
     }
-
-    internal class Response
-    {
-        public string token { get; set; }
-        public string expiration { get; set; }
-    }
-
-    internal class Login
-    {
-        public string username { get; set; }
-        public string password { get; set; }
-    }
-
-
-
 }
