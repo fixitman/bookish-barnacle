@@ -1,32 +1,54 @@
 ﻿namespace ConsoleApp1
 {
-    internal class ReminderScheduler
+    internal class ReminderScheduler: IDisposable
     {
-        private Dictionary<int,Timer> Timers  { get; set; }
+        private Dictionary<int,ReminderEvent> Events  { get; set; }
 
         public ReminderScheduler()
         {
-            Timers = new Dictionary<int,Timer>();
+            Events = new Dictionary<int,ReminderEvent>();
         }
 
 
         public void ScheduleReminder(Reminder r, TimerCallback  callback )
         {
-            //long 
-            long delay = r.Recurrence != Reminder.RecurrenceType.None ? FindNext(r) : (long)(r.ReminderTime - DateTime.Now).TotalMilliseconds;
+            long delay = FindNext(r); ;
 
-            Timer t = new Timer(callback, r, delay, Timeout.Infinite);
-            Timers.Add(r.id, t);
+            Timer t = new Timer(this.SchedulerCallback, r, delay, Timeout.Infinite);
+            ReminderEvent reminderEvent = new ReminderEvent { onTimer = callback, reminder = r, timer = t };
+            
+
+            Events.Add(r.id, reminderEvent);
+            
+        }
+
+        private void SchedulerCallback(object? state)
+        {
+            Reminder? r = state as Reminder;
+            if (r != null)
+            {
+                ReminderEvent reminderEvent = Events[r.id];
+                Console.WriteLine("Passing it on...");
+                if(r.Recurrence != Reminder.RecurrenceType.None)
+                {
+                    long delay = FindNext(r);
+                    Events[r.id].timer.Change(delay, Timeout.Infinite);
+                }
+                
+                reminderEvent.onTimer(reminderEvent.reminder);
+            }
+            else
+            {
+                Console.WriteLine("Event was passed a null reminder value");
+            }
         }
 
         private long FindNext(Reminder r)
         {
             long delay;
-            
 
             switch (r.Recurrence)
             {
-                
                 case Reminder.RecurrenceType.None:
                     delay = (long)(r.ReminderTime - DateTime.Now).TotalMilliseconds;
                     break;
@@ -34,31 +56,31 @@
                     delay = (long)(r.ReminderTime - DateTime.Now).TotalMilliseconds;
                     break;
                 case Reminder.RecurrenceType.Weekly:
-                    List<int> daysNum = new List<int>();
+                    List<int> triggerDays = new List<int>();
                     List<string> daysAll = new List<string> { "sun", "mon", "tue", "wed", "thu", "fri", "sat" };
 
                     var daysText = r.RecurrenceData.Split(",");
                     foreach(string day in daysText)
                     {
-                        daysNum.Add(daysAll.FindIndex(d => d == day));
+                        triggerDays.Add(daysAll.FindIndex(d => d == day));
                     }
                    
-                    DateTime date = r.ReminderTime;
+                    DateTime trigger = r.ReminderTime;
                     var found = false;
-                    while(date < DateTime.Now) date = date.AddDays(1);
+                    while(trigger < DateTime.Now) trigger = trigger.AddDays(1);
                     while ( !found)
                     {                        
-                        int dow = (int)date.DayOfWeek;
-                        if (daysNum.Contains(dow))
+                        int dow = (int)trigger.DayOfWeek;
+                        if (triggerDays.Contains(dow))
                         {
                             found = true;
-                            Console.WriteLine("Next time is {0}", date);
+                            Console.WriteLine("Next time is {0}", trigger);
                             break;
                         }
-                        date = date.AddDays(1);
+                        trigger = trigger.AddDays(1);
                         
                     }
-                    delay = (long)(date - DateTime.Now).TotalMilliseconds;
+                    delay = (long)(trigger - DateTime.Now).TotalMilliseconds;
                     break;
                 default:
                     delay = (long)(r.ReminderTime - DateTime.Now).TotalMilliseconds;
@@ -68,23 +90,51 @@
 
         }
 
+        public void SnoozeReminder(Reminder r, int minutes)
+        {
+            ReminderEvent? _event = Events[r.id];
+            if (_event != null)
+            {
+                Timer t = _event.timer;
+                long snoozeAmount = (long)(TimeSpan.FromMinutes(minutes).TotalMilliseconds);
+                t.Change(snoozeAmount, Timeout.Infinite);
+            }
+        }
+
+
         public void UpdateReminder(Reminder r)
         {
-            if( Timers.ContainsKey(r.id))
+            if( Events.ContainsKey(r.id))
             {
                 long delay = r.Recurrence != Reminder.RecurrenceType.None? FindNext(r) : (long)(r.ReminderTime - DateTime.Now).TotalMilliseconds;
-                Timers[r.id].Change(delay, Timeout.Infinite);
+                Events[r.id].timer.Change(delay, Timeout.Infinite);
             }
         }
 
         public void DeleteReminder(int r)
         {
-            var timerToDelete = Timers[r];
+            Timer? timerToDelete = Events[r].timer;
             timerToDelete.Dispose();
-            Timers.Remove(r);
+            Events.Remove(r);
         }
 
-        
+        public void Dispose()
+        {
+            foreach (int key in Events.Keys)
+            {
+                ReminderEvent wrapper = Events[key];
+                Console.WriteLine("Timer {0:HH:mm:ss} disposed. ",wrapper.timer);
+                wrapper.timer.Dispose();
+            }
+        }
 
+       
+       
+        class ReminderEvent
+        {
+            public Reminder reminder { get; set; }
+            public Timer timer { get; set; }
+            public TimerCallback onTimer { get; set; }
+        }
     }
 }
