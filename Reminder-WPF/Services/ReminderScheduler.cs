@@ -60,7 +60,7 @@ namespace Reminder_WPF.Services
                     break;
                 case Reminder.RecurrenceType.Daily:
                     delay = (long)(r.ReminderTime.TimeOfDay - DateTime.Now.TimeOfDay).TotalMilliseconds;
-                    if (delay < 0) delay += 24*60*60*1000;
+                    if (delay < 0) delay += (long)TimeSpan.FromDays(1).TotalMilliseconds;
                     break;
                 case Reminder.RecurrenceType.Weekly:
                     List<int> triggerDays = new List<int>();
