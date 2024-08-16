@@ -8,12 +8,12 @@
     <UseWPF>true</UseWPF>
     <Company>FixitmanMike</Company>
     <Product>ReminderApp</Product>
-    <Copyright>Copyright 2023 Mike Collins</Copyright>
-    <Version>2.0.0-beta1</Version>
+    <Copyright>Copyright 2024 Mike Collins</Copyright>
+    <Version>2.1.0</Version>
     <PackageId>ReminderApp</PackageId>
     <ApplicationIcon>Resources\finger-bw.ico</ApplicationIcon>
-    <AssemblyVersion>2.0.0.0</AssemblyVersion>
-    <FileVersion>2.0.0.0-beta1</FileVersion>
+    <AssemblyVersion>2.1.0.0</AssemblyVersion>
+    <FileVersion>2.1.0.0</FileVersion>
   </PropertyGroup>
 
   <ItemGroup>
