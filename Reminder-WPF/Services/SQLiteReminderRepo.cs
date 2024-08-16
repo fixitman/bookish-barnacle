@@ -42,6 +42,7 @@ PRIMARY KEY(id AUTOINCREMENT)
         {
             var conn = new SqliteConnection(_connectionString);
             conn.Execute(sql);
+            conn.Close();
         }
         catch (Exception e)
         {
@@ -70,6 +71,7 @@ VALUES (@ReminderText,
 SELECT last_insert_rowid();";
             var newId = await conn.ExecuteScalarAsync<int>(sql, item);
             item.id = newId;
+            conn.Close();
             return Result.Ok(item);
         }
         catch (Exception e)
@@ -91,7 +93,8 @@ WHERE ID = @ID;
 SELECT CHANGES();
 ";
            await conn.ExecuteScalarAsync<int>(sql, new { ID = item.id });
-           return Result.Ok();
+            conn.Close();
+            return Result.Ok();
         }
         catch (Exception e )
         {
@@ -112,6 +115,7 @@ WHERE ReminderTime < datetime(""now"") and Recurrence = 0;
 SELECT CHANGES();
 ";
             await conn.ExecuteScalarAsync<int>(sql);
+            conn.Close();
             return Result.Ok();
         }
         catch (Exception e)
@@ -128,6 +132,7 @@ SELECT CHANGES();
         {
             using SqliteConnection conn = new SqliteConnection(_connectionString);
             var reminders = await conn.QueryAsync<Reminder>(@"select * from Reminders");
+            conn.Close();
             return Result.Ok(reminders.ToList());
         }
         catch (Exception e)
@@ -144,6 +149,7 @@ SELECT CHANGES();
         {
             using SqliteConnection conn = new SqliteConnection(_connectionString);
             Reminder? reminder = await conn.QueryFirstOrDefaultAsync<Reminder?>(@"select * from Reminders where id = @id", new { id = id });
+            conn.Close();
             return Result.Ok(reminder);
         }
         catch (Exception e)
