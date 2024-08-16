@@ -1,8 +1,6 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Quartz;
-using Quartz.Impl;
 using Reminder_WPF.Services;
 using Reminder_WPF.ViewModels;
 using Reminder_WPF.Views;
@@ -21,7 +19,6 @@ namespace Reminder_WPF
         private IHost _host; 
         public IServiceProvider Services { get => _host.Services; }
 
-        private IScheduler? _scheduler;
         TBMenu TBMenu = new TBMenu();
        
         public App()
@@ -46,10 +43,11 @@ namespace Reminder_WPF
                     services.AddSingleton<MainWindow>();
                     services.AddSingleton<MainWindowVM>();
                     services.AddSingleton<IReminderManager,ReminderManager>();
-                    services.AddSingleton<IScheduler, StdScheduler>((provider) =>
-                    {
-                        return (StdScheduler) new StdSchedulerFactory().GetScheduler().Result;
-                    });
+                    //services.AddSingleton<IScheduler, StdScheduler>((provider) =>
+                    //{
+                    //    return (StdScheduler) new StdSchedulerFactory().GetScheduler().Result;
+                    //});
+                    services.AddSingleton<ReminderScheduler,ReminderScheduler>();
                     //services.AddSingleton<IDataRepo, SQLiteReminderRepo>();
                     services.AddSingleton<IDataRepo, APIReminderRepo>();
                     //services.AddSingleton<IAPIManager, APIManager>();
@@ -77,8 +75,6 @@ namespace Reminder_WPF
                 AppSettings.Default.Save();
             }
 
-            _scheduler = _host.Services.GetRequiredService<IScheduler>();
-            await _scheduler.Start();
                       
 
             MainWindow = _host.Services.GetRequiredService<MainWindow>();
@@ -92,10 +88,7 @@ namespace Reminder_WPF
         {
             AppSettings.Default.Save();
             
-            if (_scheduler != null)
-            {
-            await _scheduler.Shutdown();
-            }
+            
             
             using (_host)
             {

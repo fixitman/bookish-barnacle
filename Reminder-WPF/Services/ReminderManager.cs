@@ -1,6 +1,5 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using Quartz;
 using Reminder_WPF.Models;
 using Reminder_WPF.Utilities;
 using Reminder_WPF.Views;
@@ -15,24 +14,24 @@ using System.Windows;
 
 namespace Reminder_WPF.Services;
 
-public class ReminderManager : ObservableCollection<Reminder>, IReminderManager, IJobListener
+public class ReminderManager : ObservableCollection<Reminder>, IReminderManager
 {
     public static readonly string REMINDERTEXT = "reminderText";
     public static readonly string REMINDERID = "reminderID";
 
     private readonly ILogger _logger;    
     private IDataRepo DataRepo { get; }
-    private IScheduler Scheduler { get; }
+    private ReminderScheduler RemScheduler { get; }
 
     public string Name => "ReminderManager";
 
-    public ReminderManager(IDataRepo dataRepo, IScheduler scheduler, ILogger<ReminderManager> logger)
+    public ReminderManager(IDataRepo dataRepo, ReminderScheduler reminderScheduler, ILogger<ReminderManager> logger)
     {
         _logger = logger;
         logger.LogDebug("ReminderManager");
         DataRepo = dataRepo;
-        Scheduler = scheduler;
-        Scheduler.ListenerManager.AddJobListener(this);
+        RemScheduler = reminderScheduler;
+        
         Task.Run(async () =>
         {
             await GetAllReminders();
@@ -88,32 +87,37 @@ public class ReminderManager : ObservableCollection<Reminder>, IReminderManager,
     public void ScheduleReminder(Reminder item)
     {
         _logger.LogDebug("ScheduleReminder");
-        var job = JobBuilder.Create<ReminderJob>()
-            .WithIdentity(item.id.ToString())
-            .UsingJobData(REMINDERTEXT, item.ReminderText)
-            .UsingJobData(REMINDERID, item.id)
-            .Build();
+        RemScheduler.ScheduleReminder(item, Callback);
 
-        var trigger = TriggerBuilder.Create();
-        if (item.Recurrence == Reminder.RecurrenceType.Weekly)
+    }
+
+    private void Callback(object? state)
+    {
+        Reminder? reminder = (Reminder?)state;
+        if (reminder == null) return;
+        Application.Current.Dispatcher.BeginInvoke(() =>
         {
-            var cs = $"0 {item.ReminderTime.Minute} {item.ReminderTime.Hour} ? * {item.RecurrenceData}";
-            trigger.WithCronSchedule(cs);
-        }
-        else if (item.Recurrence == Reminder.RecurrenceType.Daily)
-        {
-            var cs = $"0 {item.ReminderTime.Minute} {item.ReminderTime.Hour} * * ?";
-            trigger.WithCronSchedule(cs);
-        }
-        else
-        {
-            trigger.StartAt(item.ReminderTime);
-        }
+            var dlg = new NotificationWindow(reminder?.ReminderText ?? "Empty");
+            dlg.Owner = ((App)Application.Current).MainWindow;
+            dlg.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+            System.Media.SystemSounds.Exclamation.Play();
+            var result = dlg.ShowDialog();
+            if (dlg.WasSnoozed)
+            {
+#pragma warning disable CS8604 // Possible null reference argument.
+                RemScheduler.SnoozeReminder(reminder, dlg.SnoozeMinutes);
 
+            }
+            else
+            {
+                Application.Current.Dispatcher.Invoke(async () =>
+                {
 
-        trigger.ForJob(job);
-
-        Scheduler.ScheduleJob(job, trigger.Build());
+                    await RemoveReminder(reminder);                   
+#pragma warning restore CS8604 // Possible null reference argument.
+                }, null);
+            }
+        });
     }
 
     public async Task RemoveReminder(Reminder item)
@@ -127,7 +131,7 @@ public class ReminderManager : ObservableCollection<Reminder>, IReminderManager,
         }
         else
         {
-            await Scheduler.DeleteJob(new JobKey(item.id.ToString()));
+            RemScheduler.DeleteReminder(item.id);
             var r = this.Where(r => r.id == item.id).First();
             Application.Current.Dispatcher.Invoke(() =>
             {
@@ -160,32 +164,7 @@ public class ReminderManager : ObservableCollection<Reminder>, IReminderManager,
     }
 
 
-    public Task JobToBeExecuted(IJobExecutionContext context, CancellationToken cancellationToken = default)
-    {
-        return Task.CompletedTask;
-    }
+    
 
-    public Task JobExecutionVetoed(IJobExecutionContext context, CancellationToken cancellationToken = default)
-    {
-        return Task.CompletedTask;
-    }
-
-    public Task JobWasExecuted(IJobExecutionContext context, JobExecutionException? jobException, CancellationToken cancellationToken = default)
-    {
-        var reminderId = context.JobDetail.JobDataMap.GetIntValue(REMINDERID);
-        var reminderText = context.JobDetail.JobDataMap.GetString(REMINDERTEXT);
-        Reminder? reminder = this.FirstOrDefault(r => r.id == reminderId);
-
-        
-        
-        if (reminder != null && reminder.Recurrence == Reminder.RecurrenceType.None && reminderId != 0)
-        {
-            _ = RemoveReminder(reminder);
-        }
-        
-       
-
-        return Task.CompletedTask;
-
-    }
+    
 }

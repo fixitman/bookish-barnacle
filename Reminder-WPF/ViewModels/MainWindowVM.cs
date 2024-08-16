@@ -1,6 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Quartz;
 using Reminder_WPF.Models;
 using Reminder_WPF.Services;
 using Reminder_WPF.Views;
