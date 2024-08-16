@@ -23,6 +23,8 @@ public class ReminderManager : ObservableCollection<Reminder>, IReminderManager
     private IDataRepo DataRepo { get; }
     private ReminderScheduler RemScheduler { get; }
 
+    private Dictionary<int,int>SnoozeTimes = new Dictionary<int,int>();
+
     public string Name => "ReminderManager";
 
     public ReminderManager(IDataRepo dataRepo, ReminderScheduler reminderScheduler, ILogger<ReminderManager> logger)
@@ -101,12 +103,20 @@ public class ReminderManager : ObservableCollection<Reminder>, IReminderManager
             dlg.Owner = ((App)Application.Current).MainWindow;
             dlg.WindowStartupLocation = WindowStartupLocation.CenterOwner;
             System.Media.SystemSounds.Exclamation.Play();
+            dlg.SnoozeMinutes = SnoozeTimes.ContainsKey(reminder.id) ? SnoozeTimes[reminder.id] : 10;
             var result = dlg.ShowDialog();
             if (dlg.WasSnoozed)
             {
 #pragma warning disable CS8604 // Possible null reference argument.
                 RemScheduler.SnoozeReminder(reminder, dlg.SnoozeMinutes);
-
+                if (SnoozeTimes.ContainsKey(reminder.id))
+                {
+                    SnoozeTimes[reminder.id] = dlg.SnoozeMinutes;
+                }
+                else
+                {
+                    SnoozeTimes.Add(reminder.id, dlg.SnoozeMinutes);
+                }
             }
             else
             {
