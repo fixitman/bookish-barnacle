@@ -30,7 +30,7 @@ public partial class MainWindowVM : ObservableObject
     {
         if (SelectedItem != null)
         {
-            _ = Reminders.RemoveReminder(SelectedItem);
+            Reminders.RemoveReminder(SelectedItem);
         }
     }
 

@@ -34,11 +34,11 @@ namespace Reminder_WPF.Services
             {
                 ReminderEvent reminderEvent = Events[r.id];
                
-                if(r.Recurrence != Reminder.RecurrenceType.None)
+                if(reminderEvent.reminder.Recurrence != Reminder.RecurrenceType.None)
                 {
                     long delay = FindNext(r);                    
-                    Events[r.id].timer.Change(delay, Timeout.Infinite);
-                }
+                    reminderEvent.timer.Change(delay, Timeout.Infinite);
+                }                
                 
                 reminderEvent.onTimer(reminderEvent.reminder);
             }

@@ -9,11 +9,11 @@
     <Company>FixitmanMike</Company>
     <Product>ReminderApp</Product>
     <Copyright>Copyright 2024 Mike Collins</Copyright>
-    <Version>2.1.0</Version>
+    <Version>2.1.1</Version>
     <PackageId>ReminderApp</PackageId>
     <ApplicationIcon>Resources\finger-bw.ico</ApplicationIcon>
-    <AssemblyVersion>2.1.0.0</AssemblyVersion>
-    <FileVersion>2.1.0.0</FileVersion>
+    <AssemblyVersion>2.1.1.0</AssemblyVersion>
+    <FileVersion>2.1.1.0</FileVersion>
   </PropertyGroup>
 
   <ItemGroup>

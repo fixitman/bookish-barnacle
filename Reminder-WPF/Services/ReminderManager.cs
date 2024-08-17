@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -25,7 +26,7 @@ public class ReminderManager : ObservableCollection<Reminder>, IReminderManager
 
     private Dictionary<int,int>SnoozeTimes = new Dictionary<int,int>();
 
-    public string Name => "ReminderManager";
+    //public string Name => "ReminderManager";
 
     public ReminderManager(IDataRepo dataRepo, ReminderScheduler reminderScheduler, ILogger<ReminderManager> logger)
     {
@@ -77,10 +78,10 @@ public class ReminderManager : ObservableCollection<Reminder>, IReminderManager
         }
         if (r != null)
         {
+            ScheduleReminder(r);
             Application.Current.Dispatcher.Invoke(() =>
             {
                 Add(r);
-                ScheduleReminder(r);
             }, null);
         }
         
@@ -97,7 +98,7 @@ public class ReminderManager : ObservableCollection<Reminder>, IReminderManager
     {
         Reminder? reminder = (Reminder?)state;
         if (reminder == null) return;
-        Application.Current.Dispatcher.BeginInvoke(() =>
+        _ = Application.Current.Dispatcher.BeginInvoke(() =>
         {
             var dlg = new NotificationWindow(reminder?.ReminderText ?? "Empty");
             dlg.Owner = ((App)Application.Current).MainWindow;
@@ -107,7 +108,7 @@ public class ReminderManager : ObservableCollection<Reminder>, IReminderManager
             var result = dlg.ShowDialog();
             if (dlg.WasSnoozed)
             {
-#pragma warning disable CS8604 // Possible null reference argument.
+
                 RemScheduler.SnoozeReminder(reminder, dlg.SnoozeMinutes);
                 if (SnoozeTimes.ContainsKey(reminder.id))
                 {
@@ -120,12 +121,10 @@ public class ReminderManager : ObservableCollection<Reminder>, IReminderManager
             }
             else
             {
-                Application.Current.Dispatcher.Invoke(async () =>
+                if (reminder.Recurrence == Reminder.RecurrenceType.None)
                 {
-
-                    await RemoveReminder(reminder);                   
-#pragma warning restore CS8604 // Possible null reference argument.
-                }, null);
+                    _ = RemoveReminder(reminder);
+                }
             }
         });
     }
@@ -134,6 +133,7 @@ public class ReminderManager : ObservableCollection<Reminder>, IReminderManager
     {
         _logger.LogDebug("RemoveReminder");
         if (item == null) return;
+
         var result = await DataRepo.DeleteReminderAsync(item);
         if (result.IsFailure)
         {
@@ -142,12 +142,16 @@ public class ReminderManager : ObservableCollection<Reminder>, IReminderManager
         else
         {
             RemScheduler.DeleteReminder(item.id);
-            var r = this.Where(r => r.id == item.id).First();
+            var itemToDelete = this.First(r => r.id == item.id);
             Application.Current.Dispatcher.Invoke(() =>
             {
-                Remove(r);
+                Remove(itemToDelete);
             }, null);
         }
+        
+        
+        
+        
     }
 
     public async Task UpdateReminder(Reminder item)
@@ -155,7 +159,6 @@ public class ReminderManager : ObservableCollection<Reminder>, IReminderManager
         _logger.LogDebug("UpdateReminder");
         if (item.id > 0)
         {
-            var id = item.id;
             await RemoveReminder(item);
             item.id = 0;
             await AddReminder(item);
