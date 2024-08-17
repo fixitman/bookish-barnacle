@@ -23,6 +23,7 @@ public class ReminderManager : ObservableCollection<Reminder>, IReminderManager
     private readonly ILogger _logger;    
     private IDataRepo DataRepo { get; }
     private ReminderScheduler RemScheduler { get; }
+    private Timer RefreshTimer { get; set; }
 
     private Dictionary<int,int>SnoozeTimes = new Dictionary<int,int>();
 
@@ -34,6 +35,13 @@ public class ReminderManager : ObservableCollection<Reminder>, IReminderManager
         logger.LogDebug("ReminderManager");
         DataRepo = dataRepo;
         RemScheduler = reminderScheduler;
+        RefreshTimer = new Timer(
+            (object? state) => { _ = GetAllReminders();_logger.LogDebug("refresh"); },
+            null, 
+            (long)TimeSpan.FromSeconds(10).TotalMilliseconds, 
+            (long)TimeSpan.FromSeconds(10).TotalMilliseconds
+        );
+            
         
         Task.Run(async () =>
         {
