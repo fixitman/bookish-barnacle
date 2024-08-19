@@ -20,14 +20,28 @@ namespace ConsoleApp1
                     RecurrenceData = "mon,fri"
                 };
 
-                scheduler.ScheduleReminder(r, Callback);
-                //Thread.Sleep(1000);
-                //r.ReminderText += " Changed!";
-                //r.ReminderTime = DateTime.Now.AddSeconds(9);
-                //scheduler.UpdateReminder(r);
+            //scheduler.ScheduleReminder(r, Callback);
+            //Thread.Sleep(1000);
+            //r.ReminderText += " Changed!";
+            //r.ReminderTime = DateTime.Now.AddSeconds(9);
+            //scheduler.UpdateReminder(r);
 
-                Console.ReadLine();   //to keep the program running
-                scheduler.Dispose();
+            //
+            Console.WriteLine( (FindNthDayOfMonth(DateTime.Now.AddMonths(1), 3, DayOfWeek.Sunday).ToString("D")));
+            
+            Console.ReadLine();   //to keep the program running
+            scheduler.Dispose();
+        }
+
+        private static DateTime FindNthDayOfMonth(DateTime monthToFind, int n, DayOfWeek dayOfWeek)
+        {
+            DateTime first = new DateTime(monthToFind.Year, monthToFind.Month, 1);
+            while (first.DayOfWeek != dayOfWeek)
+            {
+                first = first.AddDays(1);
+            }
+            DateTime nth = first.AddDays(7 * (n - 1));
+            return nth;
         }
 
         private static void Callback(object? state)

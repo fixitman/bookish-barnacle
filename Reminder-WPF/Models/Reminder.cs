@@ -4,7 +4,7 @@ namespace Reminder_WPF.Models
 {
     public class Reminder
     {
-        public enum RecurrenceType { None, Daily, Weekly }
+        public enum RecurrenceType { None, Daily, Weekly, Monthly }
 
         public static RecurrenceType[] GetRecurrenceTypes
         {
