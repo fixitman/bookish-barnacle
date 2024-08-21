@@ -108,12 +108,20 @@ namespace Reminder_WPF.Views
                 case "WEEKLY":
                     RecurrenceDataHolder.Visibility = Visibility.Visible;
                     WeeklyControl.Visibility = Visibility.Visible;
+                    Monthly_Control.Visibility = Visibility.Collapsed;
+                    break;
+
+                case "MONTHLY":
+                    RecurrenceDataHolder.Visibility = Visibility.Visible;
+                    WeeklyControl.Visibility = Visibility.Collapsed;
+                    Monthly_Control.Visibility= Visibility.Visible;
                     break;
                     
 
                 default:
                     RecurrenceDataHolder.Visibility = Visibility.Collapsed;
                     WeeklyControl.Visibility = Visibility.Collapsed;
+                    Monthly_Control.Visibility = Visibility.Collapsed;
                     break;
             }
 
@@ -127,14 +135,21 @@ namespace Reminder_WPF.Views
             {
                 WeeklyControl.Text = Reminder.RecurrenceData;
             }
+            else if(Reminder.Recurrence == Reminder.RecurrenceType.Monthly)
+            {
+                Monthly_Control.Text = Reminder.RecurrenceData;
+            }
         }
 
         private void GetRecurrenceData()
         {
             if(Reminder.Recurrence == Reminder.RecurrenceType.Weekly)
             {
-                Reminder.RecurrenceData = WeeklyControl.Text;
-                
+                Reminder.RecurrenceData = WeeklyControl.Text;                
+            }
+            else if(Reminder.Recurrence == Reminder.RecurrenceType.Monthly)
+            {
+                Reminder.RecurrenceData = Monthly_Control.Text;
             }
         }
 

@@ -9,7 +9,7 @@
         Closing="Window_Closing"
         WindowStartupLocation="CenterScreen"
         Icon="/Resources/finger-bw.ico"
-        
+        Background="Coral"
         >
 
     <Grid >

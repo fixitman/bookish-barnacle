@@ -1,0 +1,54 @@
+﻿<UserControl x:Class="WpfApp1.MonthlyControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:WpfApp1"
+             mc:Ignorable="d" 
+             d:DesignHeight="100" d:DesignWidth="510"
+             Background="Chocolate"
+             >
+    <Grid Margin="10 10" VerticalAlignment="Center">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="50"/>
+            <ColumnDefinition Width="*"/>
+            
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            
+        </Grid.RowDefinitions>
+
+        <StackPanel Orientation="Vertical" Grid.Row="0" Grid.Column="0">
+            <Label Content="Select Mode"/>
+            <ComboBox x:Name="CBMode" Width="150" HorizontalAlignment="Left" 
+                      ItemsSource="{Binding Modes}" SelectedValue="{Binding SelectedMode}" 
+                      SelectedValuePath="Key" DisplayMemberPath="Value"
+                      SelectionChanged="CBMode_SelectionChanged"/>
+        </StackPanel>
+
+
+        <StackPanel x:Name="stkDayOfMonth" Orientation="Vertical" Grid.Row="0" Grid.Column="2">
+            <Label>Day of Month</Label>
+            <TextBox Text="{Binding DayOfMonth}" PreviewTextInput="TextBox_PreviewTextInput"
+                     Width="100" HorizontalAlignment="Left" HorizontalContentAlignment="Center"/>
+        </StackPanel>
+
+        <StackPanel x:Name="stkNth" Orientation="Vertical" Grid.Row="0" Grid.Column="2">
+            <Label Content="Nth Day of the Month"/>
+            <StackPanel Orientation="Horizontal" >
+                <ComboBox x:Name="Nth" Width="50" Margin="0 0 10 0"
+                          ItemsSource="{Binding Nths}" SelectedValue="{Binding SelectedNth}"
+                          SelectedValuePath="Key" DisplayMemberPath="Value" />
+                <ComboBox x:Name="DayOfWeek" Width="125"
+                          ItemsSource="{Binding DaysOfWeek}" SelectedValue="{Binding SelectedDayOfWeek }"
+                          SelectedValuePath="Key" DisplayMemberPath="Value"/>
+
+            </StackPanel>
+        </StackPanel> 
+        
+        
+        
+    </Grid>
+</UserControl>

@@ -18,7 +18,7 @@ namespace Reminder_WPF.Services
 
         public void ScheduleReminder(Reminder r, TimerCallback  callback )
         {
-            long delay = FindNext(r); ;
+            long delay = FindNext(r);
 
             Timer t = new Timer(this.SchedulerCallback, r, delay, Timeout.Infinite);
             ReminderEvent reminderEvent = new ReminderEvent { onTimer = callback, reminder = r, timer = t };
@@ -135,7 +135,16 @@ namespace Reminder_WPF.Services
             var recurrenceData = r.RecurrenceData.Split(",");
             DateTime nthDate;
             DateTime trigger = DateTime.Now;
-            if (recurrenceData[0] == "nth")
+            if (recurrenceData[0] == "0")
+            {
+                int dayOfMonth = Int32.Parse(recurrenceData[1]);
+                trigger = new DateTime(DateTime.Now.Year, DateTime.Now.Month, dayOfMonth, r.ReminderTime.Hour, r.ReminderTime.Minute, 0);
+                if (trigger <= DateTime.Now)
+                {
+                    trigger = trigger.AddMonths(1);
+                }
+            }
+            if (recurrenceData[0] == "1") // nth day
             {                
                 DayOfWeek dayOfWeek = (DayOfWeek)Int32.Parse(recurrenceData[2]);
                 nthDate = FindNthDayOfMonth(DateTime.Now, Int32.Parse(recurrenceData[1]), dayOfWeek);

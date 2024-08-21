@@ -55,7 +55,8 @@
             SelectionChanged="Recurrence_SelectionChanged"/>
 
         <Grid  Grid.Row="6" Grid.ColumnSpan="2" x:Name="RecurrenceDataHolder" Visibility="Collapsed" >            
-            <controls:DoWControl  x:Name="WeeklyControl" Grid.Row="0" Grid.Column="0"/>            
+            <controls:DoWControl  x:Name="WeeklyControl" Grid.Row="0" Grid.Column="0"/>
+            <controls:MonthlyControl x:Name="Monthly_Control" Grid.Row="0" Grid.Column="0"/>
         </Grid>
 
 
