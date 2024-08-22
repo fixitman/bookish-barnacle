@@ -36,7 +36,7 @@ public class ReminderManager : ObservableCollection<Reminder>, IReminderManager
         DataRepo = dataRepo;
         RemScheduler = reminderScheduler;
         RefreshTimer = new Timer(
-            (object? state) => { _ = GetAllReminders();_logger.LogDebug("refresh"); },
+            (object? state) => { _ = RefreshReminders();_logger.LogDebug("refresh"); },
             null, 
             (long)TimeSpan.FromMinutes(10).TotalMilliseconds, 
             (long)TimeSpan.FromMinutes(10).TotalMilliseconds
