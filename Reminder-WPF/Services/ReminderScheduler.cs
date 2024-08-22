@@ -73,7 +73,7 @@ namespace Reminder_WPF.Services
             Events.Remove(r);
         }
 
-        private long FindNext(Reminder r)
+        public long FindNext(Reminder r)
         {
             long delay = -1L;
 
@@ -164,7 +164,7 @@ namespace Reminder_WPF.Services
             {
                 first = first.AddDays(1);
             }
-            DateTime nth = first.AddDays(7*(n-1));
+            DateTime nth = first.AddDays(7*(n));
             return nth;
         }
         public void Dispose()
