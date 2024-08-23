@@ -36,15 +36,17 @@
                  TextChanged="DataChanged"/>
         
         <Label Content="Date" Grid.Row="2"/>
-        <DatePicker Name="dtDate" Grid.Row="3"                     
-                    SelectedDateChanged="DataChanged"/>
+        <DatePicker Name="dtDate" Grid.Row="3"
+                    SelectedDate="{Binding  Path=SelectedDate}"
+                    />
         
         <Label Content="Time" Grid.Row="2" Grid.Column="1"/>
-        <TextBox x:Name="txtTime" Grid.Row="3" Grid.Column="1" 
+        <TextBox x:Name="txt_Time" Grid.Row="3" Grid.Column="1" 
                  Margin="5 0 0 0"
                  Padding="5 0 0 0"
                  VerticalContentAlignment="Center"
                  TextChanged="DataChanged"
+                 Text="{Binding Path=TxtTime}"
                  />
 
         <Label Content="Recurrence" Grid.Row="4" Grid.Column="0"/>
@@ -59,6 +61,7 @@
             <controls:MonthlyControl x:Name="Monthly_Control" Grid.Row="0" Grid.Column="0"/>
         </Grid>
 
+        <TextBlock x:Name="txtNextRun" Text="{Binding NextRun}" Grid.Row="7" Grid.Column="0" VerticalAlignment="Bottom" HorizontalAlignment="Left" />
 
         <StackPanel Orientation="Horizontal" 
                     Grid.Row="7" Grid.Column="1" 

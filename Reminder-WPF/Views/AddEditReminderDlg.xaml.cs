@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using Reminder_WPF.Models;
+using Reminder_WPF.Services;
 using System;
 using System.Text.Json;
 using System.Windows;
@@ -15,6 +16,12 @@ namespace Reminder_WPF.Views
         
         [ObservableProperty]
         private string errorMessage = "";
+        [ObservableProperty]
+        private DateTime selectedDate; 
+        [ObservableProperty]
+        private string txtTime ;
+        [ObservableProperty]
+        private string nextRun = "Next: ";
 
         public AddEditReminderDlg(Reminder? reminder = null)
         {
@@ -32,12 +39,21 @@ namespace Reminder_WPF.Views
                 Title = "Edit Reminder";
             }
             DataContext = Reminder;
-            dtDate.SelectedDate = Reminder.ReminderTime.Date;
-            txtTime.Text = Reminder.ReminderTime.ToShortTimeString();
-            txtTime.GotKeyboardFocus += SelectAallOnKeyboardFocus;
+            //dtDate.SelectedDate = Reminder.ReminderTime.Date;
+            SelectedDate = Reminder.ReminderTime.Date;
+            //txtTime.Text = Reminder.ReminderTime.ToShortTimeString();
+            TxtTime = Reminder.ReminderTime.ToShortTimeString();
+            txt_Time.GotKeyboardFocus += SelectAallOnKeyboardFocus;
             txtReminderText.GotKeyboardFocus += SelectAallOnKeyboardFocus;
+            UpdateNextRun();
+            
+            
             txtError.DataContext = this;
+            dtDate.DataContext = this;
+            txt_Time.DataContext = this;
+            txtNextRun.DataContext = this;
 
+                
         }
 
         private void SelectAallOnKeyboardFocus(object sender, System.Windows.Input.KeyboardFocusChangedEventArgs e)
@@ -48,31 +64,19 @@ namespace Reminder_WPF.Views
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            DateOnly d;
-            TimeOnly t;
+            
             if(txtReminderText.Text.Length < 1)
             {
                 ErrorMessage = "Reminder Text Required";
                 txtReminderText.Focus();
                 return;
-            }
-            try
-            {
-                d = DateOnly.Parse(dtDate.Text);
-                t = TimeOnly.Parse(txtTime.Text);
-            }
-            catch (Exception)
-            {
-                ErrorMessage = "Invalid Date or Time";
-                return;
-            }            
+            }                  
             if (Reminder.Recurrence == Reminder.RecurrenceType.Weekly && string.IsNullOrEmpty(WeeklyControl.Text))
             {
                 ErrorMessage = "You must select at least one day";
                 return;
-            }
-            var dt = new DateTime(d.Year, d.Month, d.Day, t.Hour, t.Minute, 0);
-            Reminder.ReminderTime = dt;
+            }            
+            UpdateReminderTime();
             GetRecurrenceData();
             DialogResult = true;
         }          
@@ -90,7 +94,7 @@ namespace Reminder_WPF.Views
 
         private void DataChanged(object sender, object e)
         {
-            ClearErrorMessage();
+            ClearErrorMessage();            
         }
 
         partial void OnErrorMessageChanged(string value)
@@ -153,10 +157,58 @@ namespace Reminder_WPF.Views
             }
         }
 
+        private void UpdateReminderTime()
+        {
+            TimeSpan t;
+            try
+            {
+                if (TxtTime != null )
+                {
+                    t = DateTime.Parse(TxtTime).TimeOfDay;
+                    var wholeThing = SelectedDate + t;
+                    Reminder.ReminderTime = wholeThing;
+                }
+            }
+            catch (Exception)
+            {
+                ErrorMessage = "Invalid Date or Time";
+                return;
+            }
+            
+            
+           
+        }
+
+        private void UpdateNextRun()
+        {
+            NextRun = "Next: " + GetNextRun().ToString("ddd MM/dd/yyyy hh:mm tt");
+        }
+
+        private DateTime GetNextRun()
+        {
+            ReminderScheduler scheduler = new ReminderScheduler();
+            var nextMillis = scheduler.FindNext(Reminder);
+            var next = DateTime.Now.AddMilliseconds(nextMillis+10);
+            return next;
+        }
+
+        partial void OnTxtTimeChanged( string value)
+        {
+            UpdateReminderTime();
+            UpdateNextRun();
+        }
+
+        partial void OnSelectedDateChanged(DateTime value)
+        {
+            UpdateReminderTime();
+            UpdateNextRun() ;
+        }
+
         public void Dispose()
         {
-            txtTime.GotKeyboardFocus -= SelectAallOnKeyboardFocus;
+            txt_Time.GotKeyboardFocus -= SelectAallOnKeyboardFocus;
             txtReminderText.GotKeyboardFocus -= SelectAallOnKeyboardFocus;
         }
+
     }
 }
