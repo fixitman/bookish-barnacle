@@ -61,8 +61,6 @@
             <controls:MonthlyControl x:Name="Monthly_Control" Grid.Row="0" Grid.Column="0"/>
         </Grid>
 
-        <TextBlock x:Name="txtNextRun" Text="{Binding NextRun}" Grid.Row="7" Grid.Column="0" VerticalAlignment="Bottom" HorizontalAlignment="Left" />
-
         <StackPanel Orientation="Horizontal" 
                     Grid.Row="7" Grid.Column="1" 
                     HorizontalAlignment="Right"

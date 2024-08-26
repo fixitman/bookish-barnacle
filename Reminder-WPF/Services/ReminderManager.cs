@@ -1,14 +1,10 @@
-﻿using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using Reminder_WPF.Models;
-using Reminder_WPF.Utilities;
 using Reminder_WPF.Views;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Reflection;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -36,12 +32,11 @@ public class ReminderManager : ObservableCollection<Reminder>, IReminderManager
         DataRepo = dataRepo;
         RemScheduler = reminderScheduler;
         RefreshTimer = new Timer(
-            (object? state) => { _ = RefreshReminders();_logger.LogDebug("refresh"); },
+            (object? state) => { RefreshReminders();_logger.LogDebug("refresh"); },
             null, 
             (long)TimeSpan.FromMinutes(10).TotalMilliseconds, 
             (long)TimeSpan.FromMinutes(10).TotalMilliseconds
         );
-            
         
         Task.Run(async () =>
         {
@@ -89,17 +84,17 @@ public class ReminderManager : ObservableCollection<Reminder>, IReminderManager
             ScheduleReminder(r);
             Application.Current.Dispatcher.Invoke(() =>
             {
+                var next = DateTime.Now +  TimeSpan.FromMilliseconds(RemScheduler.FindNext(r)+1);
+                r.ReminderTime = next;
                 Add(r);
             }, null);
-        }
-        
+        }        
     }
 
     public void ScheduleReminder(Reminder item)
     {
         _logger.LogDebug("ScheduleReminder");
         RemScheduler.ScheduleReminder(item, Callback);
-
     }
 
     private void Callback(object? state)
@@ -156,10 +151,6 @@ public class ReminderManager : ObservableCollection<Reminder>, IReminderManager
                 Remove(itemToDelete);
             }, null);
         }
-        
-        
-        
-        
     }
 
     public async Task UpdateReminder(Reminder item)
@@ -178,10 +169,14 @@ public class ReminderManager : ObservableCollection<Reminder>, IReminderManager
         MessageBox.Show(error, "Reminders - Error", MessageBoxButton.OK, MessageBoxImage.Error);
     }
 
-    public async Task RefreshReminders()
+    public void RefreshReminders()
     {
-        this.Clear();
-        await GetAllReminders();        
+        _ = Application.Current.Dispatcher.Invoke(async () =>
+            {
+                this.Clear();
+                RemScheduler.ClearEvents();
+                await GetAllReminders();        
+            });
     }
 
 

@@ -1,7 +1,6 @@
 ﻿using Reminder_WPF.Models;
 using System;
 using System.Collections.Generic;
-using System.Configuration;
 using System.Threading;
 
 namespace Reminder_WPF.Services
@@ -22,8 +21,6 @@ namespace Reminder_WPF.Services
 
             Timer t = new Timer(this.SchedulerCallback, r, delay, Timeout.Infinite);
             ReminderEvent reminderEvent = new ReminderEvent { onTimer = callback, reminder = r, timer = t };
-            
-
             Events.Add(r.id, reminderEvent);
             
         }
@@ -125,7 +122,6 @@ namespace Reminder_WPF.Services
                     break;
                 }
                 trigger = trigger.AddDays(1);
-
             }
 
             return trigger;
@@ -167,6 +163,16 @@ namespace Reminder_WPF.Services
             DateTime nth = first.AddDays(7*(n));
             return nth;
         }
+
+        public void ClearEvents()
+        {
+            foreach (var key in Events.Keys)
+            {
+                Events[key].timer.Dispose();
+                Events.Remove(key);
+            }
+        }
+
         public void Dispose()
         {
             foreach (int key in Events.Keys)

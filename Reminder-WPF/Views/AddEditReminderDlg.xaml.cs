@@ -19,9 +19,7 @@ namespace Reminder_WPF.Views
         [ObservableProperty]
         private DateTime selectedDate; 
         [ObservableProperty]
-        private string txtTime ;
-        [ObservableProperty]
-        private string nextRun = "Next: ";
+        private string txtTime;
 
         public AddEditReminderDlg(Reminder? reminder = null)
         {
@@ -39,21 +37,14 @@ namespace Reminder_WPF.Views
                 Title = "Edit Reminder";
             }
             DataContext = Reminder;
-            //dtDate.SelectedDate = Reminder.ReminderTime.Date;
             SelectedDate = Reminder.ReminderTime.Date;
-            //txtTime.Text = Reminder.ReminderTime.ToShortTimeString();
             TxtTime = Reminder.ReminderTime.ToShortTimeString();
             txt_Time.GotKeyboardFocus += SelectAallOnKeyboardFocus;
             txtReminderText.GotKeyboardFocus += SelectAallOnKeyboardFocus;
-            UpdateNextRun();
-            
             
             txtError.DataContext = this;
             dtDate.DataContext = this;
             txt_Time.DataContext = this;
-            txtNextRun.DataContext = this;
-
-                
         }
 
         private void SelectAallOnKeyboardFocus(object sender, System.Windows.Input.KeyboardFocusChangedEventArgs e)
@@ -179,29 +170,16 @@ namespace Reminder_WPF.Views
            
         }
 
-        private void UpdateNextRun()
-        {
-            NextRun = "Next: " + GetNextRun().ToString("ddd MM/dd/yyyy hh:mm tt");
-        }
-
-        private DateTime GetNextRun()
-        {
-            ReminderScheduler scheduler = new ReminderScheduler();
-            var nextMillis = scheduler.FindNext(Reminder);
-            var next = DateTime.Now.AddMilliseconds(nextMillis+10);
-            return next;
-        }
-
         partial void OnTxtTimeChanged( string value)
         {
             UpdateReminderTime();
-            UpdateNextRun();
+           
         }
 
         partial void OnSelectedDateChanged(DateTime value)
         {
             UpdateReminderTime();
-            UpdateNextRun() ;
+            
         }
 
         public void Dispose()
