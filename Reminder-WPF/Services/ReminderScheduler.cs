@@ -1,6 +1,7 @@
 ﻿using Reminder_WPF.Models;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Threading;
 
 namespace Reminder_WPF.Services
@@ -32,11 +33,11 @@ namespace Reminder_WPF.Services
             {
                 ReminderEvent reminderEvent = Events[r.id];
                
-                if(reminderEvent.reminder.Recurrence != Reminder.RecurrenceType.None)
-                {
-                    long delay = FindNext(r);                    
-                    reminderEvent.timer.Change(delay, Timeout.Infinite);
-                }                
+                //if(reminderEvent.reminder.Recurrence != Reminder.RecurrenceType.None)
+                //{
+                //    long delay = FindNext(r);                    
+                //    reminderEvent.timer.Change(delay, Timeout.Infinite);
+                //}                
                 
                 reminderEvent.onTimer(reminderEvent.reminder);
             }
@@ -45,6 +46,22 @@ namespace Reminder_WPF.Services
                 Console.WriteLine("Event was passed a null reminder value");
             }
         }
+
+         
+        internal void ScheduleNext(Reminder r)
+        {
+            ReminderEvent reminderEvent = Events[r.id];
+            long delay = FindNext(r);
+            reminderEvent.timer.Change(delay, Timeout.Infinite);
+            
+        }
+
+
+
+
+
+
+
         public void SnoozeReminder(Reminder r, int minutes)
         {
             ReminderEvent? _event = Events[r.id];
@@ -182,8 +199,7 @@ namespace Reminder_WPF.Services
             }
         }
 
-       
-       
+
         class ReminderEvent
         {
             public Reminder reminder { get; set; }

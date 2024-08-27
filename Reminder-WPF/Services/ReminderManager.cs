@@ -3,6 +3,7 @@ using Reminder_WPF.Models;
 using Reminder_WPF.Views;
 using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading;
@@ -128,6 +129,13 @@ public class ReminderManager : ObservableCollection<Reminder>, IReminderManager
                 {
                     _ = RemoveReminder(reminder);
                 }
+                else
+                {
+                    RemScheduler.ScheduleNext(reminder);
+                    var next = DateTime.Now + TimeSpan.FromMilliseconds(RemScheduler.FindNext(reminder) + 1);
+                    reminder.ReminderTime = next;
+                    OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
+                }
             }
         });
     }
@@ -171,12 +179,13 @@ public class ReminderManager : ObservableCollection<Reminder>, IReminderManager
 
     public void RefreshReminders()
     {
-        _ = Application.Current.Dispatcher.Invoke(async () =>
+        Application.Current.Dispatcher.Invoke(async() =>
             {
                 this.Clear();
                 RemScheduler.ClearEvents();
-                await GetAllReminders();        
+                await Task.Run(() => GetAllReminders());
             });
+                    
     }
 
 
