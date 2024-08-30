@@ -19,6 +19,7 @@ namespace Reminder_WPF.Services
         public void ScheduleReminder(Reminder r, TimerCallback  callback )
         {
             long delay = FindNext(r);
+            if (delay == Timeout.Infinite) return;
 
             Timer t = new Timer(this.SchedulerCallback, r, delay, Timeout.Infinite);
             ReminderEvent reminderEvent = new ReminderEvent { onTimer = callback, reminder = r, timer = t };
@@ -55,12 +56,6 @@ namespace Reminder_WPF.Services
             reminderEvent.timer.Change(delay, Timeout.Infinite);
             
         }
-
-
-
-
-
-
 
         public void SnoozeReminder(Reminder r, int minutes)
         {

@@ -32,12 +32,12 @@ public class ReminderManager : ObservableCollection<Reminder>, IReminderManager
         logger.LogDebug("ReminderManager");
         DataRepo = dataRepo;
         RemScheduler = reminderScheduler;
-        RefreshTimer = new Timer(
-            (object? state) => { RefreshReminders();_logger.LogDebug("refresh"); },
-            null, 
-            (long)TimeSpan.FromMinutes(10).TotalMilliseconds, 
-            (long)TimeSpan.FromMinutes(10).TotalMilliseconds
-        );
+        //RefreshTimer = new Timer(
+        //    (object? state) => { RefreshReminders();_logger.LogDebug("refresh"); },
+        //    null, 
+        //    (long)TimeSpan.FromMinutes(10).TotalMilliseconds, 
+        //    (long)TimeSpan.FromMinutes(10).TotalMilliseconds
+        //);
         
         Task.Run(async () =>
         {
@@ -54,7 +54,13 @@ public class ReminderManager : ObservableCollection<Reminder>, IReminderManager
         {
             foreach (Reminder r in result.Value)
             {
-                await AddReminder(r);
+                if(r.ReminderTime < DateTime.Now && r.Recurrence == Reminder.RecurrenceType.None)
+                {
+                    await DataRepo.DeleteReminderAsync(r);
+                }else
+                {
+                    await AddReminder(r);
+                }
             }
         }
         else
