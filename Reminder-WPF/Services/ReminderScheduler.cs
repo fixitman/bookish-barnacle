@@ -1,7 +1,6 @@
 ﻿using Reminder_WPF.Models;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Threading;
 
 namespace Reminder_WPF.Services
@@ -47,7 +46,6 @@ namespace Reminder_WPF.Services
                 Console.WriteLine("Event was passed a null reminder value");
             }
         }
-
          
         internal void ScheduleNext(Reminder r)
         {
@@ -59,14 +57,18 @@ namespace Reminder_WPF.Services
 
         public void SnoozeReminder(Reminder r, int minutes)
         {
-            ReminderEvent? _event = Events[r.id];
-            if (_event != null)
+            if(Events.ContainsKey(r.id))
             {
-                Timer t = _event.timer;
-                long snoozeAmount = (long)(TimeSpan.FromMinutes(minutes).TotalMilliseconds);
-                t.Change(snoozeAmount, Timeout.Infinite);
+                ReminderEvent? _event = Events[r.id];
+                if (_event != null)
+                {
+                    Timer t = _event.timer;
+                    long snoozeAmount = (long)(TimeSpan.FromMinutes(minutes).TotalMilliseconds);
+                    t.Change(snoozeAmount, Timeout.Infinite);
+                }
             }
         }
+
         public void UpdateReminder(Reminder r)
         {
             if( Events.ContainsKey(r.id))
@@ -75,6 +77,7 @@ namespace Reminder_WPF.Services
                 Events[r.id].timer.Change(delay, Timeout.Infinite);
             }
         }
+
         public void DeleteReminder(int r)
         {
             if (Events.ContainsKey(r))
@@ -117,6 +120,7 @@ namespace Reminder_WPF.Services
             return delay;
 
         }
+
         private static DateTime FindNextWeekly(Reminder r)
         {
             List<int> triggerDays = new List<int>();
@@ -144,6 +148,7 @@ namespace Reminder_WPF.Services
 
             return trigger;
         }
+
         private DateTime FindNextMonthly(Reminder r)
         {
             var recurrenceData = r.RecurrenceData.Split(",");
@@ -171,6 +176,7 @@ namespace Reminder_WPF.Services
 
             return trigger;
         }
+
         private DateTime FindNthDayOfMonth(DateTime monthToFind, int n, DayOfWeek day)
         {
             DateTime first = monthToFind.AddDays(-(monthToFind.Day - 1));
@@ -199,7 +205,6 @@ namespace Reminder_WPF.Services
                 _event.timer.Dispose();
             }
         }
-
 
         class ReminderEvent
         {

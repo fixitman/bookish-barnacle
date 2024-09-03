@@ -32,13 +32,13 @@ public class ReminderManager : ObservableCollection<Reminder>, IReminderManager
         logger.LogDebug("ReminderManager");
         DataRepo = dataRepo;
         RemScheduler = reminderScheduler;
-        //RefreshTimer = new Timer(
-        //    (object? state) => { RefreshReminders();_logger.LogDebug("refresh"); },
-        //    null, 
-        //    (long)TimeSpan.FromMinutes(10).TotalMilliseconds, 
-        //    (long)TimeSpan.FromMinutes(10).TotalMilliseconds
-        //);
-        
+        RefreshTimer = new Timer(
+            (object? state) => { RefreshReminders(); _logger.LogDebug("refresh"); },
+            null,
+            (long)TimeSpan.FromMinutes(10).TotalMilliseconds,
+            (long)TimeSpan.FromMinutes(10).TotalMilliseconds
+        );
+
         Task.Run(async () =>
         {
             await GetAllReminders();
@@ -77,7 +77,7 @@ public class ReminderManager : ObservableCollection<Reminder>, IReminderManager
         if (item.id == 0)
         {
             var result = await DataRepo.AddReminderAsync(item);
-            if (result.Success)
+            if (result.Success && result.Value != null)
             {
                 r = result.Value;
             }
@@ -91,8 +91,9 @@ public class ReminderManager : ObservableCollection<Reminder>, IReminderManager
             ScheduleReminder(r);
             Application.Current.Dispatcher.Invoke(() =>
             {
-                var next = DateTime.Now +  TimeSpan.FromMilliseconds(RemScheduler.FindNext(r)+1);
-                r.ReminderTime = next;
+                var delay = TimeSpan.FromMilliseconds(RemScheduler.FindNext(r) + 1);
+                var next = DateTime.Now + delay;
+                r.ReminderTime = new DateTime(next.Year, next.Month, next.Day,next.Hour,next.Minute,0);
                 Add(r);
             }, null);
         }        
@@ -170,8 +171,13 @@ public class ReminderManager : ObservableCollection<Reminder>, IReminderManager
     public async Task UpdateReminder(Reminder item)
     {
         _logger.LogDebug("UpdateReminder");
-        if (item.id > 0)
+        var current = this.First(r => r.id == item.id);
+        if (current == null)
         {
+            await AddReminder(item);
+        }
+        else if (item.Equals(current) == false)
+        {   
             await RemoveReminder(item);
             item.id = 0;
             await AddReminder(item);
@@ -185,17 +191,23 @@ public class ReminderManager : ObservableCollection<Reminder>, IReminderManager
 
     public void RefreshReminders()
     {
-        Application.Current.Dispatcher.Invoke(async() =>
+        Application.Current.Dispatcher.Invoke(async() => {
+            var result = await DataRepo.GetRemindersAsync();
+            if (result.IsFailure)
             {
-                this.Clear();
-                RemScheduler.ClearEvents();
-                await Task.Run(() => GetAllReminders());
-            });
+                return;
+            }
+            foreach (Reminder reminder in result.Value)
+            {
+                await UpdateReminder(reminder);
+            }
+        });
                     
     }
 
+   
 
-    
 
-    
+
+
 }
