@@ -19,7 +19,7 @@ namespace Reminder_WPF.Services
         public void ScheduleReminder(Reminder r, TimerCallback  callback )
         {
             long delay = FindNext(r);
-            if (delay == Timeout.Infinite) return;
+            if (delay == Timeout.Infinite || delay >= Int32.MaxValue - 2) return;
 
             Timer t = new Timer(this.SchedulerCallback, r, delay, Timeout.Infinite);
             ReminderEvent reminderEvent = new ReminderEvent { onTimer = callback, reminder = r, timer = t };
@@ -77,9 +77,15 @@ namespace Reminder_WPF.Services
         }
         public void DeleteReminder(int r)
         {
-            Timer? timerToDelete = Events[r].timer;
-            timerToDelete.Dispose();
-            Events.Remove(r);
+            if (Events.ContainsKey(r))
+            {
+                Timer? timerToDelete = Events[r].timer;
+                if (timerToDelete != null)
+                {
+                    timerToDelete.Dispose();
+                    Events.Remove(r);
+                }
+            }
         }
 
         public long FindNext(Reminder r)
