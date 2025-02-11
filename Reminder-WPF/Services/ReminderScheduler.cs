@@ -166,10 +166,10 @@ namespace Reminder_WPF.Services
             if (recurrenceData[0] == "1") // nth day
             {                
                 DayOfWeek dayOfWeek = (DayOfWeek)Int32.Parse(recurrenceData[2]);
-                nthDate = FindNthDayOfMonth(DateTime.Now, Int32.Parse(recurrenceData[1]), dayOfWeek);
-                if (nthDate <= DateTime.Now)
+                nthDate = FindNthDayOfMonth(r.ReminderTime, Int32.Parse(recurrenceData[1]), dayOfWeek);
+                while (nthDate <= DateTime.Now)
                 {
-                    nthDate = FindNthDayOfMonth(DateTime.Now.AddMonths(1), Int32.Parse(recurrenceData[1]), dayOfWeek);
+                    nthDate = FindNthDayOfMonth(nthDate.AddMonths(1), Int32.Parse(recurrenceData[1]), dayOfWeek);
                 }
                 trigger = new DateTime(nthDate.Year, nthDate.Month, nthDate.Day, r.ReminderTime.Hour, r.ReminderTime.Minute, 0);
             }
