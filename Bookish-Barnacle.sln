@@ -5,10 +5,6 @@ VisualStudioVersion = 17.6.33801.468
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Reminder-WPF", "Reminder-WPF\Reminder-WPF.csproj", "{CFB447CF-E452-4BB2-923C-F10205736E31}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConsoleApp1", "ConsoleApp1\ConsoleApp1.csproj", "{B64122FB-59FE-4C7A-AC39-6A0C5E649A03}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WpfApp1", "WpfApp1\WpfApp1.csproj", "{BB048C65-CF23-4404-A994-EA843A60F30C}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -19,14 +15,6 @@ Global
 		{CFB447CF-E452-4BB2-923C-F10205736E31}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CFB447CF-E452-4BB2-923C-F10205736E31}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CFB447CF-E452-4BB2-923C-F10205736E31}.Release|Any CPU.Build.0 = Release|Any CPU
-		{B64122FB-59FE-4C7A-AC39-6A0C5E649A03}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B64122FB-59FE-4C7A-AC39-6A0C5E649A03}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B64122FB-59FE-4C7A-AC39-6A0C5E649A03}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B64122FB-59FE-4C7A-AC39-6A0C5E649A03}.Release|Any CPU.Build.0 = Release|Any CPU
-		{BB048C65-CF23-4404-A994-EA843A60F30C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{BB048C65-CF23-4404-A994-EA843A60F30C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{BB048C65-CF23-4404-A994-EA843A60F30C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{BB048C65-CF23-4404-A994-EA843A60F30C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
