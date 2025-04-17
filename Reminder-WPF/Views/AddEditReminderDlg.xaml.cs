@@ -21,8 +21,8 @@ namespace Reminder_WPF.Views
         private DateTime selectedDate; 
         [ObservableProperty]
         private string txtTime;
-        [ObservableProperty]
-        private string txtTimer;
+
+        public string txtTimer=string.Empty;
 
         public AddEditReminderDlg(Reminder? reminder = null)
         {
@@ -59,6 +59,7 @@ namespace Reminder_WPF.Views
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
+            txtTimer = txt_Timer.Text;
             
             if(txtReminderText.Text.Length < 1)
             {
@@ -72,9 +73,20 @@ namespace Reminder_WPF.Views
                 return;
             }
             
-            UpdateReminderTime();
-            SetTimer();
-            GetRecurrenceData();
+
+
+            if (!String.IsNullOrEmpty(txtTimer))
+            {
+                SetTimer();
+            }
+            else
+            {
+                UpdateReminderTime();
+                GetRecurrenceData();
+            }
+
+                
+            
 
             if (ErrorMessage.Length > 0)
             {
@@ -200,9 +212,9 @@ namespace Reminder_WPF.Views
         {
             try
             {
-                if (!String.IsNullOrEmpty(TxtTimer))
+                if (!String.IsNullOrEmpty(txtTimer))
                 {
-                    var mins = int.Parse(TxtTimer);
+                    var mins = int.Parse(txtTimer);
                     if (mins < 1)
                     {
                         ErrorMessage = "Timer value must be positive";

@@ -64,7 +64,7 @@
             Padding="5 0 0 0"
             VerticalContentAlignment="Center"
             TextChanged="DataChanged"
-            Text="{Binding Path=TxtTimer}" />
+            Text="{Binding Path=txtTimer}" />
 
         <Grid  Grid.Row="6" Grid.ColumnSpan="2" x:Name="RecurrenceDataHolder" Visibility="Collapsed" >            
             <controls:DoWControl  x:Name="WeeklyControl" Grid.Row="0" Grid.Column="0"/>
