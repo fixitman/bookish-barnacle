@@ -2,6 +2,7 @@
 using Reminder_WPF.Models;
 using Reminder_WPF.Services;
 using System;
+using System.Configuration;
 using System.Text.Json;
 using System.Windows;
 using System.Windows.Controls;
@@ -20,6 +21,8 @@ namespace Reminder_WPF.Views
         private DateTime selectedDate; 
         [ObservableProperty]
         private string txtTime;
+        [ObservableProperty]
+        private string txtTimer;
 
         public AddEditReminderDlg(Reminder? reminder = null)
         {
@@ -41,7 +44,8 @@ namespace Reminder_WPF.Views
             TxtTime = Reminder.ReminderTime.ToShortTimeString();
             txt_Time.GotKeyboardFocus += SelectAallOnKeyboardFocus;
             txtReminderText.GotKeyboardFocus += SelectAallOnKeyboardFocus;
-            
+
+            txt_Timer.DataContext = this;            
             txtError.DataContext = this;
             dtDate.DataContext = this;
             txt_Time.DataContext = this;
@@ -66,10 +70,20 @@ namespace Reminder_WPF.Views
             {
                 ErrorMessage = "You must select at least one day";
                 return;
-            }            
+            }
+            
             UpdateReminderTime();
+            SetTimer();
             GetRecurrenceData();
-            DialogResult = true;
+
+            if (ErrorMessage.Length > 0)
+            {
+                return;
+            }
+            else
+            {
+                DialogResult= true;
+            }
         }          
        
         private void Window_ContentRendered(object sender, EventArgs e)
@@ -85,7 +99,19 @@ namespace Reminder_WPF.Views
 
         private void DataChanged(object sender, object e)
         {
-            ClearErrorMessage();            
+            ClearErrorMessage();
+            if (!String.IsNullOrEmpty(txt_Timer.Text))
+            {   
+                txt_Time.IsEnabled = false;
+                dtDate.IsEnabled = false;
+                cbRecurrence.IsEnabled = false;
+            }
+            else
+            {   
+                txt_Time.IsEnabled = true;
+                dtDate.IsEnabled = true;
+                cbRecurrence.IsEnabled = true;
+            }
         }
 
         partial void OnErrorMessageChanged(string value)
@@ -168,6 +194,27 @@ namespace Reminder_WPF.Views
             
             
            
+        }
+
+        private void SetTimer()
+        {
+            try
+            {
+                if (!String.IsNullOrEmpty(TxtTimer))
+                {
+                    var mins = int.Parse(TxtTimer);
+                    if (mins < 1)
+                    {
+                        ErrorMessage = "Timer value must be positive";
+                    }
+                    Reminder.ReminderTime = DateTime.Now.AddMinutes(mins);
+                }
+            }
+            catch (Exception)
+            {
+                ErrorMessage = "Invalid Timer Value";
+                return;
+            }
         }
 
         partial void OnTxtTimeChanged( string value)

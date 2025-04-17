@@ -49,12 +49,22 @@
                  Text="{Binding Path=TxtTime}"
                  />
 
-        <Label Content="Recurrence" Grid.Row="4" Grid.Column="0"/>
+        <Label Content="Recurrence"  Grid.Row="4" Grid.Column="0"/>
         <ComboBox 
+            Name="cbRecurrence"
             SelectedValue="{Binding Recurrence}" 
             ItemsSource="{Binding GetRecurrenceTypes}"
             Grid.Row="5" Height="auto"
             SelectionChanged="Recurrence_SelectionChanged"/>
+        
+        <Label Content="Timer (mins)" Grid.Row="4" Grid.Column="1"/>
+        <TextBox x:Name="txt_Timer" 
+            Grid.Row="5" Grid.Column="1"  
+            Margin="5 0 0 0"
+            Padding="5 0 0 0"
+            VerticalContentAlignment="Center"
+            TextChanged="DataChanged"
+            Text="{Binding Path=TxtTimer}" />
 
         <Grid  Grid.Row="6" Grid.ColumnSpan="2" x:Name="RecurrenceDataHolder" Visibility="Collapsed" >            
             <controls:DoWControl  x:Name="WeeklyControl" Grid.Row="0" Grid.Column="0"/>
