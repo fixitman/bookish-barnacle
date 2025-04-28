@@ -24,15 +24,17 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <!--<Menu Grid.Row="0" Grid.ColumnSpan="2">
-            <MenuItem Header="File" />
-        </Menu>-->
+        <Menu Grid.Row="0" Grid.ColumnSpan="2">
+            <MenuItem Header="File">
+                <MenuItem Header="Refresh" Command="{Binding MenuRefreshCommand}"/>
+                <MenuItem Header="Exit" Command="{Binding MenuExitCommand}"/>
+            </MenuItem>
+        </Menu>
 
         <ListView x:Name="ReminderList"
                       Grid.Column="0" Grid.Row="1" Grid.RowSpan="3" 
                       ItemsSource="{Binding Reminders}" 
                       Margin="20,20,0,20" 
-                      
                       SelectionMode="Single"
                       BorderThickness="1" BorderBrush="Black"
                       SelectionChanged="ListView_SelectionChanged"
@@ -51,6 +53,7 @@
                     </GridView.Columns>
                 </GridView>
             </ListView.View>
+            
         </ListView>
 
         <Button Grid.Column="1" Grid.Row="1" Content="Add" Margin="20"

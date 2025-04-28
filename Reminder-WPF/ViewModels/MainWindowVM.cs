@@ -58,6 +58,18 @@ public partial class MainWindowVM : ObservableObject
         }
     }
 
+    [RelayCommand]
+    void MenuExit()
+    {
+        App.Current.Shutdown();
+    }
+
+    [RelayCommand]
+    void MenuRefresh()
+    {
+        Reminders.RefreshReminders();
+    }
+
     partial void OnSelectedItemChanged(Reminder? value)
     {
         DeleteClickedCommand.NotifyCanExecuteChanged();
