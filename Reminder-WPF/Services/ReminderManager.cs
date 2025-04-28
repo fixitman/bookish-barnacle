@@ -197,6 +197,14 @@ public class ReminderManager : ObservableCollection<Reminder>, IReminderManager
             {
                 return;
             }
+            foreach (Reminder existing in this)
+            {
+                if (result.Value.FirstOrDefault(r => r.id == existing.id) == null)
+                {
+                    RemScheduler.DeleteReminder(existing.id);
+                    this.Remove(existing);
+                }
+            }
             foreach (Reminder reminder in result.Value)
             {
                 await UpdateReminder(reminder);
