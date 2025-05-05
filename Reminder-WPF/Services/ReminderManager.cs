@@ -74,9 +74,14 @@ public class ReminderManager : ObservableCollection<Reminder>, IReminderManager
         _logger.LogDebug("AddReminder");
         if (item == null) return;
         Reminder r = item;
+
+        //strip millis and ticks
+        r.ReminderTime = new DateTime(item.ReminderTime.Year,item.ReminderTime.Month,item.ReminderTime.Day,
+                                item.ReminderTime.Hour,item.ReminderTime.Minute, item.ReminderTime.Second);
+
         if (item.id == 0)
         {
-            var result = await DataRepo.AddReminderAsync(item);
+            var result = await DataRepo.AddReminderAsync(r);
             if (result.Success && result.Value != null)
             {
                 r = result.Value;
@@ -91,9 +96,10 @@ public class ReminderManager : ObservableCollection<Reminder>, IReminderManager
             ScheduleReminder(r);
             Application.Current.Dispatcher.Invoke(() =>
             {
-                var delay = TimeSpan.FromMilliseconds(RemScheduler.FindNext(r) + 1);
+                var delay = TimeSpan.FromMilliseconds(RemScheduler.FindNext(r) + 1);                
                 var next = DateTime.Now + delay;
-                r.ReminderTime = new DateTime(next.Year, next.Month, next.Day,next.Hour,next.Minute,0);
+                //strip millis and ticks
+                r.ReminderTime = new DateTime(next.Year, next.Month, next.Day,next.Hour,next.Minute,next.Second);
                 Add(r);
             }, null);
         }        
