@@ -231,15 +231,17 @@ public class ReminderManager : ObservableCollection<Reminder>, IReminderManager
             }
             foreach (Reminder existing in this)
             {
-                if (result.Value.FirstOrDefault(r => r.id == existing.id) == null)
+                //if (result.Value.FirstOrDefault(r => r.id == existing.id) == null)
                 {
                     RemScheduler.DeleteReminder(existing.id);
-                    this.Remove(existing);
+                    //this.Remove(existing);
                 }
             }
+            this.Clear();
             foreach (Reminder reminder in result.Value)
             {
-                await UpdateReminder(reminder);
+                //await UpdateReminder(reminder);
+                await AddReminder(reminder);
             }
         });
                     
