@@ -22,6 +22,10 @@ namespace Reminder_WPF.Services
 
             Timer t = new Timer(this.SchedulerCallback, r, delay, Timeout.Infinite);
             ReminderEvent reminderEvent = new ReminderEvent { onTimer = callback, reminder = r, timer = t };
+            if (Events.ContainsKey(r.id))
+            {
+                Events.Remove(r.id);
+            }
             Events.Add(r.id, reminderEvent);
             
         }

@@ -1,1 +1,1 @@
-﻿fix refresh so that it doesn't overwrite snoozed reminders
+﻿fix refresh so that it doesn't overwrite snoozed reminders  -  done

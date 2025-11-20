@@ -45,5 +45,9 @@ namespace Reminder_WPF.Models
             }
             return true;
         }
+        public Reminder Clone()
+        {
+            return (Reminder) this.MemberwiseClone();
+        }
     }
 }

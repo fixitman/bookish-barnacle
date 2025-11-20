@@ -91,15 +91,16 @@ public class ReminderManager : ObservableCollection<Reminder>, IReminderManager
                 ShowError(result.Error);
             }
         }
+        
         if (r != null)
         {
             ScheduleReminder(r);
             Application.Current.Dispatcher.Invoke(() =>
             {
-                var delay = TimeSpan.FromMilliseconds(RemScheduler.FindNext(r) + 1);                
+                var delay = TimeSpan.FromMilliseconds(RemScheduler.FindNext(r) + 1);
                 var next = DateTime.Now + delay;
                 //strip millis and ticks
-                r.ReminderTime = new DateTime(next.Year, next.Month, next.Day,next.Hour,next.Minute,next.Second);
+                r.ReminderTime = new DateTime(next.Year, next.Month, next.Day, next.Hour, next.Minute, next.Second);
                 Add(r);
             }, null);
         }        
@@ -180,15 +181,40 @@ public class ReminderManager : ObservableCollection<Reminder>, IReminderManager
         var current = this.First(r => r.id == item.id);
         if (current == null)
         {
-            await AddReminder(item);
+            await AddReminder(item);            
         }
         else if (item.Equals(current) == false)
-        {   
-            await RemoveReminder(item);
-            item.id = 0;
-            await AddReminder(item);
+        {
+            Reminder r = item;
+            
+            var result = await DataRepo.UpdateReminderAsync(r);
+            if (result.Success && result.Value != null)
+            {
+                r = result.Value;
+                    
+            }
+            else
+            {
+                ShowError(result.Error);
+            }
+            
+
+            if (r != null)
+            {
+                ScheduleReminder(r);
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    var delay = TimeSpan.FromMilliseconds(RemScheduler.FindNext(r) + 1);
+                    var next = DateTime.Now + delay;
+                    //strip millis and ticks
+                    r.ReminderTime = new DateTime(next.Year, next.Month, next.Day, next.Hour, next.Minute, next.Second);
+                    Remove(current);
+                    Add(r.Clone());
+                }, null);
+            }
         }
     }
+    
 
     private static void ShowError(string error)
     {

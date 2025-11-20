@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Windows.Navigation;
 
 namespace Reminder_WPF.Services;
 
@@ -158,4 +159,10 @@ SELECT CHANGES();
             return Result.Fail<Reminder?>(e.Message);
         }
     }
+
+    public async Task<Result<Reminder?>> UpdateReminderAsync(Reminder item)
+    {
+        return  null;
+    }
+
 }
