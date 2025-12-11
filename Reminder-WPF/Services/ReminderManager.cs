@@ -178,9 +178,10 @@ public class ReminderManager : ObservableCollection<Reminder>, IReminderManager
     public async Task UpdateReminder(Reminder item)
     {
         _logger.LogDebug("UpdateReminder");
-        var current = this.First(r => r.id == item.id);
+        var current = this.FirstOrDefault(r => r.id == item.id);
         if (current == null)
         {
+            item.id=0;
             await AddReminder(item);            
         }
         else if (item.Equals(current) == false)

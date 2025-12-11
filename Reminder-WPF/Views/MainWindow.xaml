@@ -27,6 +27,8 @@
         <Menu Grid.Row="0" Grid.ColumnSpan="2" Background="Coral">
             <MenuItem Header="File">
                 <MenuItem Header="Refresh" Command="{Binding MenuRefreshCommand}"/>
+                <MenuItem Header="Export Schedule" Command="{Binding ExportCommand}"/>
+                <MenuItem Header="Import Schedule" Command="{Binding ImportCommand}"/>
                 <MenuItem Header="Exit" Command="{Binding MenuExitCommand}"/>
             </MenuItem>
         </Menu>
