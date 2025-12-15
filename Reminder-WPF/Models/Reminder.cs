@@ -16,6 +16,7 @@ namespace Reminder_WPF.Models
         public DateTime ReminderTime { get; set; }
         public RecurrenceType Recurrence { get; set; } = RecurrenceType.None;
         public string RecurrenceData { get; set; } = "";
+        public long LastUpdated { get; set; }
 
         public bool Equals(Reminder? other)
         {
