@@ -110,9 +110,14 @@ namespace Reminder_WPF.Services
             try
             {
                 using var client = await GetClient();
-                var result = await client.DeleteAsync($"reminders/{item.id}");
-                if(result.StatusCode == HttpStatusCode.NotFound) 
+                var existing = await client.GetReminderByIdAsync(item.id);
+                if(existing.StatusCode == HttpStatusCode.NotFound)
+                    return Result.Ok;
+                existing.EnsureSuccessStatusCode();
+                if(existing.data.LastUpdated > item.LastUpdated)
                     return Result.Ok();
+                
+                var result = await client.DeleteAsync($"reminders/{item.id}");
                 result.EnsureSuccessStatusCode();
                 return Result.Ok();
             }
