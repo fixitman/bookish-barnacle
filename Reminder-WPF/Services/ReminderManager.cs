@@ -49,7 +49,12 @@ public class ReminderManager : ObservableCollection<Reminder>, IReminderManager
 
     private async Task GetAllReminders()
     {
-        var result = await DataRepo.GetRemindersAsync();
+        //var result = await DataRepo.GetRemindersAsync();
+
+        var localRepo = new LocalRepo();
+        var result = await localRepo.GetRemindersAsync();
+
+
         if (result.Success)
         {
             foreach (Reminder r in result.Value)
