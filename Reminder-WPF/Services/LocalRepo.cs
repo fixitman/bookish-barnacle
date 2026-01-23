@@ -29,20 +29,24 @@ public class LocalRepo : IDataRepo
 
     public async Task<Result<Reminder?>> AddReminderAsync(Reminder item)
     {
+        item.LastUpdated = DateTime.Now.Ticks;
         db.Add(item);
         var r = await db.SaveChangesAsync();
+        return Result.Ok<Reminder?>(null);
+
+    }
+
+    public async Task<Result> DeleteReminderAsync(Reminder item)
+    {
+        db.Remove(item);
+        var r = await db.SaveChangesAsync();
         return Result.Ok();
-
     }
 
-    public Task<Result> DeleteReminderAsync(Reminder item)
+    public async Task<Result<Reminder?>> GetReminderByIdAsync(int id)
     {
-        throw new System.NotImplementedException();
-    }
-
-    public Task<Result<Reminder?>> GetReminderByIdAsync(int id)
-    {
-        throw new System.NotImplementedException();
+        var r = await db.Reminders.FirstOrDefaultAsync(item => item.id == id);
+        return Result.Ok(r);
     }
 
     public async Task<Result<List<Reminder>>> GetRemindersAsync()
@@ -62,8 +66,18 @@ public class LocalRepo : IDataRepo
         
     }
 
-    public Task<Result<Reminder?>> UpdateReminderAsync(Reminder r)
+    public async Task<Result<Reminder?>> UpdateReminderAsync(Reminder r)
     {
-        throw new System.NotImplementedException();
+        var reminder = await db.Reminders.FirstOrDefaultAsync(item => item.id == r.id);
+        if (reminder == null)
+        {
+            return Result.Ok<Reminder?>(null);
+        }
+        reminder.LastUpdated = DateTime.Now.Ticks;
+        reminder.Recurrence = r.Recurrence;
+        reminder.RecurrenceData = r.RecurrenceData;
+        reminder.ReminderText = r.ReminderText;
+        reminder.ReminderTime = r.ReminderTime; 
+        return Result.Ok<Reminder?>(reminder);
     }
 }
