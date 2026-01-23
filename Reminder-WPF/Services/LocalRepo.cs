@@ -1,15 +1,8 @@
-
-
-
-
-
 using System;
 using System.Collections.Generic;
-using System.Data.Common;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.VisualBasic;
 using Reminder_WPF.Models;
 using Reminder_WPF.Services;
 using Reminder_WPF.Utilities;
@@ -33,7 +26,6 @@ public class LocalRepo : IDataRepo
         db.Add(item);
         var r = await db.SaveChangesAsync();
         return Result.Ok<Reminder?>(null);
-
     }
 
     public async Task<Result> DeleteReminderAsync(Reminder item)
@@ -63,7 +55,6 @@ public class LocalRepo : IDataRepo
         {
             return Result.Fail<List<Reminder>>("GetRemindersAsync failed");
         }
-        
     }
 
     public async Task<Result<Reminder?>> UpdateReminderAsync(Reminder r)
