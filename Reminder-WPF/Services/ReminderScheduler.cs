@@ -1,6 +1,7 @@
 ﻿using Reminder_WPF.Models;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 
 namespace Reminder_WPF.Services
@@ -24,7 +25,7 @@ namespace Reminder_WPF.Services
             ReminderEvent reminderEvent = new ReminderEvent { onTimer = callback, reminder = r, timer = t };
             if (Events.ContainsKey(r.id))
             {
-                Events.Remove(r.id);
+                DeleteReminder(r.id);                
             }
             Events.Add(r.id, reminderEvent);
             
