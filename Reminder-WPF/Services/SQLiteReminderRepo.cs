@@ -1,5 +1,6 @@
 ﻿using Dapper;
 using Microsoft.Data.Sqlite;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Reminder_WPF.Models;
 using Reminder_WPF.Utilities;
@@ -21,7 +22,14 @@ public class SQLiteReminderRepo : IDataRepo
     public SQLiteReminderRepo(ILogger<SQLiteReminderRepo> logger)
     {
         this.logger = logger;
-        _connectionString = ConfigurationManager.ConnectionStrings["Default"].ConnectionString;
+        var config = new ConfigurationBuilder()
+            .AddJsonFile("appsettings.json")
+            .Build();
+        
+
+
+
+        _connectionString = config.GetConnectionString("Default");
         CreateTables();
         _ = DeleteOldRemindersAsync();
     }
@@ -162,7 +170,28 @@ SELECT CHANGES();
 
     public async Task<Result<Reminder?>> UpdateReminderAsync(Reminder item)
     {
-        return  null;
+        logger.LogDebug("UpdateReminderAsync");
+        try
+        {
+            using SqliteConnection conn = new SqliteConnection(_connectionString);
+            string sql = @"
+UPDATE Reminders
+SET ReminderText = @ReminderText,
+    ReminderTime = @ReminderTime,
+    Recurrence = @Recurrence,
+    RecurrenceData = @RecurrenceData
+WHERE id = @id;
+";
+            await conn.ExecuteAsync(sql, item);
+            conn.Close();
+            return Result.Ok(item);
+        }
+        catch (Exception e)
+        {
+            logger.LogError($"There was a problem. {e.Message}");
+            return Result.Fail<Reminder>(e.Message);
+        }
     }
 
 }
+
