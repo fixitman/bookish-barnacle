@@ -44,6 +44,7 @@ ReminderText	TEXT NOT NULL DEFAULT """",
 ReminderTime	INTEGER NOT NULL,
 Recurrence	INTEGER NOT NULL DEFAULT 0,
 RecurrenceData	TEXT,
+LastUpdated    INTEGER NOT NULL DEFAULT (strftime('%s', 'now')),
 PRIMARY KEY(id AUTOINCREMENT)
 )";
 

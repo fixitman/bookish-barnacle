@@ -9,6 +9,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Reminder_WPF.Services;
 
@@ -18,7 +19,9 @@ public class ReminderManager : ObservableCollection<Reminder>, IReminderManager
     public static readonly string REMINDERID = "reminderID";
 
     private readonly ILogger _logger;    
-    private IDataRepo DataRepo { get; }
+    private IDataRepo LocalRepo { get; }
+    private IDataRepo RemoteRepo { get; }
+    
     private ReminderScheduler RemScheduler { get; }
     private Timer RefreshTimer { get; set; }
 
@@ -26,11 +29,13 @@ public class ReminderManager : ObservableCollection<Reminder>, IReminderManager
 
     //public string Name => "ReminderManager";
 
-    public ReminderManager(IDataRepo dataRepo, ReminderScheduler reminderScheduler, ILogger<ReminderManager> logger)
+    public ReminderManager([FromKeyedServices("local")]IDataRepo localRepo, [FromKeyedServices("remote")]IDataRepo remoteRepo,ReminderScheduler reminderScheduler, ILogger<ReminderManager> logger)
     {
+
         _logger = logger;
         logger.LogDebug("ReminderManager");
-        DataRepo = dataRepo;
+        LocalRepo = localRepo;
+        RemoteRepo = remoteRepo;
         RemScheduler = reminderScheduler;
         RefreshTimer = new Timer(
             (object? state) => { RefreshReminders(); _logger.LogDebug("refresh"); },
@@ -49,14 +54,14 @@ public class ReminderManager : ObservableCollection<Reminder>, IReminderManager
 
     private async Task GetAllReminders()
     {
-        var result = await DataRepo.GetRemindersAsync();
+        var result = await LocalRepo.GetRemindersAsync();
         if (result.Success)
         {
             foreach (Reminder r in result.Value)
             {
                 if(r.ReminderTime < DateTime.Now && r.Recurrence == Reminder.RecurrenceType.None)
                 {
-                    await DataRepo.DeleteReminderAsync(r);
+                    await LocalRepo.DeleteReminderAsync(r);
                 }else
                 {
                     await AddReminder(r);
@@ -81,7 +86,7 @@ public class ReminderManager : ObservableCollection<Reminder>, IReminderManager
 
         if (item.id == 0)
         {
-            var result = await DataRepo.AddReminderAsync(r);
+            var result = await LocalRepo.AddReminderAsync(r);
             if (result.Success && result.Value != null)
             {
                 r = result.Value;
@@ -159,7 +164,7 @@ public class ReminderManager : ObservableCollection<Reminder>, IReminderManager
         _logger.LogDebug("RemoveReminder");
         if (item == null) return;
 
-        var result = await DataRepo.DeleteReminderAsync(item);
+        var result = await LocalRepo.DeleteReminderAsync(item);
         if (result.IsFailure)
         {
             ShowError(result.Error);
@@ -188,7 +193,7 @@ public class ReminderManager : ObservableCollection<Reminder>, IReminderManager
         {
             Reminder r = item;
             
-            var result = await DataRepo.UpdateReminderAsync(r);
+            var result = await LocalRepo.UpdateReminderAsync(r);
             if (result.Success && result.Value != null)
             {
                 r = result.Value;
@@ -216,7 +221,6 @@ public class ReminderManager : ObservableCollection<Reminder>, IReminderManager
         }
     }
     
-
     private static void ShowError(string error)
     {
         MessageBox.Show(error, "Reminders - Error", MessageBoxButton.OK, MessageBoxImage.Error);
@@ -225,7 +229,7 @@ public class ReminderManager : ObservableCollection<Reminder>, IReminderManager
     public void RefreshReminders()
     {
         Application.Current.Dispatcher.Invoke(async() => {
-            var result = await DataRepo.GetRemindersAsync();
+            var result = await LocalRepo.GetRemindersAsync();
             if (result.IsFailure)
             {
                 return;
