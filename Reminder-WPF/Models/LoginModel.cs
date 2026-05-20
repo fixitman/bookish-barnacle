@@ -8,7 +8,7 @@ namespace Reminder_WPF.Models
 {
     public class LoginModel
     {
-        public string UserName { get; set; }
-        public string password { get; set; }
+        public required string UserName { get; set; }
+        public required string password { get; set; }
     }
 }

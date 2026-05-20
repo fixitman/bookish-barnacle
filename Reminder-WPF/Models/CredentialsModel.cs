@@ -8,8 +8,8 @@ namespace Reminder_WPF.Models
 {
     public class CredentialsModel
     {
-        public string Username { get; set; }
-        public string Password { get; set; }
-        public bool Save {  get; set; }  
+        public required string Username { get; set; }
+        public required string Password { get; set; }
+        public required bool Save {  get; set; }  
     }
 }

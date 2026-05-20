@@ -8,7 +8,7 @@ namespace Reminder_WPF.Models
 {
     internal class LoginResponse
     {
-        public string token {  get; set; }
-        public string expiration { get; set; }
+        public required string token {  get; set; }
+        public required string expiration { get; set; }
     }
 }
