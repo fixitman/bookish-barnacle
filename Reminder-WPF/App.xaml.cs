@@ -43,14 +43,10 @@ namespace Reminder_WPF
                     services.AddSingleton<MainWindow>();
                     services.AddSingleton<MainWindowVM>();
                     services.AddSingleton<IReminderManager,ReminderManager>();
-                    //services.AddSingleton<IScheduler, StdScheduler>((provider) =>
-                    //{
-                    //    return (StdScheduler) new StdSchedulerFactory().GetScheduler().Result;
-                    //});
                     services.AddSingleton<ReminderScheduler,ReminderScheduler>();
                     services.AddKeyedSingleton<IDataRepo, SQLiteReminderRepo>("local");
                     services.AddKeyedSingleton<IDataRepo, APIReminderRepo>("remote");
-                    //services.AddSingleton<IAPIManager, APIManager>();
+                    services.AddTransient<IDataSync, DataSync>();
                     services.AddHttpClient();
                 })
                 .UseSerilog((context, config) =>
