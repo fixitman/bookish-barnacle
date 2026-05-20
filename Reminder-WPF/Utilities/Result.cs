@@ -26,9 +26,9 @@ namespace Reminder_WPF.Utilities
 			return new Result(false, message);
 		}
 
-		public static Result<T> Fail<T>(string message)
+		public static Result<T?> Fail<T>(string message)
 		{
-			return new Result<T>(default, false, message);
+			return new Result<T?>(default!, false, message);
 		}
 
 		public static Result Ok()
@@ -48,11 +48,11 @@ namespace Reminder_WPF.Utilities
 
 		public static Result<T> Empty<T>()
 		{
-			return new Result<T>(default, false, EMPTY);
+			return new Result<T>(default!, false, EMPTY);
 		}
 	}
 
-	public class Result<T> : Result
+	public class Result<T>  :Result
 	{
 		protected internal Result(T value, bool success, string error)
 			: base(success, error)

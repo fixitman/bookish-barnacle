@@ -29,7 +29,7 @@ public class SQLiteReminderRepo : IDataRepo
 
 
 
-        _connectionString = config.GetConnectionString("Default");
+        _connectionString = config.GetConnectionString("Default") ?? throw new InvalidOperationException("Connection string 'Default' not found.");
         CreateTables();
         _ = DeleteOldRemindersAsync();
     }
@@ -39,13 +39,13 @@ public class SQLiteReminderRepo : IDataRepo
         logger.LogDebug("CreateTables");
         string sql = @"
 CREATE TABLE IF NOT EXISTS Reminders (
-id	INTEGER NOT NULL UNIQUE,
+id	TEXT NOT NULL UNIQUE,
 ReminderText	TEXT NOT NULL DEFAULT """",
 ReminderTime	INTEGER NOT NULL,
 Recurrence	INTEGER NOT NULL DEFAULT 0,
 RecurrenceData	TEXT,
-LastUpdated    INTEGER NOT NULL DEFAULT (strftime('%s', 'now')),
-PRIMARY KEY(id AUTOINCREMENT)
+LastUpdated    INTEGER NOT NULL DEFAULT (strftime('%s', 'now') * 1000),
+PRIMARY KEY(id)
 )";
 
         try
@@ -65,22 +65,28 @@ PRIMARY KEY(id AUTOINCREMENT)
     public async Task<Result<Reminder?>> AddReminderAsync(Reminder item)
     {
         logger.LogDebug("AddReminderAsync");
+        item.id = Guid.NewGuid().ToString();
+        item.LastUpdated = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
         try
         {
             using SqliteConnection conn = new SqliteConnection(_connectionString);
             string sql = @"
 INSERT INTO Reminders
-(ReminderText,
+(id,
+ReminderText,
 ReminderTime, 
 Recurrence,
-RecurrenceData) 
-VALUES (@ReminderText,
+RecurrenceData,
+LastUpdated )
+VALUES (@id,
+@ReminderText,
 @ReminderTime,
 @Recurrence,
-@RecurrenceData);
+@RecurrenceData,
+@LastUpdated);
 SELECT last_insert_rowid();";
-            var newId = await conn.ExecuteScalarAsync<int>(sql, item);
-            item.id = newId;
+            await conn.ExecuteScalarAsync<string>(sql, item);
+            
             conn.Close();
             return Result.Ok(item);
         }
@@ -185,7 +191,7 @@ WHERE id = @id;
 ";
             await conn.ExecuteAsync(sql, item);
             conn.Close();
-            return Result.Ok(item);
+            return Result<Reminder?>.Ok(item);
         }
         catch (Exception e)
         {

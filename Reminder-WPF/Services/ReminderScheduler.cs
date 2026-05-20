@@ -8,11 +8,11 @@ namespace Reminder_WPF.Services
 {
     public class ReminderScheduler: IDisposable
     {
-        private Dictionary<int,ReminderEvent> Events  { get; set; }
+        private Dictionary<string,ReminderEvent> Events  { get; set; }
 
         public ReminderScheduler()
         {
-            Events = new Dictionary<int,ReminderEvent>();
+            Events = new Dictionary<string,ReminderEvent>();
         }
 
 
@@ -83,7 +83,7 @@ namespace Reminder_WPF.Services
             }
         }
 
-        public void DeleteReminder(int r)
+        public void DeleteReminder(string r)
         {
             if (Events.ContainsKey(r))
             {
@@ -204,7 +204,7 @@ namespace Reminder_WPF.Services
 
         public void Dispose()
         {
-            foreach (int key in Events.Keys)
+            foreach (string key in Events.Keys)
             {
                 ReminderEvent _event = Events[key];                
                 _event.timer.Dispose();
@@ -213,9 +213,9 @@ namespace Reminder_WPF.Services
 
         class ReminderEvent
         {
-            public Reminder reminder { get; set; }
-            public Timer timer { get; set; }
-            public TimerCallback onTimer { get; set; }
+            public required Reminder reminder { get; set; }
+            public required Timer timer { get; set; }
+            public required TimerCallback onTimer { get; set; }
         }
     }
 }

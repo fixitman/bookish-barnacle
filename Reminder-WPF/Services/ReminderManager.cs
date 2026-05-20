@@ -23,19 +23,27 @@ public class ReminderManager : ObservableCollection<Reminder>, IReminderManager
     private IDataRepo RemoteRepo { get; }
     
     private ReminderScheduler RemScheduler { get; }
+
+    private DataSync dataSync { get; }
     private Timer RefreshTimer { get; set; }
 
-    private Dictionary<int,int>SnoozeTimes = new Dictionary<int,int>();
+    private Dictionary<string,int>SnoozeTimes = new Dictionary<string,int>();
 
     //public string Name => "ReminderManager";
 
-    public ReminderManager([FromKeyedServices("local")]IDataRepo localRepo, [FromKeyedServices("remote")]IDataRepo remoteRepo,ReminderScheduler reminderScheduler, ILogger<ReminderManager> logger)
+    public ReminderManager(
+        [FromKeyedServices("local")]IDataRepo localRepo, 
+        [FromKeyedServices("remote")]IDataRepo remoteRepo,
+        ReminderScheduler reminderScheduler, 
+        ILogger<ReminderManager> logger
+        )
     {
 
         _logger = logger;
         logger.LogDebug("ReminderManager");
         LocalRepo = localRepo;
         RemoteRepo = remoteRepo;
+        dataSync = new DataSync(LocalRepo, RemoteRepo, logger);
         RemScheduler = reminderScheduler;
         RefreshTimer = new Timer(
             (object? state) => { RefreshReminders(); _logger.LogDebug("refresh"); },
@@ -84,7 +92,7 @@ public class ReminderManager : ObservableCollection<Reminder>, IReminderManager
         r.ReminderTime = new DateTime(item.ReminderTime.Year,item.ReminderTime.Month,item.ReminderTime.Day,
                                 item.ReminderTime.Hour,item.ReminderTime.Minute, item.ReminderTime.Second);
 
-        if (item.id == 0)
+        if (item.id != null && item.id != "")
         {
             var result = await LocalRepo.AddReminderAsync(r);
             if (result.Success && result.Value != null)
@@ -108,6 +116,9 @@ public class ReminderManager : ObservableCollection<Reminder>, IReminderManager
                 r.ReminderTime = new DateTime(next.Year, next.Month, next.Day, next.Hour, next.Minute, next.Second);
                 Add(r);
             }, null);
+            await dataSync.QueueChangeAsync(r, SyncOperation.Create);
+            await dataSync.SyncAsync();
+           
         }        
     }
 
@@ -127,7 +138,7 @@ public class ReminderManager : ObservableCollection<Reminder>, IReminderManager
             dlg.Owner = ((App)Application.Current).MainWindow;
             dlg.WindowStartupLocation = WindowStartupLocation.CenterOwner;
             System.Media.SystemSounds.Exclamation.Play();
-            dlg.SnoozeMinutes = SnoozeTimes.ContainsKey(reminder.id) ? SnoozeTimes[reminder.id] : 10;
+            dlg.SnoozeMinutes = SnoozeTimes.ContainsKey(reminder!.id) ? SnoozeTimes[reminder.id] : 10;
             var result = dlg.ShowDialog();
             if (dlg.WasSnoozed)
             {
@@ -186,7 +197,7 @@ public class ReminderManager : ObservableCollection<Reminder>, IReminderManager
         var current = this.FirstOrDefault(r => r.id == item.id);
         if (current == null)
         {
-            item.id=0;
+            item.id= Guid.NewGuid().ToString();
             await AddReminder(item);            
         }
         else if (item.Equals(current) == false)

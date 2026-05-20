@@ -9,6 +9,7 @@ using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
+using System.Net.NetworkInformation;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -19,6 +20,8 @@ namespace Reminder_WPF.Services
     {
         private readonly IHttpClientFactory _factory;
         private readonly ILogger<APIReminderRepo> _logger;
+
+        
        
         public APIReminderRepo(IHttpClientFactory factory, ILogger<APIReminderRepo> logger)
         {
@@ -47,7 +50,7 @@ namespace Reminder_WPF.Services
 
         }
 
-        public async Task<Result<Reminder?>> GetReminderByIdAsync(int id)
+        public async Task<Result<Reminder?>> GetReminderByIdAsync(string id)
         {
             try
             {
@@ -69,7 +72,7 @@ namespace Reminder_WPF.Services
             try
             {
                 using var client = await GetClient();
-                item.LastUpdated = DateTimeOffset.Now.ToUnixTimeMilliseconds();
+                //item.LastUpdated = DateTimeOffset.Now.ToUnixTimeMilliseconds();
                 var result = await client.PostAsJsonAsync<Reminder>($"reminders", item);                
                 result.EnsureSuccessStatusCode();
                 var reminder = await result.Content.ReadFromJsonAsync<Reminder>();
@@ -90,7 +93,7 @@ namespace Reminder_WPF.Services
             {
                 using var client = await GetClient();
                 var path = $"reminders/{item.id}";
-                item.LastUpdated = DateTimeOffset.Now.ToUnixTimeMilliseconds();
+                //item.LastUpdated = DateTimeOffset.Now.ToUnixTimeMilliseconds();
                 var result = await client.PutAsJsonAsync<Reminder>(path, item);
                 result.EnsureSuccessStatusCode();
                 var reminder = await result.Content.ReadFromJsonAsync<Reminder>();
@@ -167,8 +170,7 @@ namespace Reminder_WPF.Services
                         }
                     }                    
                 }
-            }
-            return null;
+            }            
         }
 
         private CredentialsModel? GetCredentials()
@@ -219,6 +221,21 @@ namespace Reminder_WPF.Services
                 return null;
             }
             return Credentials;
+
+        }
+
+        public Task<bool> IsAvailableAsync()
+        {
+            Ping p = new Ping();
+            try {
+                var reply = p.Send(AppSettings.Default.API_Host, 1000);
+                return Task.FromResult(reply.Status == IPStatus.Success);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogCritical($"Exception Thrown: {ex.Message}");
+                return Task.FromResult(false);
+            }
 
         }
     }
