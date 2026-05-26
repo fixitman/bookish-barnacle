@@ -158,7 +158,7 @@ SELECT CHANGES();
         }
     }
 
-    public async Task<Result<Reminder?>> GetReminderByIdAsync(int id)
+    public async Task<Result<Reminder?>> GetReminderByIdAsync(string id)
     {
         logger.LogDebug($"GetReminderByIdAsync ({id})");
         try
