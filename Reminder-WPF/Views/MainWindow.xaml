@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Reminder_WPF.Views"
         mc:Ignorable="d"
-        Title="Reminders v2.1.5   ---   DEBUG   ---" Height="450" Width="800"
+        Title="Reminders v3.0.0   ---   DEBUG   ---" Height="450" Width="800"
         Closing="Window_Closing"
         WindowStartupLocation="CenterScreen"
         Icon="/Resources/finger-bw.ico"
@@ -24,7 +24,7 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <Menu Grid.Row="0" Grid.ColumnSpan="2" Background="Coral">
+        <Menu Grid.Row="0" Grid.ColumnSpan="2" Background="Coral" >
             <MenuItem Header="File">
                 <MenuItem Header="Refresh" Command="{Binding MenuRefreshCommand}"/>
                 <MenuItem Header="Export Schedule" Command="{Binding ExportCommand}"/>
