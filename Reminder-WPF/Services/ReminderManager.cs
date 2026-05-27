@@ -188,6 +188,8 @@ public class ReminderManager : ObservableCollection<Reminder>, IReminderManager
             {
                 Remove(itemToDelete);
             }, null);
+            await dataSync.QueueChangeAsync(item, SyncOperation.Delete);
+            await dataSync.SyncAsync();
         }
     }
 
@@ -228,6 +230,9 @@ public class ReminderManager : ObservableCollection<Reminder>, IReminderManager
                     Remove(current);
                     Add(r.Clone());
                 }, null);
+                await dataSync.QueueChangeAsync(r, SyncOperation.Update);
+                await dataSync.SyncAsync();
+                
             }
         }
     }
@@ -240,6 +245,7 @@ public class ReminderManager : ObservableCollection<Reminder>, IReminderManager
     public void RefreshReminders()
     {
         Application.Current.Dispatcher.Invoke(async() => {
+            await dataSync.SyncAsync();
             var result = await LocalRepo.GetRemindersAsync();
             if (result.IsFailure)
             {
@@ -257,15 +263,15 @@ public class ReminderManager : ObservableCollection<Reminder>, IReminderManager
             foreach (Reminder reminder in result.Value)
             {
                 //await UpdateReminder(reminder);
-                await AddReminder(reminder);
+                await AddReminderLocalAsync(reminder);
             }
         });
                     
     }
 
-   
-
-
-
-
+    private async Task AddReminderLocalAsync(Reminder reminder)
+    {
+        RemScheduler.ScheduleReminder(reminder, Callback);
+        this.Add(reminder);
+    }
 }

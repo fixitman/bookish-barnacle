@@ -61,6 +61,7 @@ namespace Reminder_WPF.Services
             lock (_cacheLock)
             {
                 var json = File.ReadAllText(_cachePath);
+                if (string.IsNullOrWhiteSpace(json)) return new List<PendingChange>();
                 return JsonSerializer.Deserialize<List<PendingChange>>(json) ?? new List<PendingChange>();
             }
         }
@@ -130,7 +131,7 @@ namespace Reminder_WPF.Services
             try
             {
                 var remoteResult = await _remote.GetRemindersAsync();
-                if (remoteResult.IsFailureOrEmpty) return; // remote failure - can't do much
+                if (remoteResult.IsFailure) return; // remote failure - can't do much
                 remoteList = remoteResult.Value;
             }
             catch
@@ -139,7 +140,7 @@ namespace Reminder_WPF.Services
             }
 
             var result = await _local.GetRemindersAsync();
-            if (result.IsFailureOrEmpty) return; // local store failure - can't do much
+            if (result.IsFailure) return; // local store failure - can't do much
             var localById = result.Value.ToDictionary(r => r.id);
 
             // Upsert remote items into local
@@ -148,16 +149,29 @@ namespace Reminder_WPF.Services
                 if (r == null) continue;
                 if (localById.TryGetValue(r.id, out var existing))
                 {
-                    // if remote is newer, update local. Here we naively overwrite.
-                    await _local.UpdateReminderAsync(r);
+                    
+                    // if remote is newer, update local. 
+                    if (existing.LastUpdated < r.LastUpdated){
+                        await _local.UpdateReminderAsync(r);     
+                    // if local is newer, update remote.                    
+                    }else if(existing.LastUpdated > r.LastUpdated){
+                        await _remote.UpdateReminderAsync(existing);                        
+                    }
+                    //else do nothing - they are the same
                 }
                 else
                 {
                     await _local.AddReminderAsync(r);
                 }
             }
-
-            // Optionally remove local items not present remotely - keep simple: do nothing.
+            foreach (var local in result.Value)
+            {
+                if (local == null) continue;
+                if (!remoteList.Any(r => r.id == local.id))
+                {
+                    await _local.DeleteReminderAsync(local);
+                }
+            }
         }
     }
 }
