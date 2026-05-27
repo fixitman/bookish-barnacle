@@ -27,8 +27,8 @@ namespace Reminder_WPF.Services
         private readonly IDataRepo _local;
         private readonly IDataRepo _remote;
         private readonly string _cachePath;
-        private readonly object _cacheLock = new object();
-
+        private readonly object _cacheLock = new object();        
+        private static bool _isSyncing = false; 
         private const string CacheFileName = "reminder_sync_cache.json";
 
         public DataSync(IDataRepo localRepo, IDataRepo remoteRepo, ILogger logger)
@@ -38,8 +38,6 @@ namespace Reminder_WPF.Services
             _cachePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), CacheFileName);
             EnsureCacheFile();
         }
-
-        
 
         // Represents a pending change to be applied to remote when online
         private class PendingChange
@@ -89,6 +87,8 @@ namespace Reminder_WPF.Services
         // Try to flush cache to remote and then pull remote state into local
         public async Task SyncAsync()
         {
+            if (_isSyncing) return; // simple guard to prevent concurrent syncs
+            _isSyncing = true;
             if (_remote == null || _local == null) return; // sanity check - should not happen
             if (!await _remote.IsAvailableAsync()) return; // remote unavailable - likely offline
             // First, attempt to push cached changes
@@ -172,6 +172,8 @@ namespace Reminder_WPF.Services
                     await _local.DeleteReminderAsync(local);
                 }
             }
+
+            _isSyncing = false;
         }
     }
 }
