@@ -11,7 +11,7 @@ namespace Reminder_WPF.Services
         Task<Result<Reminder?>> AddReminderAsync(Reminder item);
 
         
-        Task<Result> DeleteReminderAsync(Reminder item);
+        Task<Result<object>> DeleteReminderAsync(Reminder item);
 
         
         Task<Result<List<Reminder>>> GetRemindersAsync();

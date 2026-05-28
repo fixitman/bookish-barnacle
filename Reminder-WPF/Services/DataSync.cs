@@ -132,7 +132,7 @@ namespace Reminder_WPF.Services
             {
                 var remoteResult = await _remote.GetRemindersAsync();
                 if (remoteResult.IsFailure) return; // remote failure - can't do much
-                remoteList = remoteResult.Value;
+                remoteList = remoteResult.Value ?? new List<Reminder>();
             }
             catch
             {
@@ -140,7 +140,7 @@ namespace Reminder_WPF.Services
             }
 
             var result = await _local.GetRemindersAsync();
-            if (result.IsFailure) return; // local store failure - can't do much
+            if (result.IsFailure || result.Value == null) return; // local store failure - can't do much
             var localById = result.Value.ToDictionary(r => r.id);
 
             // Upsert remote items into local

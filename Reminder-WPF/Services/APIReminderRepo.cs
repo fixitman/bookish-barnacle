@@ -39,13 +39,13 @@ namespace Reminder_WPF.Services
                     var result = await client.GetAsync("Reminders");
                     result.EnsureSuccessStatusCode();
                     var data = await result.Content.ReadFromJsonAsync<List<Reminder>>();
-                    return Result.Ok(data?? new List<Reminder>());
+                    return Result.Success(data?? new List<Reminder>());
                 }
             }
             catch (HttpRequestException e)
             {
                 _logger.LogCritical($"Exception Thrown: {e.Message}");
-                return Result.Fail<List<Reminder>>(e.Message);
+                return Result.Failure<List<Reminder>>(e.Message);
             }
 
         }
@@ -58,12 +58,12 @@ namespace Reminder_WPF.Services
                 var result = await client.GetAsync($"reminders/{id}");
                 result.EnsureSuccessStatusCode();
                 var reminder = await result.Content.ReadFromJsonAsync<Reminder?>();
-                return Result.Ok(reminder);
+                return Result.Success(reminder);
             }
             catch (HttpRequestException e)
             {
                 _logger.LogCritical($"Exception Thrown: {e.Message}");
-                return Result.Fail<Reminder?>(e.Message);
+                return Result.Failure<Reminder?>(e.Message);
             }
         }
 
@@ -76,13 +76,13 @@ namespace Reminder_WPF.Services
                 var result = await client.PostAsJsonAsync<Reminder>($"reminders", item);                
                 result.EnsureSuccessStatusCode();
                 var reminder = await result.Content.ReadFromJsonAsync<Reminder>();
-                return Result.Ok(reminder);              
+                return Result.Success(reminder);              
                
             }
             catch (HttpRequestException e)
             {
                 _logger.LogCritical($"Exception Thrown: {e.Message}");
-                return Result.Fail<Reminder?>(e.Message);
+                return Result.Failure<Reminder?>(e.Message);
             }
 
         }
@@ -97,32 +97,32 @@ namespace Reminder_WPF.Services
                 var result = await client.PutAsJsonAsync<Reminder>(path, item);
                 result.EnsureSuccessStatusCode();
                 var reminder = await result.Content.ReadFromJsonAsync<Reminder>();
-                return Result.Ok(reminder);
+                return Result.Success(reminder);
 
             }
             catch (HttpRequestException e)
             {
                 _logger.LogCritical($"Exception Thrown: {e.Message}");
-                return Result.Fail<Reminder?>(e.Message);
+                return Result.Failure<Reminder?>(e.Message);
             }
 
         }
 
-        public async Task<Result> DeleteReminderAsync(Reminder item)
+        public async Task<Result<object>> DeleteReminderAsync(Reminder item)
         {
             try
             {
                 using var client = await GetClient();
                 var result = await client.DeleteAsync($"reminders/{item.id}/{item.LastUpdated}");
                 if(result.StatusCode == HttpStatusCode.NotFound) 
-                    return Result.Ok();
+                    return Result.Success();
                 result.EnsureSuccessStatusCode();
-                return Result.Ok();
+                return Result.Success();
             }
             catch (HttpRequestException e)
             {
                 _logger.LogCritical($"Exception Thrown: {e.Message}");
-                return Result.Fail(e.Message);
+                return Result.Failure<object>(e.Message);
             }
         }
 

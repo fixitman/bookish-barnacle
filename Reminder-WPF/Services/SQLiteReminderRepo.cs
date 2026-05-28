@@ -88,16 +88,16 @@ SELECT last_insert_rowid();";
             await conn.ExecuteScalarAsync<string>(sql, item);
             
             conn.Close();
-            return Result.Ok(item);
+            return Result.Success<Reminder?>(item);
         }
         catch (Exception e)
         {
             logger.LogError($"There was a problem. {e.Message}");
-            return Result.Fail<Reminder>(e.Message);
+            return Result.Failure<Reminder?>(e.Message);
         }
     }
 
-    public async Task<Result> DeleteReminderAsync(Reminder item)
+    public async Task<Result<object>> DeleteReminderAsync(Reminder item)
     {
         logger.LogDebug("DeleteReminderAsync");
         try
@@ -110,16 +110,16 @@ SELECT CHANGES();
 ";
            await conn.ExecuteScalarAsync<int>(sql, new { ID = item.id });
             conn.Close();
-            return Result.Ok();
+            return Result.Success();
         }
         catch (Exception e )
         {
             logger.LogError($"There was a problem. {e.Message}");
-            return Result.Fail(e.Message);
+            return Result.Failure(e.Message);
         }
     }
 
-    public async Task<Result> DeleteOldRemindersAsync()
+    public async Task<Result<object>> DeleteOldRemindersAsync()
     {
         logger.LogDebug("DeleteOldRemindersAsync");
         try
@@ -132,12 +132,12 @@ SELECT CHANGES();
 ";
             await conn.ExecuteScalarAsync<int>(sql);
             conn.Close();
-            return Result.Ok();
+            return Result.Success();
         }
         catch (Exception e)
         {
             logger.LogError($"There was a problem. {e.Message}");
-            return Result.Fail(e.Message);
+            return Result.Failure(e.Message);
         }
     }
 
@@ -149,12 +149,12 @@ SELECT CHANGES();
             using SqliteConnection conn = new SqliteConnection(_connectionString);
             var reminders = await conn.QueryAsync<Reminder>(@"select * from Reminders");
             conn.Close();
-            return Result.Ok(reminders.ToList());
+            return Result.Success(reminders.ToList());
         }
         catch (Exception e)
         {
             logger.LogError($"There was a problem. {e.Message}");
-            return Result.Fail<List<Reminder>>(e.Message);
+            return Result.Failure<List<Reminder>>(e.Message);
         }
     }
 
@@ -166,12 +166,12 @@ SELECT CHANGES();
             using SqliteConnection conn = new SqliteConnection(_connectionString);
             Reminder? reminder = await conn.QueryFirstOrDefaultAsync<Reminder?>(@"select * from Reminders where id = @id", new { id = id });
             conn.Close();
-            return Result.Ok(reminder);
+            return Result.Success(reminder);
         }
         catch (Exception e)
         {
             logger.LogError($"There was a problem. {e.Message}");
-            return Result.Fail<Reminder?>(e.Message);
+            return Result.Failure<Reminder?>(e.Message);
         }
     }
 
@@ -191,12 +191,12 @@ WHERE id = @id;
 ";
             await conn.ExecuteAsync(sql, item);
             conn.Close();
-            return Result<Reminder?>.Ok(item);
+            return Result.Success<Reminder?>(item);
         }
         catch (Exception e)
         {
             logger.LogError($"There was a problem. {e.Message}");
-            return Result.Fail<Reminder>(e.Message);
+            return Result.Failure<Reminder?>(e.Message);
         }
     }
 

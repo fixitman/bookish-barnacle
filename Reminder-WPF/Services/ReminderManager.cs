@@ -63,7 +63,7 @@ public class ReminderManager : ObservableCollection<Reminder>, IReminderManager
     private async Task GetAllReminders()
     {
         var result = await LocalRepo.GetRemindersAsync();
-        if (result.Success)
+        if (result.IsSuccess && result.Value != null)
         {
             foreach (Reminder r in result.Value)
             {
@@ -76,7 +76,7 @@ public class ReminderManager : ObservableCollection<Reminder>, IReminderManager
                 }
             }
         }
-        else
+        else if(result.Error != null)
         {
             ShowError(result.Error);
         }
@@ -95,11 +95,11 @@ public class ReminderManager : ObservableCollection<Reminder>, IReminderManager
         if (item.id != null && item.id != "")
         {
             var result = await LocalRepo.AddReminderAsync(r);
-            if (result.Success && result.Value != null)
+            if (result.IsSuccess && result.Value != null)
             {
                 r = result.Value;
             }
-            else
+            else if(result.Error != null)
             {
                 ShowError(result.Error);
             }
@@ -176,7 +176,7 @@ public class ReminderManager : ObservableCollection<Reminder>, IReminderManager
         if (item == null) return;
 
         var result = await LocalRepo.DeleteReminderAsync(item);
-        if (result.IsFailure)
+        if (result.IsFailure && result.Error != null)
         {
             ShowError(result.Error);
         }
@@ -207,12 +207,12 @@ public class ReminderManager : ObservableCollection<Reminder>, IReminderManager
             Reminder r = item;
             
             var result = await LocalRepo.UpdateReminderAsync(r);
-            if (result.Success && result.Value != null)
+            if (result.IsSuccess && result.Value != null)
             {
                 r = result.Value;
                     
             }
-            else
+            else if(result.Error != null)
             {
                 ShowError(result.Error);
             }
@@ -247,7 +247,7 @@ public class ReminderManager : ObservableCollection<Reminder>, IReminderManager
         Application.Current.Dispatcher.Invoke(async() => {
             await dataSync.SyncAsync();
             var result = await LocalRepo.GetRemindersAsync();
-            if (result.IsFailure)
+            if (result.IsFailure )
             {
                 return;
             }
@@ -260,6 +260,7 @@ public class ReminderManager : ObservableCollection<Reminder>, IReminderManager
                 }
             }
             this.Clear();
+            if(result.Value == null) return;
             foreach (Reminder reminder in result.Value)
             {
                 //await UpdateReminder(reminder);
