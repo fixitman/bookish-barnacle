@@ -65,8 +65,6 @@ PRIMARY KEY(id)
     public async Task<Result<Reminder?>> AddReminderAsync(Reminder item)
     {
         logger.LogDebug("AddReminderAsync");
-        item.id = Guid.NewGuid().ToString();
-        item.LastUpdated = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
         try
         {
             using SqliteConnection conn = new SqliteConnection(_connectionString);
@@ -186,7 +184,8 @@ UPDATE Reminders
 SET ReminderText = @ReminderText,
     ReminderTime = @ReminderTime,
     Recurrence = @Recurrence,
-    RecurrenceData = @RecurrenceData
+    RecurrenceData = @RecurrenceData,
+    LastUpdated = @LastUpdated
 WHERE id = @id;
 ";
             await conn.ExecuteAsync(sql, item);

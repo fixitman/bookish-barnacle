@@ -72,7 +72,6 @@ namespace Reminder_WPF.Services
             try
             {
                 using var client = await GetClient();
-                //item.LastUpdated = DateTimeOffset.Now.ToUnixTimeMilliseconds();
                 var result = await client.PostAsJsonAsync<Reminder>($"reminders", item);                
                 result.EnsureSuccessStatusCode();
                 var reminder = await result.Content.ReadFromJsonAsync<Reminder>();
@@ -93,7 +92,6 @@ namespace Reminder_WPF.Services
             {
                 using var client = await GetClient();
                 var path = $"reminders/{item.id}";
-                //item.LastUpdated = DateTimeOffset.Now.ToUnixTimeMilliseconds();
                 var result = await client.PutAsJsonAsync<Reminder>(path, item);
                 result.EnsureSuccessStatusCode();
                 var reminder = await result.Content.ReadFromJsonAsync<Reminder>();

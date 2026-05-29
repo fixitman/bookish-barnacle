@@ -86,24 +86,30 @@ public class ReminderManager : ObservableCollection<Reminder>, IReminderManager
     {
         _logger.LogDebug("AddReminder");
         if (item == null) return;
+        if(item.id != string.Empty) throw new ArgumentException("New reminder should not have an id");
+        {
+            item.id = Guid.NewGuid().ToString();
+        }
+        item.LastUpdated = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+
         Reminder r = item;
 
         //strip millis and ticks
         r.ReminderTime = new DateTime(item.ReminderTime.Year,item.ReminderTime.Month,item.ReminderTime.Day,
                                 item.ReminderTime.Hour,item.ReminderTime.Minute, item.ReminderTime.Second);
+        r.id = Guid.NewGuid().ToString();
 
-        if (item.id != null && item.id != "")
+        
+        var result = await LocalRepo.AddReminderAsync(r);
+        if (result.IsSuccess && result.Value != null)
         {
-            var result = await LocalRepo.AddReminderAsync(r);
-            if (result.IsSuccess && result.Value != null)
-            {
-                r = result.Value;
-            }
-            else if(result.Error != null)
-            {
-                ShowError(result.Error);
-            }
+            r = result.Value;
         }
+        else if(result.Error != null)
+        {
+            ShowError(result.Error);
+        }
+        
         
         if (r != null)
         {
@@ -197,20 +203,17 @@ public class ReminderManager : ObservableCollection<Reminder>, IReminderManager
     {
         _logger.LogDebug("UpdateReminder");
         var current = this.FirstOrDefault(r => r.id == item.id);
-        if (current == null)
-        {
-            item.id= Guid.NewGuid().ToString();
-            await AddReminder(item);            
-        }
-        else if (item.Equals(current) == false)
+        if (current == null) throw new ArgumentException("Reminder to update not found in current list");
+        
+        if (item.Equals(current) == false)
         {
             Reminder r = item;
+            r.LastUpdated = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
             
             var result = await LocalRepo.UpdateReminderAsync(r);
             if (result.IsSuccess && result.Value != null)
             {
                 r = result.Value;
-                    
             }
             else if(result.Error != null)
             {
@@ -246,31 +249,25 @@ public class ReminderManager : ObservableCollection<Reminder>, IReminderManager
     {
         Application.Current.Dispatcher.Invoke(async() => {
             await dataSync.SyncAsync();
-            var result = await LocalRepo.GetRemindersAsync();
-            if (result.IsFailure )
+            var localResult = await LocalRepo.GetRemindersAsync();
+            if (localResult.IsFailure )
             {
                 return;
             }
             foreach (Reminder existing in this)
             {
-                //if (result.Value.FirstOrDefault(r => r.id == existing.id) == null)
-                {
-                    RemScheduler.DeleteReminder(existing.id);
-                    //this.Remove(existing);
-                }
+                RemScheduler.DeleteReminder(existing.id);                
             }
             this.Clear();
-            if(result.Value == null) return;
-            foreach (Reminder reminder in result.Value)
+            if(localResult.Value == null) return;
+            foreach (Reminder reminder in localResult.Value)
             {
-                //await UpdateReminder(reminder);
-                await AddReminderLocalAsync(reminder);
+                AddReminderLocal(reminder);
             }
-        });
-                    
+        });         
     }
 
-    private async Task AddReminderLocalAsync(Reminder reminder)
+    private void AddReminderLocal(Reminder reminder)
     {
         RemScheduler.ScheduleReminder(reminder, Callback);
         this.Add(reminder);
