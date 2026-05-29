@@ -203,12 +203,14 @@ public class ReminderManager : ObservableCollection<Reminder>, IReminderManager
     {
         _logger.LogDebug("UpdateReminder");
         var current = this.FirstOrDefault(r => r.id == item.id);
-        if (current == null) throw new ArgumentException("Reminder to update not found in current list");
+        if (current == null) {
+            _ = AddReminder(item);
+            return;
+        }
         
-        if (item.Equals(current) == false)
+        if (item.Equals(current) == false && item.LastUpdated > current.LastUpdated)
         {
             Reminder r = item;
-            r.LastUpdated = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
             
             var result = await LocalRepo.UpdateReminderAsync(r);
             if (result.IsSuccess && result.Value != null)
