@@ -6,6 +6,7 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Reminder_WPF.Models;
+using Reminder_WPF.Utilities;
 
 namespace Reminder_WPF.Services
 {
@@ -88,9 +89,9 @@ namespace Reminder_WPF.Services
         public async Task SyncAsync()
         {
             if (_isSyncing) return; // simple guard to prevent concurrent syncs
-            _isSyncing = true;
             if (_remote == null || _local == null) return; // sanity check - should not happen
             if (!await _remote.IsAvailableAsync()) return; // remote unavailable - likely offline
+            _isSyncing = true;
             // First, attempt to push cached changes
             var cached = LoadCache();
             if (cached.Any())
@@ -128,40 +129,51 @@ namespace Reminder_WPF.Services
 
             // Pull remote list and merge into local store. If remote call fails, bail out (offline).
             List<Reminder> remoteList;
+            Dictionary<string, Reminder> localById;
+            Result<List<Reminder>> result;
             try
             {
                 var remoteResult = await _remote.GetRemindersAsync();
-                if (remoteResult.IsFailure) return; // remote failure - can't do much
+                if (remoteResult.IsFailure) throw new InvalidOperationException("Failed to retrieve reminders from remote source."); // remote failure - can't do much
                 remoteList = remoteResult.Value ?? new List<Reminder>();
+                result = await _local.GetRemindersAsync();
+                if (result.IsFailure || result.Value == null) throw new InvalidOperationException("Failed to retrieve reminders from local source."); // local store failure - can't do much
+                localById = result.Value.ToDictionary(r => r.id);
             }
             catch
             {
+                _isSyncing = false;
                 return; // offline or remote unavailable
             }
 
-            var result = await _local.GetRemindersAsync();
-            if (result.IsFailure || result.Value == null) return; // local store failure - can't do much
-            var localById = result.Value.ToDictionary(r => r.id);
 
             // Upsert remote items into local
             foreach (var r in remoteList)
             {
-                if (r == null) continue;
-                if (localById.TryGetValue(r.id, out var existing))
+                try
                 {
-                    
-                    // if remote is newer, update local. 
-                    if (existing.LastUpdated < r.LastUpdated){
-                        await _local.UpdateReminderAsync(r);     
-                    // if local is newer, update remote.                    
-                    }else if(existing.LastUpdated > r.LastUpdated){
-                        await _remote.UpdateReminderAsync(existing);                        
+                    if (r == null) continue;
+                    if (localById.TryGetValue(r.id, out var existing))
+                    {
+                        
+                        // if remote is newer, update local. 
+                        if (existing.LastUpdated < r.LastUpdated){
+                            await _local.UpdateReminderAsync(r);     
+                        // if local is newer, update remote.                    
+                        }else if(existing.LastUpdated > r.LastUpdated){
+                            await _remote.UpdateReminderAsync(existing);                        
+                        }
+                        //else do nothing - they are the same
                     }
-                    //else do nothing - they are the same
+                    else
+                    {
+                        await _local.AddReminderAsync(r);
+                    }
                 }
-                else
+                catch (System.Exception)
                 {
-                    await _local.AddReminderAsync(r);
+                    _isSyncing = false;
+                    return; // remote failure - likely offline - bail out and try again later
                 }
             }
             foreach (var local in result.Value)
