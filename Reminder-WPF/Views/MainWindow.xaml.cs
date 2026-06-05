@@ -20,6 +20,7 @@ public partial class MainWindow : Window
         helper.EnsureHandle();
         
         InitializeComponent();
+        vM.MenuRefreshCommand.Execute(null);
         DataContext = vM;
         VM = vM;
         VM.MainWindow = this;
