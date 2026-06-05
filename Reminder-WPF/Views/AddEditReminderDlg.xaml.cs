@@ -94,6 +94,7 @@ namespace Reminder_WPF.Views
             }
             else
             {
+                Reminder.LastUpdated = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
                 DialogResult= true;
             }
         }          
