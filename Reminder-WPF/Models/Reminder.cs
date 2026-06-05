@@ -11,7 +11,7 @@ namespace Reminder_WPF.Models
             get => Enum.GetValues<RecurrenceType>();
         }
 
-        public string id {  get; set; } = Guid.NewGuid().ToString();
+        public string id {  get; set; } 
         public string ReminderText { get; set; } = string.Empty;
         public DateTime ReminderTime { get; set; }
         public RecurrenceType Recurrence { get; set; } = RecurrenceType.None;

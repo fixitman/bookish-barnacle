@@ -36,13 +36,9 @@ namespace Reminder_WPF.Services
             Reminder? r = state as Reminder;
             if (r != null)
             {
+                if (!Events.ContainsKey(r.id)) return;
+
                 ReminderEvent reminderEvent = Events[r.id];
-               
-                //if(reminderEvent.reminder.Recurrence != Reminder.RecurrenceType.None)
-                //{
-                //    long delay = FindNext(r);                    
-                //    reminderEvent.timer.Change(delay, Timeout.Infinite);
-                //}                
                 
                 reminderEvent.onTimer(reminderEvent.reminder);
             }
@@ -54,6 +50,7 @@ namespace Reminder_WPF.Services
          
         internal void ScheduleNext(Reminder r)
         {
+            if (!Events.ContainsKey(r.id)) return;
             ReminderEvent reminderEvent = Events[r.id];
             long delay = FindNext(r);
             reminderEvent.timer.Change(delay, Timeout.Infinite);

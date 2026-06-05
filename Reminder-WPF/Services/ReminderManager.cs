@@ -86,7 +86,7 @@ public class ReminderManager : ObservableCollection<Reminder>, IReminderManager
     {
         _logger.LogDebug("AddReminder");
         if (item == null) return;
-        if(item.id != string.Empty) throw new ArgumentException("New reminder should not have an id");
+        if(item.id != null && item.id != string.Empty) throw new ArgumentException("New reminder should not have an id");
         {
             item.id = Guid.NewGuid().ToString();
         }
