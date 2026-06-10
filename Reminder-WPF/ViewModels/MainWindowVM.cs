@@ -117,9 +117,7 @@ public partial class MainWindowVM : ObservableObject
                 List<Reminder>? list = JsonConvert.DeserializeObject<List<Reminder>>(remindersJson);
                 if(list != null)
                 {
-                    foreach(Reminder reminder in list){
-                        Reminders.UpdateReminder(reminder);
-                    }
+                    Reminders.ImportReminders(list);
                 }
             }
             catch (Exception ex)

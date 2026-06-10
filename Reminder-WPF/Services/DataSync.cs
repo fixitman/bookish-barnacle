@@ -36,7 +36,7 @@ namespace Reminder_WPF.Services
         {
             _local = localRepo ?? throw new ArgumentNullException(nameof(localRepo));
             _remote = remoteRepo ?? throw new ArgumentNullException(nameof(remoteRepo));
-            _cachePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), CacheFileName);
+            _cachePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),"FixitmanMike" ,CacheFileName);
             EnsureCacheFile();
         }
 
@@ -104,13 +104,16 @@ namespace Reminder_WPF.Services
                         switch (change.Operation)
                         {
                             case SyncOperation.Create:
-                                await _remote.AddReminderAsync(change.Item);
+                                var AddResult = await _remote.AddReminderAsync(change.Item);
+                                if (AddResult.IsFailure) throw new InvalidOperationException("Failed to add reminder to remote source.");
                                 break;
                             case SyncOperation.Update:
-                                await _remote.UpdateReminderAsync(change.Item);
+                                var UpdateResult = await _remote.UpdateReminderAsync(change.Item);
+                                if (UpdateResult.IsFailure) throw new InvalidOperationException("Failed to update reminder on remote source.");
                                 break;
                             case SyncOperation.Delete:
-                                await _remote.DeleteReminderAsync(change.Item);
+                                var DeleteResult = await _remote.DeleteReminderAsync(change.Item);
+                                if (DeleteResult.IsFailure) throw new InvalidOperationException("Failed to delete reminder from remote source.");
                                 break;
                             default:
                                 // unknown operation - ignore
@@ -158,10 +161,11 @@ namespace Reminder_WPF.Services
                         
                         // if remote is newer, update local. 
                         if (existing.LastUpdated < r.LastUpdated){
-                            await _local.UpdateReminderAsync(r);     
+                        var UpdateResult = await _local.UpdateReminderAsync(r);     
                         // if local is newer, update remote.                    
                         }else if(existing.LastUpdated > r.LastUpdated){
-                            await _remote.UpdateReminderAsync(existing);                        
+                            var UpdateResult = await _remote.UpdateReminderAsync(existing);
+                            if (UpdateResult.IsFailure) throw new InvalidOperationException("Failed to update reminder on remote source.");
                         }
                         //else do nothing - they are the same
                     }

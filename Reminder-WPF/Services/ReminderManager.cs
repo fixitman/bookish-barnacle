@@ -45,12 +45,12 @@ public class ReminderManager : ObservableCollection<Reminder>, IReminderManager
         RemoteRepo = remoteRepo;
         dataSync = new DataSync(LocalRepo, RemoteRepo, logger);
         RemScheduler = reminderScheduler;
-        RefreshTimer = new Timer(
-            (object? state) => { RefreshReminders(); _logger.LogDebug("refresh"); },
-            null,
-            (long)TimeSpan.FromMinutes(10).TotalMilliseconds,
-            (long)TimeSpan.FromMinutes(10).TotalMilliseconds
-        );
+        // RefreshTimer = new Timer(
+        //     (object? state) => { RefreshReminders(); _logger.LogDebug("refresh"); },
+        //     null,
+        //     (long)TimeSpan.FromMinutes(10).TotalMilliseconds,
+        //     (long)TimeSpan.FromMinutes(10).TotalMilliseconds
+        // );
 
         Task.Run(async () =>
         {
@@ -72,7 +72,7 @@ public class ReminderManager : ObservableCollection<Reminder>, IReminderManager
                     await LocalRepo.DeleteReminderAsync(r);
                 }else
                 {
-                    await AddReminder(r);
+                    AddReminderLocal(r);
                 }
             }
         }
@@ -86,8 +86,7 @@ public class ReminderManager : ObservableCollection<Reminder>, IReminderManager
     {
         _logger.LogDebug("AddReminder");
         if (item == null) return;
-        if(item.id != null && item.id != string.Empty) throw new ArgumentException("New reminder should not have an id");
-        {
+        if(item.id == null || item.id == string.Empty) {
             item.id = Guid.NewGuid().ToString();
         }
         item.LastUpdated = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
@@ -97,7 +96,7 @@ public class ReminderManager : ObservableCollection<Reminder>, IReminderManager
         //strip millis and ticks
         r.ReminderTime = new DateTime(item.ReminderTime.Year,item.ReminderTime.Month,item.ReminderTime.Day,
                                 item.ReminderTime.Hour,item.ReminderTime.Minute, item.ReminderTime.Second);
-        r.id = Guid.NewGuid().ToString();
+        
 
         
         var result = await LocalRepo.AddReminderAsync(r);
@@ -122,7 +121,7 @@ public class ReminderManager : ObservableCollection<Reminder>, IReminderManager
                 r.ReminderTime = new DateTime(next.Year, next.Month, next.Day, next.Hour, next.Minute, next.Second);
                 Add(r);
             }, null);
-            await dataSync.QueueChangeAsync(r, SyncOperation.Create);
+            await dataSync.QueueChangeAsync(r, SyncOperation.Update);
             await dataSync.SyncAsync();
            
         }        
@@ -204,7 +203,7 @@ public class ReminderManager : ObservableCollection<Reminder>, IReminderManager
         _logger.LogDebug("UpdateReminder");
         var current = this.FirstOrDefault(r => r.id == item.id);
         if (current == null) {
-            _ = AddReminder(item);
+            await AddReminder(item);
             return;
         }
         
@@ -273,5 +272,14 @@ public class ReminderManager : ObservableCollection<Reminder>, IReminderManager
     {
         RemScheduler.ScheduleReminder(reminder, Callback);
         this.Add(reminder);
+    }
+
+    public async Task ImportReminders(List<Reminder> list)
+    {
+        foreach(Reminder reminder in list)
+        {
+            await dataSync.QueueChangeAsync(reminder, SyncOperation.Create);
+        }
+        RefreshReminders();
     }
 }

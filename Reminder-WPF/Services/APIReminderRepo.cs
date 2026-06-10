@@ -69,6 +69,7 @@ namespace Reminder_WPF.Services
 
         public async Task<Result<Reminder?>> AddReminderAsync(Reminder item)
         {
+            _logger.LogDebug($"AddReminderAsync remote ({item.id})");
             try
             {
                 using var client = await GetClient();
@@ -88,6 +89,7 @@ namespace Reminder_WPF.Services
 
         public async Task<Result<Reminder?>> UpdateReminderAsync(Reminder item)
         {
+            _logger.LogDebug($"UpdateReminderAsync remote ({item.id})");
             try
             {
                 using var client = await GetClient();
@@ -108,6 +110,7 @@ namespace Reminder_WPF.Services
 
         public async Task<Result<object>> DeleteReminderAsync(Reminder item)
         {
+            _logger.LogDebug($"DeleteReminderAsync remote ({item.id})");
             try
             {
                 using var client = await GetClient();
