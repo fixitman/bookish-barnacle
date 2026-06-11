@@ -45,12 +45,12 @@ public class ReminderManager : ObservableCollection<Reminder>, IReminderManager
         RemoteRepo = remoteRepo;
         dataSync = new DataSync(LocalRepo, RemoteRepo, logger);
         RemScheduler = reminderScheduler;
-        // RefreshTimer = new Timer(
-        //     (object? state) => { RefreshReminders(); _logger.LogDebug("refresh"); },
-        //     null,
-        //     (long)TimeSpan.FromMinutes(10).TotalMilliseconds,
-        //     (long)TimeSpan.FromMinutes(10).TotalMilliseconds
-        // );
+        RefreshTimer = new Timer(
+            (object? state) => { RefreshReminders(); _logger.LogDebug("refresh"); },
+            null,
+            (long)TimeSpan.FromMinutes(10).TotalMilliseconds,
+            (long)TimeSpan.FromMinutes(10).TotalMilliseconds
+        );
 
         Task.Run(async () =>
         {
