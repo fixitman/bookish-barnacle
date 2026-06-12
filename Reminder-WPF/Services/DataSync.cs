@@ -43,8 +43,10 @@ namespace Reminder_WPF.Services
         // Represents a pending change to be applied to remote when online
         private class PendingChange
         {
+            private static TimeSpan MAX_AGE = TimeSpan.FromDays(1);
             public required SyncOperation Operation { get; set; } // "create", "update", "delete"
             public required Reminder Item { get; set; }
+            public DateTime ExpiresAt  = DateTime.UtcNow + MAX_AGE; 
         }
 
         private void EnsureCacheFile()
@@ -99,6 +101,7 @@ namespace Reminder_WPF.Services
                 var remaining = new List<PendingChange>();
                 foreach (var change in cached)
                 {
+                    if (change.ExpiresAt < DateTime.UtcNow) continue; // skip stale changes
                     try
                     {
                         switch (change.Operation)
