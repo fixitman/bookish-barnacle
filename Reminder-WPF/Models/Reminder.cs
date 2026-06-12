@@ -36,6 +36,8 @@ namespace Reminder_WPF.Models
             if(!Recurrence.Equals(other.Recurrence)) return false;
             if(!RecurrenceData.Equals(other.RecurrenceData)) return false;
             //if(!ReminderTime.Ticks.Equals(other.ReminderTime.Ticks)) return false;
+            if(!LastUpdated.Equals(other.LastUpdated)) return false;
+            if(!ReminderTime.Equals(other.ReminderTime)) return false;
             if(Recurrence == RecurrenceType.None)
             {
                 if (!ReminderTime.Equals(other.ReminderTime)) return false;
