@@ -125,7 +125,7 @@ SELECT CHANGES();
             using SqliteConnection conn = new SqliteConnection(_connectionString);
             string sql = @"
 DELETE FROM REMINDERS 
-WHERE ReminderTime < datetime(""now"") and Recurrence = 0;
+WHERE ReminderTime < datetime(""now"",""localtime"") and Recurrence = 0;
 SELECT CHANGES();
 ";
             await conn.ExecuteScalarAsync<int>(sql);
