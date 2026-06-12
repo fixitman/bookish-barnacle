@@ -71,7 +71,7 @@ namespace Reminder_WPF.Services
         {
             lock (_cacheLock)
             {
-                var json = JsonSerializer.Serialize(list);
+                var json = JsonSerializer.Serialize(list, new JsonSerializerOptions { WriteIndented = true });
                 File.WriteAllText(_cachePath, json);
             }
         }
@@ -96,9 +96,9 @@ namespace Reminder_WPF.Services
             _isSyncing = true;
             // First, attempt to push cached changes
             var cached = LoadCache();
+            var remaining = new List<PendingChange>();
             if (cached.Any())
             {
-                var remaining = new List<PendingChange>();
                 foreach (var change in cached)
                 {
                     if (change.ExpiresAt < DateTime.UtcNow) continue; // skip stale changes
@@ -186,7 +186,7 @@ namespace Reminder_WPF.Services
             foreach (var local in result.Value)
             {
                 if (local == null) continue;
-                if (!remoteList.Any(r => r.id == local.id))
+                if (!remoteList.Any(r => r.id == local.id) && !remaining.Any(change => change.Item.id == local.id))    // if not in remote and not already queued for create, delete local
                 {
                     await _local.DeleteReminderAsync(local);
                 }
