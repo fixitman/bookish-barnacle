@@ -72,6 +72,7 @@ public class ReminderManager : ObservableCollection<Reminder>, IReminderManager
                     await LocalRepo.DeleteReminderAsync(r);
                 }else
                 {
+                    r.ReminderTime = RemScheduler.GetNext(r);         
                     AddReminderLocal(r);
                 }
             }

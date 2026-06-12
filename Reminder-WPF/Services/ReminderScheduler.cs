@@ -93,6 +93,13 @@ namespace Reminder_WPF.Services
             }
         }
 
+        public DateTime GetNext(Reminder r)
+        {
+            var n = DateTime.Now + TimeSpan.FromMilliseconds(FindNext(r));
+            return new DateTime(n.Year, n.Month, n.Day, n.Hour, n.Minute, n.Second);
+        }
+
+
         public long FindNext(Reminder r)
         {
             long delay = -1L;
