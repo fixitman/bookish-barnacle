@@ -121,7 +121,7 @@ public class ReminderManager : ObservableCollection<Reminder>, IReminderManager
                 r.ReminderTime = new DateTime(next.Year, next.Month, next.Day, next.Hour, next.Minute, next.Second);
                 Add(r);
             }, null);
-            await dataSync.QueueChangeAsync(r, SyncOperation.Update);
+            await dataSync.QueueChangeAsync(r, SyncOperation.Create);
             await dataSync.SyncAsync();
            
         }        
