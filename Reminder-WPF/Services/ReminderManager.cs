@@ -94,9 +94,7 @@ public class ReminderManager : ObservableCollection<Reminder>, IReminderManager
 
         Reminder r = item;
 
-        //strip millis and ticks
-        r.ReminderTime = new DateTime(item.ReminderTime.Year,item.ReminderTime.Month,item.ReminderTime.Day,
-                                item.ReminderTime.Hour,item.ReminderTime.Minute, item.ReminderTime.Second);
+        r.ReminderTime = RemScheduler.GetNext(r);
         
 
         
@@ -208,38 +206,40 @@ public class ReminderManager : ObservableCollection<Reminder>, IReminderManager
             return;
         }
         
-        if (item.Equals(current) == false && item.LastUpdated > current.LastUpdated)
+        if(item.Equals(current)) return;
+        item.LastUpdated = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+        
+        Reminder r = item;
+        r.ReminderTime = RemScheduler.GetNext(r);
+        
+        var result = await LocalRepo.UpdateReminderAsync(r);
+        if (result.IsSuccess && result.Value != null)
         {
-            Reminder r = item;
-            
-            var result = await LocalRepo.UpdateReminderAsync(r);
-            if (result.IsSuccess && result.Value != null)
-            {
-                r = result.Value;
-            }
-            else if(result.Error != null)
-            {
-                ShowError(result.Error);
-            }
-            
-
-            if (r != null)
-            {
-                ScheduleReminder(r);
-                Application.Current.Dispatcher.Invoke(() =>
-                {
-                    var delay = TimeSpan.FromMilliseconds(RemScheduler.FindNext(r) + 1);
-                    var next = DateTime.Now + delay;
-                    //strip millis and ticks
-                    r.ReminderTime = new DateTime(next.Year, next.Month, next.Day, next.Hour, next.Minute, next.Second);
-                    Remove(current);
-                    Add(r.Clone());
-                }, null);
-                await dataSync.QueueChangeAsync(r, SyncOperation.Update);
-                await dataSync.SyncAsync();
-                
-            }
+            r = result.Value;
         }
+        else if(result.Error != null)
+        {
+            ShowError(result.Error);
+        }
+        
+
+        if (r != null)
+        {
+            ScheduleReminder(r);
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                var delay = TimeSpan.FromMilliseconds(RemScheduler.FindNext(r) + 1);
+                var next = DateTime.Now + delay;
+                //strip millis and ticks
+                r.ReminderTime = new DateTime(next.Year, next.Month, next.Day, next.Hour, next.Minute, next.Second);
+                Remove(current);
+                Add(r.Clone());
+            }, null);
+            await dataSync.QueueChangeAsync(r, SyncOperation.Update);
+            await dataSync.SyncAsync();
+            
+        }
+        
     }
     
     private static void ShowError(string error)
