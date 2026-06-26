@@ -18,7 +18,7 @@ namespace Reminder_WPF.Services
 
         public void ScheduleReminder(Reminder r, TimerCallback  callback )
         {
-            long delay = FindNext(r);
+            long delay = (long)(FindNext(r) - DateTime.Now).TotalMilliseconds  ;
             if (delay == Timeout.Infinite || delay >= Int32.MaxValue - 2) return;
 
             Timer t = new Timer(this.SchedulerCallback, r, delay, Timeout.Infinite);
@@ -52,7 +52,7 @@ namespace Reminder_WPF.Services
         {
             if (!Events.ContainsKey(r.id)) return;
             ReminderEvent reminderEvent = Events[r.id];
-            long delay = FindNext(r);
+            long delay = (long)(FindNext(r) - DateTime.Now).TotalMilliseconds;
             reminderEvent.timer.Change(delay, Timeout.Infinite);
             
         }
@@ -75,7 +75,7 @@ namespace Reminder_WPF.Services
         {
             if( Events.ContainsKey(r.id))
             {
-                long delay = r.Recurrence != Reminder.RecurrenceType.None? FindNext(r) : (long)(r.ReminderTime - DateTime.Now).TotalMilliseconds;
+                long delay = (long)(FindNext(r) - DateTime.Now).TotalMilliseconds;
                 Events[r.id].timer.Change(delay, Timeout.Infinite);
             }
         }
@@ -95,38 +95,39 @@ namespace Reminder_WPF.Services
 
         public DateTime GetNext(Reminder r)
         {
-            var n = DateTime.Now + TimeSpan.FromMilliseconds(FindNext(r) + 10);
+            var n = FindNext(r).AddMilliseconds(10);
             return new DateTime(n.Year, n.Month, n.Day, n.Hour, n.Minute, n.Second);
         }
 
 
-        public long FindNext(Reminder r)
+        public DateTime FindNext(Reminder r)
         {
-            long delay = -1L;
+            DateTime next;
 
             switch (r.Recurrence)
             {
                 case Reminder.RecurrenceType.None:
-                    delay = (long)(r.ReminderTime - DateTime.Now).TotalMilliseconds;
-                    if (delay < 0) delay = Timeout.Infinite;                    
+                    next = r.ReminderTime;                 
                     break;
                 case Reminder.RecurrenceType.Daily:
-                    delay = (long)(r.ReminderTime.TimeOfDay - DateTime.Now.TimeOfDay).TotalMilliseconds ;
-                    if (delay < 0) delay += (long)TimeSpan.FromDays(1).TotalMilliseconds;
+                    next = r.ReminderTime;
+                    if (next <= DateTime.Now)
+                    {
+                        next = next.AddHours(24);
+                    }
                     break;
                 case Reminder.RecurrenceType.Weekly:
-                    DateTime trigger = FindNextWeekly(r);
-                    delay = (long)(trigger - DateTime.Now).TotalMilliseconds;
+                    next = FindNextWeekly(r);                    
                     break;
                 case Reminder.RecurrenceType.Monthly:
                     var trigger1 = FindNextMonthly(r);
-                    delay = (long)(trigger1 - DateTime.Now).TotalMilliseconds;
+                    next = trigger1;
                     break;
                 default:
-                    delay = (long)(r.ReminderTime - DateTime.Now).TotalMilliseconds;
+                    next = r.ReminderTime;
                     break;
             }
-            return delay;
+            return next;
 
         }
 

@@ -156,8 +156,7 @@ public class ReminderManager : ObservableCollection<Reminder>, IReminderManager
                 else
                 {
                     RemScheduler.ScheduleNext(reminder);
-                    var next = DateTime.Now + TimeSpan.FromMilliseconds(RemScheduler.FindNext(reminder) + 1);
-                    reminder.ReminderTime = next;
+                    reminder.ReminderTime = RemScheduler.GetNext(reminder);
                     OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
                 }
             }
