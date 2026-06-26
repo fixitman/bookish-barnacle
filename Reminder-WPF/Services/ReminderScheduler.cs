@@ -95,7 +95,7 @@ namespace Reminder_WPF.Services
 
         public DateTime GetNext(Reminder r)
         {
-            var n = DateTime.Now + TimeSpan.FromMilliseconds(FindNext(r));
+            var n = DateTime.Now + TimeSpan.FromMilliseconds(FindNext(r) + 10);
             return new DateTime(n.Year, n.Month, n.Day, n.Hour, n.Minute, n.Second);
         }
 
@@ -111,7 +111,7 @@ namespace Reminder_WPF.Services
                     if (delay < 0) delay = Timeout.Infinite;                    
                     break;
                 case Reminder.RecurrenceType.Daily:
-                    delay = (long)(r.ReminderTime.TimeOfDay - DateTime.Now.TimeOfDay).TotalMilliseconds;
+                    delay = (long)(r.ReminderTime.TimeOfDay - DateTime.Now.TimeOfDay).TotalMilliseconds ;
                     if (delay < 0) delay += (long)TimeSpan.FromDays(1).TotalMilliseconds;
                     break;
                 case Reminder.RecurrenceType.Weekly:
